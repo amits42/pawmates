@@ -34,12 +34,12 @@ export default function HomePage() {
 
   const currentCompany: CompanyInfo = {
     id: "default-id",
-    companyName: "PawMates",
+    companyName: "ZuboPets",
     tagline: "Your Pet's Best Friend, Always.",
     description:
-      "At PawMates, we connect loving pet owners with trusted and experienced pet sitters. Our mission is to provide peace of mind by ensuring your furry, feathered, or scaled family members receive the best care possible in the comfort of their own home or with a dedicated sitter.",
+      "At ZuboPets, we connect loving pet owners with trusted and experienced pet sitters. Our mission is to provide peace of mind by ensuring your furry, feathered, or scaled family members receive the best care possible in the comfort of their own home or with a dedicated sitter.",
     mission: "To provide exceptional, compassionate, and reliable pet care services.",
-    contactEmail: "support@pawmates.com",
+    contactEmail: "support@zubopets.com",
     contactPhone: "+1 (555) 123-4567",
     address: "123 Pet Lovers Lane, Animal City, PA 12345",
     operatingHours: "Mon-Fri: 9 AM - 6 PM, Sat: 10 AM - 4 PM",
@@ -52,22 +52,22 @@ export default function HomePage() {
     founders: [
       {
         name: "Jane Doe",
-        bio: "Jane is a lifelong animal enthusiast with over 15 years of experience in pet care and animal welfare. She founded PawMates to create a reliable and compassionate community for pets and their owners.",
+        bio: "Jane is a lifelong animal enthusiast with over 15 years of experience in pet care and animal welfare. She founded ZuboPets to create a reliable and compassionate community for pets and their owners.",
         imageUrl: "/placeholder.svg?height=100&width=100",
       },
       {
         name: "John Smith",
-        bio: "John brings a strong background in technology and operations, ensuring PawMates runs smoothly and efficiently. His passion for pets drives his commitment to innovative solutions.",
+        bio: "John brings a strong background in technology and operations, ensuring ZuboPets runs smoothly and efficiently. His passion for pets drives his commitment to innovative solutions.",
         imageUrl: "/placeholder.svg?height=100&width=100",
       },
     ] as Founder[],
     socialMedia: {
-      facebook: "https://facebook.com/PawMates",
-      twitter: "https://twitter.com/PawMates",
-      instagram: "https://instagram.com/PawMates",
-      linkedin: "https://linkedin.com/company/PawMates",
-      youtube: "https://youtube.com/PawMates",
-      tiktok: "https://tiktok.com/@PawMates",
+      facebook: "https://facebook.com/ZuboPets",
+      twitter: "https://twitter.com/ZuboPets",
+      instagram: "https://instagram.com/ZuboPets",
+      linkedin: "https://linkedin.com/company/ZuboPets",
+      youtube: "https://youtube.com/ZuboPets",
+      tiktok: "https://tiktok.com/@ZuboPets",
     } as SocialMedia,
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -99,18 +99,15 @@ export default function HomePage() {
           <div className="absolute inset-0 bg-gradient-to-r from-blue-800/60 to-purple-800/60"></div>
           <div className="container px-4 md:px-6 text-center relative z-10">
             <div className="flex flex-col items-center justify-center space-y-6">
-              {/* Logo */}
+              {/* Logo Only - No Text */}
               <div className="flex items-center justify-center mb-4">
                 <img
                   src="/logo/zubo-logo.svg"
-                  alt="PawMates Logo"
-                  className="h-20 w-auto md:h-24 lg:h-28 drop-shadow-lg"
+                  alt="ZuboPets Logo"
+                  className="h-24 w-auto md:h-32 lg:h-40 drop-shadow-2xl"
                 />
               </div>
 
-              <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl text-white drop-shadow-lg">
-                {currentCompany.companyName}
-              </h1>
               <p className="text-2xl md:text-3xl lg:text-4xl font-semibold text-white/90 drop-shadow-md">
                 {currentCompany.tagline}
               </p>
@@ -333,9 +330,8 @@ export default function HomePage() {
       {/* Footer */}
       <footer className="w-full py-8 bg-gray-800 text-white text-center">
         <div className="container px-4 md:px-6 flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
-          <div className="flex items-center gap-3">
-            <img src="/logo/zubo-logo.svg" alt="PawMates Logo" className="h-6 w-auto brightness-0 invert" />
-            <span className="font-semibold text-lg">{currentCompany.companyName}</span>
+          <div className="flex items-center justify-center">
+            <img src="/logo/zubo-logo.svg" alt="ZuboPets Logo" className="h-8 w-auto brightness-0 invert" />
           </div>
           <nav className="flex gap-6 text-sm">
             <Link href="#services" className="hover:text-blue-400 transition-colors font-medium">
@@ -354,9 +350,7 @@ export default function HomePage() {
               Terms of Service
             </Link>
           </nav>
-          <p className="text-sm text-gray-400">
-            &copy; {new Date().getFullYear()} {currentCompany.companyName}. All rights reserved.
-          </p>
+          <p className="text-sm text-gray-400">&copy; {new Date().getFullYear()} ZuboPets. All rights reserved.</p>
         </div>
       </footer>
     </div>

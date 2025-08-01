@@ -41,4 +41,5 @@ export const manrope = localFont({
   ],
   variable: "--font-manrope",
   display: "swap",
+  preload: true,
 })

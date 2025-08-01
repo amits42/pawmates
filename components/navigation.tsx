@@ -57,12 +57,8 @@ export default function Navigation() {
       {/* Top navigation for desktop */}
       <header className="hidden md:block border-b bg-white shadow-sm sticky top-0 z-40">
         <div className="container flex h-16 items-center px-4">
-          <Link
-            href="/landing"
-            className="mr-4 font-bold text-2xl text-blue-800 flex items-center hover:opacity-80 transition-opacity"
-          >
-            <img src="/logo/zubo-logo.svg" alt="PawMates Logo" className="mr-3 h-8 w-auto" />
-            <span className="font-semibold tracking-tight">PawMates</span>
+          <Link href="/landing" className="mr-4 flex items-center hover:opacity-80 transition-opacity">
+            <img src="/logo/zubo-logo.svg" alt="ZuboPets Logo" className="h-8 w-auto" />
           </Link>
 
           {/* Main Navigation - 3 items */}
