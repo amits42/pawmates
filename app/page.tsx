@@ -3,9 +3,46 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Heart, Shield, Clock, Star, Users, MapPin, Phone, Mail } from "lucide-react"
+import {
+  Heart,
+  Shield,
+  Clock,
+  Star,
+  Users,
+  MapPin,
+  Phone,
+  Mail,
+  Facebook,
+  Twitter,
+  Instagram,
+  Linkedin,
+  Youtube,
+  TwitterIcon as TikTok,
+} from "lucide-react"
 
 export default function HomePage() {
+  const founders = [
+    {
+      name: "Jane Doe",
+      bio: "Jane is a lifelong animal enthusiast with over 15 years of experience in pet care and animal welfare. She founded ZuboPets to create a reliable and compassionate community for pets and their owners.",
+      imageUrl: "/placeholder.svg?height=100&width=100?query=Jane Doe portrait",
+    },
+    {
+      name: "John Smith",
+      bio: "John brings a strong background in technology and operations, ensuring ZuboPets runs smoothly and efficiently. His passion for pets drives his commitment to innovative solutions.",
+      imageUrl: "/placeholder.svg?height=100&width=100?query=John Smith portrait",
+    },
+  ]
+
+  const socialMediaLinks = [
+    { name: "Facebook", icon: Facebook, url: "https://facebook.com/ZuboPets" },
+    { name: "Twitter", icon: Twitter, url: "https://twitter.com/ZuboPets" },
+    { name: "Instagram", icon: Instagram, url: "https://instagram.com/ZuboPets" },
+    { name: "LinkedIn", icon: Linkedin, url: "https://linkedin.com/company/ZuboPets" },
+    { name: "YouTube", icon: Youtube, url: "https://youtube.com/ZuboPets" },
+    { name: "TikTok", icon: TikTok, url: "https://tiktok.com/@ZuboPets" },
+  ]
+
   return (
     <div className="min-h-screen bg-zubo-background">
       {/* Navigation */}
@@ -147,8 +184,42 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* About Us Section (Founders) */}
+      <section id="about" className="py-20 bg-zubo-background">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl lg:text-4xl font-bold text-zubo-text mb-4">Meet Our Founders</h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              The passionate individuals behind ZuboPets, dedicated to revolutionizing pet care.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-2 gap-8">
+            {founders.map((founder, index) => (
+              <Card
+                key={index}
+                className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-gradient-to-br from-white to-zubo-background"
+              >
+                <CardContent className="flex flex-col sm:flex-row items-center gap-6 p-6">
+                  <Image
+                    src={founder.imageUrl || "/placeholder.svg"}
+                    alt={founder.name}
+                    width={100}
+                    height={100}
+                    className="rounded-full object-cover w-24 h-24 sm:w-32 sm:h-32 border-4 border-zubo-highlight-1 shadow-md"
+                  />
+                  <div className="text-center sm:text-left">
+                    <CardTitle className="text-2xl font-semibold text-zubo-primary mb-2">{founder.name}</CardTitle>
+                    <CardDescription className="text-zubo-text leading-relaxed">{founder.bio}</CardDescription>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Services Section */}
-      <section id="services" className="py-20 bg-zubo-background">
+      <section id="services" className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl lg:text-4xl font-bold text-zubo-text mb-4">Our Services</h2>
@@ -337,6 +408,24 @@ export default function HomePage() {
                   <span>Available in 50+ cities</span>
                 </li>
               </ul>
+              <h3 className="font-semibold text-lg mt-6 mb-4">Follow Us</h3>
+              <div className="flex space-x-4">
+                {socialMediaLinks.map((platform) => {
+                  const Icon = platform.icon
+                  return (
+                    <Link
+                      key={platform.name}
+                      href={platform.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-gray-400 hover:text-white transition-colors"
+                      aria-label={`Follow us on ${platform.name}`}
+                    >
+                      <Icon className="h-6 w-6" />
+                    </Link>
+                  )
+                })}
+              </div>
             </div>
           </div>
 
