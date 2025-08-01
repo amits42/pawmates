@@ -74,8 +74,8 @@ export default function Navigation() {
                   href={item.href}
                   className={`flex items-center px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                     isActive
-                      ? "text-blue-600 bg-blue-100 font-semibold"
-                      : "text-gray-600 hover:text-blue-600 hover:bg-blue-50 font-medium"
+                      ? "text-zubo-primary bg-zubo-highlight-1 bg-opacity-20 font-semibold"
+                      : "text-zubo-text hover:text-zubo-primary hover:bg-zubo-background font-medium"
                   }`}
                 >
                   <Icon className="mr-2 h-4 w-4" />
@@ -96,10 +96,10 @@ export default function Navigation() {
               <div className="relative">
                 <button
                   onClick={toggleDropdown}
-                  className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                  className="flex items-center space-x-2 p-2 rounded-lg hover:bg-zubo-background transition-colors"
                 >
                   <Avatar className="h-8 w-8">
-                    <AvatarFallback className="bg-blue-100 text-blue-600 font-medium text-sm">
+                    <AvatarFallback className="bg-zubo-highlight-1 bg-opacity-30 text-zubo-primary font-medium text-sm">
                       {getUserInitials()}
                     </AvatarFallback>
                   </Avatar>
@@ -118,7 +118,7 @@ export default function Navigation() {
                     <div className="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-20">
                       {/* User Info */}
                       <div className="px-4 py-3 border-b border-gray-100">
-                        <p className="font-medium text-gray-900">{user.name || "User"}</p>
+                        <p className="font-medium text-zubo-text">{user.name || "User"}</p>
                         <p className="text-sm text-gray-500">{user.phone}</p>
                       </div>
 
@@ -127,7 +127,7 @@ export default function Navigation() {
                         <Link
                           href="/profile"
                           onClick={closeDropdown}
-                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                          className="flex items-center px-4 py-2 text-sm text-zubo-text hover:bg-zubo-background transition-colors"
                         >
                           <User className="mr-3 h-4 w-4" />
                           Profile
@@ -165,7 +165,9 @@ export default function Navigation() {
                 key={item.href}
                 href={item.href}
                 className={`flex flex-col items-center py-2 px-3 rounded-lg transition-colors ${
-                  isActive ? "text-blue-600 bg-blue-50" : "text-gray-600 hover:text-blue-600"
+                  isActive
+                    ? "text-zubo-primary bg-zubo-highlight-1 bg-opacity-20"
+                    : "text-gray-600 hover:text-zubo-primary"
                 }`}
               >
                 <Icon className="h-5 w-5 mb-1" />
@@ -178,12 +180,14 @@ export default function Navigation() {
           <button
             onClick={toggleDropdown}
             className={`flex flex-col items-center py-2 px-3 rounded-lg transition-colors ${
-              isDropdownOpen ? "text-blue-600 bg-blue-50" : "text-gray-600 hover:text-blue-600"
+              isDropdownOpen
+                ? "text-zubo-primary bg-zubo-highlight-1 bg-opacity-20"
+                : "text-gray-600 hover:text-zubo-primary"
             }`}
           >
             <div className="relative">
               <Avatar className="h-5 w-5">
-                <AvatarFallback className="bg-blue-100 text-blue-600 font-medium text-xs">
+                <AvatarFallback className="bg-zubo-highlight-1 bg-opacity-30 text-zubo-primary font-medium text-xs">
                   {getUserInitials()}
                 </AvatarFallback>
               </Avatar>
@@ -202,7 +206,7 @@ export default function Navigation() {
             <div className="absolute bottom-16 right-4 w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-20">
               {/* User Info */}
               <div className="px-4 py-3 border-b border-gray-100">
-                <p className="font-medium text-gray-900">{user?.name || "User"}</p>
+                <p className="font-medium text-zubo-text">{user?.name || "User"}</p>
                 <p className="text-sm text-gray-500">{user?.phone}</p>
               </div>
 
@@ -211,7 +215,7 @@ export default function Navigation() {
                 <Link
                   href="/profile"
                   onClick={closeDropdown}
-                  className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                  className="flex items-center px-4 py-2 text-sm text-zubo-text hover:bg-zubo-background transition-colors"
                 >
                   <User className="mr-3 h-4 w-4" />
                   Profile

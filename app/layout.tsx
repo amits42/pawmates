@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   keywords: "pet sitting, dog walking, pet care, pet sitters, animal care",
   authors: [{ name: "ZuboPets Team" }],
   manifest: "/manifest.json",
-  themeColor: "#3b82f6",
+  themeColor: "#253347",
   viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no",
   appleWebApp: {
     capable: true,
@@ -55,7 +55,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="ZuboPets" />
         <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="theme-color" content="#3b82f6" />
+        <meta name="theme-color" content="#253347" />
       </head>
       <body className={manrope.className}>
         <Toaster />

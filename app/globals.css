@@ -29,6 +29,14 @@
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
+
+    /* ZuboPets Brand Colors */
+    --zubo-primary: 220 35% 22%; /* Royal Midnight Blue #253347 */
+    --zubo-background: 45 50% 97%; /* Porcelain White #FBF9F6 */
+    --zubo-highlight-1: 12 45% 75%; /* Blush Coral #E7A79D */
+    --zubo-highlight-2: 30 35% 55%; /* Bronze Clay #B8835C */
+    --zubo-accent: 85 15% 65%; /* Soft Moss Green #AAB89B */
+    --zubo-text: 0 0% 18%; /* Graphite Gray #2D2D2D */
   }
 
   .dark {
@@ -66,6 +74,8 @@
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+    background-color: hsl(var(--zubo-background));
+    color: hsl(var(--zubo-text));
   }
 }
 
@@ -75,6 +85,55 @@
   font-feature-settings: "rlig" 1, "calt" 1, "ss01" 1;
 }
 
+/* ZuboPets Brand Color Classes */
+.bg-zubo-primary {
+  background-color: hsl(var(--zubo-primary));
+}
+
+.text-zubo-primary {
+  color: hsl(var(--zubo-primary));
+}
+
+.bg-zubo-background {
+  background-color: hsl(var(--zubo-background));
+}
+
+.bg-zubo-highlight-1 {
+  background-color: hsl(var(--zubo-highlight-1));
+}
+
+.text-zubo-highlight-1 {
+  color: hsl(var(--zubo-highlight-1));
+}
+
+.bg-zubo-highlight-2 {
+  background-color: hsl(var(--zubo-highlight-2));
+}
+
+.text-zubo-highlight-2 {
+  color: hsl(var(--zubo-highlight-2));
+}
+
+.bg-zubo-accent {
+  background-color: hsl(var(--zubo-accent));
+}
+
+.text-zubo-accent {
+  color: hsl(var(--zubo-accent));
+}
+
+.text-zubo-text {
+  color: hsl(var(--zubo-text));
+}
+
+.border-zubo-primary {
+  border-color: hsl(var(--zubo-primary));
+}
+
+.border-zubo-highlight-1 {
+  border-color: hsl(var(--zubo-highlight-1));
+}
+
 /* Smooth transitions for better UX */
 * {
   transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
@@ -82,7 +141,7 @@
 
 /* Enhanced focus styles */
 :focus-visible {
-  outline: 2px solid hsl(var(--ring));
+  outline: 2px solid hsl(var(--zubo-primary));
   outline-offset: 2px;
 }
 
@@ -92,17 +151,17 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: hsl(var(--zubo-background));
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
+  background: hsl(var(--zubo-accent));
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
+  background: hsl(var(--zubo-highlight-2));
 }
 
 /* Smooth scrolling */
@@ -112,7 +171,8 @@ html {
 
 /* Focus styles for accessibility */
 .focus-visible:focus-visible {
-  @apply outline-2 outline-offset-2 outline-blue-600;
+  @apply outline-2 outline-offset-2;
+  outline-color: hsl(var(--zubo-primary));
 }
 
 /* Animation utilities */
@@ -143,7 +203,7 @@ html {
 
 /* Gradient text */
 .gradient-text {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, hsl(var(--zubo-primary)) 0%, hsl(var(--zubo-highlight-2)) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -156,7 +216,7 @@ html {
 
 .card-hover:hover {
   transform: translateY(-4px);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 20px 25px -5px rgba(37, 51, 71, 0.1), 0 10px 10px -5px rgba(37, 51, 71, 0.04);
 }
 
 /* Button animations */

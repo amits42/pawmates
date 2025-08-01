@@ -7,7 +7,7 @@ import { Heart, Shield, Clock, Star, Users, MapPin, Phone, Mail } from "lucide-r
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <div className="min-h-screen bg-zubo-background">
       {/* Navigation */}
       <nav className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -16,22 +16,27 @@ export default function HomePage() {
               <Image src="/logo/zubo-logo.svg" alt="ZuboPets" width={120} height={40} className="h-8 w-auto" priority />
             </div>
             <div className="hidden md:flex items-center space-x-8">
-              <Link href="#services" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
+              <Link href="#services" className="text-zubo-text hover:text-zubo-primary transition-colors font-medium">
                 Services
               </Link>
-              <Link href="#about" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
+              <Link href="#about" className="text-zubo-text hover:text-zubo-primary transition-colors font-medium">
                 About
               </Link>
-              <Link href="#contact" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
+              <Link href="#contact" className="text-zubo-text hover:text-zubo-primary transition-colors font-medium">
                 Contact
               </Link>
               <Link href="/login">
-                <Button variant="outline" className="border-blue-200 text-blue-600 hover:bg-blue-50 bg-transparent">
+                <Button
+                  variant="outline"
+                  className="border-zubo-primary text-zubo-primary hover:bg-zubo-primary hover:text-white bg-transparent"
+                >
                   Sign In
                 </Button>
               </Link>
               <Link href="/login">
-                <Button className="bg-blue-600 hover:bg-blue-700 text-white">Get Started</Button>
+                <Button className="bg-zubo-primary hover:bg-zubo-primary hover:opacity-90 text-white">
+                  Get Started
+                </Button>
               </Link>
             </div>
           </div>
@@ -40,7 +45,7 @@ export default function HomePage() {
 
       {/* Hero Section */}
       <section className="relative py-20 lg:py-32 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-zubo-primary/10 to-zubo-highlight-2/10"></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <div className="mb-8 flex justify-center">
@@ -53,9 +58,11 @@ export default function HomePage() {
                 priority
               />
             </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-zubo-text mb-6 leading-tight">
               Your Pet's Best Friend,{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">Always</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-zubo-primary to-zubo-highlight-2">
+                Always
+              </span>
             </h1>
             <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
               Connect with trusted, verified pet sitters and caretakers in your area. Professional pet care services
@@ -65,7 +72,7 @@ export default function HomePage() {
               <Link href="/login">
                 <Button
                   size="lg"
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all"
+                  className="bg-zubo-primary hover:bg-zubo-primary hover:opacity-90 text-white px-8 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all"
                 >
                   Find Pet Care
                 </Button>
@@ -74,7 +81,7 @@ export default function HomePage() {
                 <Button
                   size="lg"
                   variant="outline"
-                  className="border-blue-200 text-blue-600 hover:bg-blue-50 px-8 py-3 text-lg font-semibold bg-transparent"
+                  className="border-zubo-primary text-zubo-primary hover:bg-zubo-primary hover:text-white px-8 py-3 text-lg font-semibold bg-transparent"
                 >
                   Become a Sitter
                 </Button>
@@ -88,18 +95,18 @@ export default function HomePage() {
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Why Choose ZuboPets?</h2>
+            <h2 className="text-3xl lg:text-4xl font-bold text-zubo-text mb-4">Why Choose ZuboPets?</h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               We're committed to providing the highest quality pet care services with complete transparency and trust.
             </p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-gradient-to-br from-blue-50 to-white">
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-gradient-to-br from-zubo-highlight-1/20 to-white">
               <CardHeader>
-                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-                  <Shield className="h-6 w-6 text-blue-600" />
+                <div className="w-12 h-12 bg-zubo-primary rounded-lg flex items-center justify-center mb-4">
+                  <Shield className="h-6 w-6 text-white" />
                 </div>
-                <CardTitle className="text-xl font-semibold">Verified Sitters</CardTitle>
+                <CardTitle className="text-xl font-semibold text-zubo-text">Verified Sitters</CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-gray-600 leading-relaxed">
@@ -109,12 +116,12 @@ export default function HomePage() {
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-gradient-to-br from-purple-50 to-white">
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-gradient-to-br from-zubo-accent/20 to-white">
               <CardHeader>
-                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
-                  <Clock className="h-6 w-6 text-purple-600" />
+                <div className="w-12 h-12 bg-zubo-highlight-2 rounded-lg flex items-center justify-center mb-4">
+                  <Clock className="h-6 w-6 text-white" />
                 </div>
-                <CardTitle className="text-xl font-semibold">24/7 Support</CardTitle>
+                <CardTitle className="text-xl font-semibold text-zubo-text">24/7 Support</CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-gray-600 leading-relaxed">
@@ -123,12 +130,12 @@ export default function HomePage() {
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-gradient-to-br from-green-50 to-white">
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-gradient-to-br from-zubo-highlight-2/20 to-white">
               <CardHeader>
-                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
-                  <Heart className="h-6 w-6 text-green-600" />
+                <div className="w-12 h-12 bg-zubo-accent rounded-lg flex items-center justify-center mb-4">
+                  <Heart className="h-6 w-6 text-white" />
                 </div>
-                <CardTitle className="text-xl font-semibold">Loving Care</CardTitle>
+                <CardTitle className="text-xl font-semibold text-zubo-text">Loving Care</CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-gray-600 leading-relaxed">
@@ -141,10 +148,10 @@ export default function HomePage() {
       </section>
 
       {/* Services Section */}
-      <section id="services" className="py-20 bg-gray-50">
+      <section id="services" className="py-20 bg-zubo-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Our Services</h2>
+            <h2 className="text-3xl lg:text-4xl font-bold text-zubo-text mb-4">Our Services</h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               Comprehensive pet care services tailored to meet your pet's unique needs and your busy schedule.
             </p>
@@ -152,10 +159,10 @@ export default function HomePage() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <Card className="text-center hover:shadow-lg transition-shadow bg-white border-0">
               <CardHeader>
-                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Users className="h-8 w-8 text-blue-600" />
+                <div className="w-16 h-16 bg-zubo-primary rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Users className="h-8 w-8 text-white" />
                 </div>
-                <CardTitle className="text-lg font-semibold">Pet Sitting</CardTitle>
+                <CardTitle className="text-lg font-semibold text-zubo-text">Pet Sitting</CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-gray-600">
@@ -166,10 +173,10 @@ export default function HomePage() {
 
             <Card className="text-center hover:shadow-lg transition-shadow bg-white border-0">
               <CardHeader>
-                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <MapPin className="h-8 w-8 text-green-600" />
+                <div className="w-16 h-16 bg-zubo-accent rounded-full flex items-center justify-center mx-auto mb-4">
+                  <MapPin className="h-8 w-8 text-white" />
                 </div>
-                <CardTitle className="text-lg font-semibold">Dog Walking</CardTitle>
+                <CardTitle className="text-lg font-semibold text-zubo-text">Dog Walking</CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-gray-600">
@@ -180,10 +187,10 @@ export default function HomePage() {
 
             <Card className="text-center hover:shadow-lg transition-shadow bg-white border-0">
               <CardHeader>
-                <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Heart className="h-8 w-8 text-purple-600" />
+                <div className="w-16 h-16 bg-zubo-highlight-1 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Heart className="h-8 w-8 text-white" />
                 </div>
-                <CardTitle className="text-lg font-semibold">Pet Boarding</CardTitle>
+                <CardTitle className="text-lg font-semibold text-zubo-text">Pet Boarding</CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-gray-600">
@@ -194,10 +201,10 @@ export default function HomePage() {
 
             <Card className="text-center hover:shadow-lg transition-shadow bg-white border-0">
               <CardHeader>
-                <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Star className="h-8 w-8 text-orange-600" />
+                <div className="w-16 h-16 bg-zubo-highlight-2 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Star className="h-8 w-8 text-white" />
                 </div>
-                <CardTitle className="text-lg font-semibold">Special Care</CardTitle>
+                <CardTitle className="text-lg font-semibold text-zubo-text">Special Care</CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-gray-600">
@@ -210,40 +217,43 @@ export default function HomePage() {
       </section>
 
       {/* Stats Section */}
-      <section className="py-20 bg-blue-600">
+      <section className="py-20 bg-zubo-primary">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-4 gap-8 text-center text-white">
             <div>
               <div className="text-4xl font-bold mb-2">10,000+</div>
-              <div className="text-blue-100">Happy Pets</div>
+              <div className="text-zubo-highlight-1">Happy Pets</div>
             </div>
             <div>
               <div className="text-4xl font-bold mb-2">500+</div>
-              <div className="text-blue-100">Verified Sitters</div>
+              <div className="text-zubo-highlight-1">Verified Sitters</div>
             </div>
             <div>
               <div className="text-4xl font-bold mb-2">50+</div>
-              <div className="text-blue-100">Cities Covered</div>
+              <div className="text-zubo-highlight-1">Cities Covered</div>
             </div>
             <div>
               <div className="text-4xl font-bold mb-2">4.9★</div>
-              <div className="text-blue-100">Average Rating</div>
+              <div className="text-zubo-highlight-1">Average Rating</div>
             </div>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600">
+      <section className="py-20 bg-gradient-to-r from-zubo-primary to-zubo-highlight-2">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl lg:text-4xl font-bold text-white mb-6">Ready to Give Your Pet the Best Care?</h2>
-          <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-zubo-highlight-1 mb-8 max-w-2xl mx-auto">
             Join thousands of pet parents who trust ZuboPets for their pet care needs. Get started today and find the
             perfect sitter for your furry friend.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/login">
-              <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-3 text-lg font-semibold">
+              <Button
+                size="lg"
+                className="bg-white text-zubo-primary hover:bg-gray-100 px-8 py-3 text-lg font-semibold"
+              >
                 Book Pet Care Now
               </Button>
             </Link>
@@ -251,7 +261,7 @@ export default function HomePage() {
               <Button
                 size="lg"
                 variant="outline"
-                className="border-white text-white hover:bg-white hover:text-blue-600 px-8 py-3 text-lg font-semibold bg-transparent"
+                className="border-white text-white hover:bg-white hover:text-zubo-primary px-8 py-3 text-lg font-semibold bg-transparent"
               >
                 Become a Sitter
               </Button>
@@ -261,7 +271,7 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-16">
+      <footer className="bg-zubo-text text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-4 gap-8">
             <div className="md:col-span-2">
@@ -279,7 +289,7 @@ export default function HomePage() {
                 for peace of mind and exceptional care.
               </p>
               <div className="flex space-x-4">
-                <Badge variant="secondary" className="bg-gray-800 text-gray-300">
+                <Badge variant="secondary" className="bg-zubo-highlight-2 text-white">
                   Trusted by 10,000+ pet parents
                 </Badge>
               </div>
