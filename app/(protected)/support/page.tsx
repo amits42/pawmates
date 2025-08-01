@@ -18,8 +18,8 @@ import { Label } from "@/components/ui/label"
 import { Toaster } from "@/components/ui/toaster"
 
 interface EmailSupportFormProps {
-  selectedBooking: Booking | null,
-  user: any;
+  selectedBooking: Booking | null
+  user: any
 }
 
 function EmailSupportForm({ selectedBooking, user }: EmailSupportFormProps) {
@@ -144,16 +144,17 @@ function EmailSupportForm({ selectedBooking, user }: EmailSupportFormProps) {
   return (
     <div className="space-y-4">
       {/* Email Support Header */}
-      <Card className="bg-blue-50 border-blue-200">
+      <Card className="bg-zubo-primary-light border-zubo-primary-light">
         <CardHeader className="pb-3">
           <div className="flex items-center gap-2">
-            <Mail className="w-5 h-5 text-blue-600" />
-            <CardTitle className="text-lg text-blue-800">Email Support</CardTitle>
+            <Mail className="w-5 h-5 text-zubo-primary" />
+            <CardTitle className="text-lg text-zubo-primary">Email Support</CardTitle>
           </div>
         </CardHeader>
         <CardContent>
-          <p className="text-blue-700 text-sm">
-            Send us a detailed message about your issue. All your booking details and contact info will be sent to our admin team.
+          <p className="text-zubo-primary text-sm">
+            Send us a detailed message about your issue. All your booking details and contact info will be sent to our
+            admin team.
           </p>
         </CardContent>
       </Card>
@@ -230,7 +231,7 @@ function EmailSupportForm({ selectedBooking, user }: EmailSupportFormProps) {
         <Button
           onClick={handleEmailSubmit}
           disabled={isLoading || !emailSubject.trim() || !emailMessage.trim()}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+          className="w-full bg-zubo-primary hover:bg-zubo-primary-darker text-white"
         >
           {isLoading ? (
             <>
@@ -361,13 +362,13 @@ Please assist me with this booking. Thank you!`
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
-      upcoming: { variant: "default" as const, color: "bg-blue-100 text-blue-800" },
-      confirmed: { variant: "default" as const, color: "bg-green-100 text-green-800" },
-      pending: { variant: "outline" as const, color: "bg-yellow-100 text-yellow-800" },
-      ongoing: { variant: "secondary" as const, color: "bg-yellow-100 text-yellow-800" },
-      completed: { variant: "outline" as const, color: "bg-green-100 text-green-800" },
-      cancelled: { variant: "destructive" as const, color: "bg-red-100 text-red-800" },
-      assigned: { variant: "default" as const, color: "bg-purple-100 text-purple-800" },
+      upcoming: { variant: "default" as const, color: "bg-zubo-primary-light text-zubo-primary" },
+      confirmed: { variant: "default" as const, color: "bg-zubo-accent-light text-zubo-accent" },
+      pending: { variant: "outline" as const, color: "bg-zubo-highlight-2-light text-zubo-highlight-2" },
+      ongoing: { variant: "secondary" as const, color: "bg-zubo-highlight-2-light text-zubo-highlight-2" },
+      completed: { variant: "outline" as const, color: "bg-zubo-accent-light text-zubo-accent" },
+      cancelled: { variant: "destructive" as const, color: "bg-destructive text-destructive-foreground" },
+      assigned: { variant: "default" as const, color: "bg-zubo-primary-light text-zubo-primary" },
     }
 
     const normalizedStatus = status?.toLowerCase() || "pending"
@@ -410,8 +411,8 @@ Please assist me with this booking. Thank you!`
       <div className="container mx-auto p-4 md:p-6 pb-20 md:pb-6">
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading support options...</p>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-zubo-accent mx-auto mb-4"></div>
+            <p className="text-zubo-text">Loading support options...</p>
           </div>
         </div>
       </div>
@@ -424,12 +425,12 @@ Please assist me with this booking. Thank you!`
         {/* Left Side - Select a Booking */}
         <div>
           <div className="flex items-center gap-2 mb-4">
-            <div className="w-6 h-6 bg-orange-100 rounded flex items-center justify-center">
-              <Calendar className="w-4 h-4 text-orange-600" />
+            <div className="w-6 h-6 bg-zubo-highlight-1-light rounded flex items-center justify-center">
+              <Calendar className="w-4 h-4 text-zubo-highlight-1" />
             </div>
             <h2 className="text-xl font-semibold">Select a Booking</h2>
           </div>
-          <p className="text-gray-600 mb-6">Choose the booking you need help with</p>
+          <p className="text-zubo-text mb-6">Choose the booking you need help with</p>
 
           <Tabs defaultValue="upcoming" className="w-full">
             <TabsList className="grid w-full grid-cols-4">
@@ -444,27 +445,30 @@ Please assist me with this booking. Thank you!`
                 upcoming.map((booking) => (
                   <Card
                     key={booking.id}
-                    className={`cursor-pointer transition-all ${selectedBooking?.id === booking.id ? "ring-2 ring-blue-500 bg-blue-50" : "hover:shadow-md"
-                      }`}
+                    className={`cursor-pointer transition-all ${
+                      selectedBooking?.id === booking.id
+                        ? "ring-2 ring-zubo-primary bg-zubo-primary-light"
+                        : "hover:shadow-md"
+                    }`}
                     onClick={() => setSelectedBooking(booking)}
                   >
                     <CardContent className="p-4">
                       <div className="flex justify-between items-start mb-3">
                         <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
-                            <span className="text-orange-600 text-sm">🐾</span>
+                          <div className="w-8 h-8 bg-zubo-highlight-1-light rounded-full flex items-center justify-center">
+                            <span className="text-zubo-highlight-1 text-sm">🐾</span>
                           </div>
                           <div>
                             <h3 className="font-medium">
                               #{booking.id.toString().slice(-12)} - {booking.serviceName || "Service"}
                             </h3>
-                            <p className="text-sm text-gray-600">Pet ({booking.petName || "Unknown"})</p>
+                            <p className="text-sm text-zubo-text">Pet ({booking.petName || "Unknown"})</p>
                           </div>
                         </div>
                         {getStatusBadge(booking.status || "pending")}
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4 text-sm text-gray-600">
+                      <div className="grid grid-cols-2 gap-4 text-sm text-zubo-text">
                         <div className="flex items-center gap-2">
                           <Calendar className="w-4 h-4" />
                           {booking.date ? new Date(booking.date).toLocaleDateString() : "Not scheduled"}
@@ -485,7 +489,7 @@ Please assist me with this booking. Thank you!`
                   </Card>
                 ))
               ) : (
-                <div className="text-center py-8 text-gray-500">
+                <div className="text-center py-8 text-zubo-text">
                   <p>No upcoming bookings found</p>
                 </div>
               )}
@@ -496,27 +500,30 @@ Please assist me with this booking. Thank you!`
                 ongoing.map((booking) => (
                   <Card
                     key={booking.id}
-                    className={`cursor-pointer transition-all ${selectedBooking?.id === booking.id ? "ring-2 ring-blue-500 bg-blue-50" : "hover:shadow-md"
-                      }`}
+                    className={`cursor-pointer transition-all ${
+                      selectedBooking?.id === booking.id
+                        ? "ring-2 ring-zubo-primary bg-zubo-primary-light"
+                        : "hover:shadow-md"
+                    }`}
                     onClick={() => setSelectedBooking(booking)}
                   >
                     <CardContent className="p-4">
                       <div className="flex justify-between items-start mb-3">
                         <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                            <span className="text-green-600 text-sm">🔄</span>
+                          <div className="w-8 h-8 bg-zubo-accent-light rounded-full flex items-center justify-center">
+                            <span className="text-zubo-accent text-sm">🔄</span>
                           </div>
                           <div>
                             <h3 className="font-medium">
                               #{booking.id.toString().slice(-12)} - {booking.serviceName || "Service"}
                             </h3>
-                            <p className="text-sm text-gray-600">Pet ({booking.petName || "Unknown"})</p>
+                            <p className="text-sm text-zubo-text">Pet ({booking.petName || "Unknown"})</p>
                           </div>
                         </div>
                         {getStatusBadge(booking.status || "pending")}
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4 text-sm text-gray-600">
+                      <div className="grid grid-cols-2 gap-4 text-sm text-zubo-text">
                         <div className="flex items-center gap-2">
                           <Calendar className="w-4 h-4" />
                           {booking.date ? new Date(booking.date).toLocaleDateString() : "Not scheduled"}
@@ -537,7 +544,7 @@ Please assist me with this booking. Thank you!`
                   </Card>
                 ))
               ) : (
-                <div className="text-center py-8 text-gray-500">
+                <div className="text-center py-8 text-zubo-text">
                   <p>No ongoing bookings found</p>
                 </div>
               )}
@@ -548,27 +555,30 @@ Please assist me with this booking. Thank you!`
                 completed.map((booking) => (
                   <Card
                     key={booking.id}
-                    className={`cursor-pointer transition-all ${selectedBooking?.id === booking.id ? "ring-2 ring-blue-500 bg-blue-50" : "hover:shadow-md"
-                      }`}
+                    className={`cursor-pointer transition-all ${
+                      selectedBooking?.id === booking.id
+                        ? "ring-2 ring-zubo-primary bg-zubo-primary-light"
+                        : "hover:shadow-md"
+                    }`}
                     onClick={() => setSelectedBooking(booking)}
                   >
                     <CardContent className="p-4">
                       <div className="flex justify-between items-start mb-3">
                         <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                            <span className="text-green-600 text-sm">✅</span>
+                          <div className="w-8 h-8 bg-zubo-accent-light rounded-full flex items-center justify-center">
+                            <span className="text-zubo-accent text-sm">✅</span>
                           </div>
                           <div>
                             <h3 className="font-medium">
                               #{booking.id.toString().slice(-12)} - {booking.serviceName || "Service"}
                             </h3>
-                            <p className="text-sm text-gray-600">Pet ({booking.petName || "Unknown"})</p>
+                            <p className="text-sm text-zubo-text">Pet ({booking.petName || "Unknown"})</p>
                           </div>
                         </div>
                         {getStatusBadge(booking.status || "pending")}
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4 text-sm text-gray-600">
+                      <div className="grid grid-cols-2 gap-4 text-sm text-zubo-text">
                         <div className="flex items-center gap-2">
                           <Calendar className="w-4 h-4" />
                           {booking.date ? new Date(booking.date).toLocaleDateString() : "Not scheduled"}
@@ -589,7 +599,7 @@ Please assist me with this booking. Thank you!`
                   </Card>
                 ))
               ) : (
-                <div className="text-center py-8 text-gray-500">
+                <div className="text-center py-8 text-zubo-text">
                   <p>No completed bookings found</p>
                 </div>
               )}
@@ -600,27 +610,30 @@ Please assist me with this booking. Thank you!`
                 cancelled.map((booking) => (
                   <Card
                     key={booking.id}
-                    className={`cursor-pointer transition-all ${selectedBooking?.id === booking.id ? "ring-2 ring-blue-500 bg-blue-50" : "hover:shadow-md"
-                      }`}
+                    className={`cursor-pointer transition-all ${
+                      selectedBooking?.id === booking.id
+                        ? "ring-2 ring-zubo-primary bg-zubo-primary-light"
+                        : "hover:shadow-md"
+                    }`}
                     onClick={() => setSelectedBooking(booking)}
                   >
                     <CardContent className="p-4">
                       <div className="flex justify-between items-start mb-3">
                         <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
-                            <span className="text-red-600 text-sm">❌</span>
+                          <div className="w-8 h-8 bg-destructive rounded-full flex items-center justify-center">
+                            <span className="text-destructive-foreground text-sm">❌</span>
                           </div>
                           <div>
                             <h3 className="font-medium">
                               #{booking.id.toString().slice(-12)} - {booking.serviceName || "Service"}
                             </h3>
-                            <p className="text-sm text-gray-600">Pet ({booking.petName || "Unknown"})</p>
+                            <p className="text-sm text-zubo-text">Pet ({booking.petName || "Unknown"})</p>
                           </div>
                         </div>
                         {getStatusBadge(booking.status || "pending")}
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4 text-sm text-gray-600">
+                      <div className="grid grid-cols-2 gap-4 text-sm text-zubo-text">
                         <div className="flex items-center gap-2">
                           <Calendar className="w-4 h-4" />
                           {booking.date ? new Date(booking.date).toLocaleDateString() : "Not scheduled"}
@@ -641,7 +654,7 @@ Please assist me with this booking. Thank you!`
                   </Card>
                 ))
               ) : (
-                <div className="text-center py-8 text-gray-500">
+                <div className="text-center py-8 text-zubo-text">
                   <p>No cancelled bookings found</p>
                 </div>
               )}
@@ -652,19 +665,19 @@ Please assist me with this booking. Thank you!`
         {/* Right Side - Contact Support */}
         <div>
           <div className="flex items-center gap-2 mb-4">
-            <div className="w-6 h-6 bg-orange-100 rounded flex items-center justify-center">
-              <MessageCircle className="w-4 h-4 text-orange-600" />
+            <div className="w-6 h-6 bg-zubo-highlight-1-light rounded flex items-center justify-center">
+              <MessageCircle className="w-4 h-4 text-zubo-highlight-1" />
             </div>
             <h2 className="text-xl font-semibold">Contact Support</h2>
           </div>
-          <p className="text-gray-600 mb-6">Choose how you'd like to get help</p>
+          <p className="text-zubo-text mb-6">Choose how you'd like to get help</p>
 
           {/* Selected Booking Display */}
           {selectedBooking && (
-            <Card className="mb-6 bg-orange-50 border-orange-200">
+            <Card className="mb-6 bg-zubo-highlight-1-light border-zubo-highlight-1-light">
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">
-                  <span className="text-orange-600">🐾</span>
+                  <span className="text-zubo-highlight-1">🐾</span>
                   <CardTitle className="text-lg">Selected Booking</CardTitle>
                 </div>
               </CardHeader>
@@ -685,7 +698,7 @@ Please assist me with this booking. Thank you!`
                   </div>
                   <div>
                     <span className="font-medium">Status:</span>
-                    <Badge className="ml-2 bg-yellow-100 text-yellow-800">
+                    <Badge className="ml-2 bg-zubo-highlight-2-light text-zubo-highlight-2">
                       {selectedBooking.status?.toUpperCase() || "PENDING"}
                     </Badge>
                   </div>
@@ -704,30 +717,32 @@ Please assist me with this booking. Thank you!`
             <div className="grid grid-cols-2 gap-4">
               <Button
                 variant={contactMethod === "chat" ? "default" : "outline"}
-                className={`h-auto p-4 flex flex-col items-center gap-2 ${contactMethod === "chat"
-                  ? "bg-green-600 text-white hover:bg-green-700"
-                  : "border-green-200 hover:bg-green-50"
-                  }`}
+                className={`h-auto p-4 flex flex-col items-center gap-2 ${
+                  contactMethod === "chat"
+                    ? "bg-zubo-accent text-white hover:bg-zubo-accent-darker"
+                    : "border-zubo-accent-light hover:bg-zubo-accent-light"
+                }`}
                 disabled={!selectedBooking}
                 onClick={() => setContactMethod("chat")}
               >
-                <MessageCircle className={`w-6 h-6 ${contactMethod === "chat" ? "text-white" : "text-green-600"}`} />
-                <span className={`font-medium ${contactMethod === "chat" ? "text-white" : "text-green-600"}`}>
+                <MessageCircle className={`w-6 h-6 ${contactMethod === "chat" ? "text-white" : "text-zubo-accent"}`} />
+                <span className={`font-medium ${contactMethod === "chat" ? "text-white" : "text-zubo-accent"}`}>
                   Chat
                 </span>
               </Button>
 
               <Button
                 variant={contactMethod === "email" ? "default" : "outline"}
-                className={`h-auto p-4 flex flex-col items-center gap-2 ${contactMethod === "email"
-                  ? "bg-blue-600 text-white hover:bg-blue-700"
-                  : "border-blue-200 hover:bg-blue-50"
-                  }`}
+                className={`h-auto p-4 flex flex-col items-center gap-2 ${
+                  contactMethod === "email"
+                    ? "bg-zubo-primary text-white hover:bg-zubo-primary-darker"
+                    : "border-zubo-primary-light hover:bg-zubo-primary-light"
+                }`}
                 disabled={!selectedBooking}
                 onClick={() => setContactMethod("email")}
               >
-                <Mail className={`w-6 h-6 ${contactMethod === "email" ? "text-white" : "text-blue-600"}`} />
-                <span className={`font-medium ${contactMethod === "email" ? "text-white" : "text-blue-600"}`}>
+                <Mail className={`w-6 h-6 ${contactMethod === "email" ? "text-white" : "text-zubo-primary"}`} />
+                <span className={`font-medium ${contactMethod === "email" ? "text-white" : "text-zubo-primary"}`}>
                   Email
                 </span>
               </Button>
@@ -735,15 +750,15 @@ Please assist me with this booking. Thank you!`
 
             {/* Chat Support Section */}
             {contactMethod === "chat" && (
-              <Card className="bg-green-50 border-green-200">
+              <Card className="bg-zubo-accent-light border-zubo-accent-light">
                 <CardHeader className="pb-3">
                   <div className="flex items-center gap-2">
-                    <MessageCircle className="w-5 h-5 text-green-600" />
-                    <CardTitle className="text-lg text-green-800">WhatsApp Admin Support</CardTitle>
+                    <MessageCircle className="w-5 h-5 text-zubo-accent" />
+                    <CardTitle className="text-lg text-zubo-accent">WhatsApp Admin Support</CardTitle>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-green-700 text-sm mb-4">
+                  <p className="text-zubo-accent text-sm mb-4">
                     Start a WhatsApp chat session with our admin support team. We'll create a dedicated chat room for
                     your booking where you can get instant help and support.
                   </p>
@@ -751,7 +766,7 @@ Please assist me with this booking. Thank you!`
                   <Button
                     onClick={handleWhatsAppChat}
                     disabled={!selectedBooking || isLoading}
-                    className="w-full bg-green-600 hover:bg-green-700 text-white"
+                    className="w-full bg-zubo-accent hover:bg-zubo-accent-darker text-white"
                   >
                     {isLoading ? (
                       <>
