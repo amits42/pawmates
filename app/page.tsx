@@ -10,10 +10,11 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import ContactForm from "@/components/contact-form"
-import * as LucideIcons from "lucide-react" // Import all Lucide icons under a namespace
+import * as LucideIcons from "lucide-react"
 import type { CompanyInfo, ServiceItem, Founder, SocialMedia } from "@/types/api"
 import { useToast } from "@/hooks/use-toast"
 import { Toaster } from "@/components/ui/toaster"
+
 export default function HomePage() {
   const router = useRouter()
   const { user, loading } = useAuth()
@@ -31,15 +32,14 @@ export default function HomePage() {
     }
   }, [user, loading, router])
 
-  // Show loading while determining redirect
   const currentCompany: CompanyInfo = {
     id: "default-id",
-    companyName: "ZuboPets",
+    companyName: "PawMates",
     tagline: "Your Pet's Best Friend, Always.",
     description:
-      "At ZuboPets, we connect loving pet owners with trusted and experienced pet sitters. Our mission is to provide peace of mind by ensuring your furry, feathered, or scaled family members receive the best care possible in the comfort of their own home or with a dedicated sitter.",
+      "At PawMates, we connect loving pet owners with trusted and experienced pet sitters. Our mission is to provide peace of mind by ensuring your furry, feathered, or scaled family members receive the best care possible in the comfort of their own home or with a dedicated sitter.",
     mission: "To provide exceptional, compassionate, and reliable pet care services.",
-    contactEmail: "support@ZuboPets.com",
+    contactEmail: "support@pawmates.com",
     contactPhone: "+1 (555) 123-4567",
     address: "123 Pet Lovers Lane, Animal City, PA 12345",
     operatingHours: "Mon-Fri: 9 AM - 6 PM, Sat: 10 AM - 4 PM",
@@ -52,22 +52,22 @@ export default function HomePage() {
     founders: [
       {
         name: "Jane Doe",
-        bio: "Jane is a lifelong animal enthusiast with over 15 years of experience in pet care and animal welfare. She founded ZuboPets to create a reliable and compassionate community for pets and their owners.",
+        bio: "Jane is a lifelong animal enthusiast with over 15 years of experience in pet care and animal welfare. She founded PawMates to create a reliable and compassionate community for pets and their owners.",
         imageUrl: "/placeholder.svg?height=100&width=100",
       },
       {
         name: "John Smith",
-        bio: "John brings a strong background in technology and operations, ensuring ZuboPets runs smoothly and efficiently. His passion for pets drives his commitment to innovative solutions.",
+        bio: "John brings a strong background in technology and operations, ensuring PawMates runs smoothly and efficiently. His passion for pets drives his commitment to innovative solutions.",
         imageUrl: "/placeholder.svg?height=100&width=100",
       },
     ] as Founder[],
     socialMedia: {
-      facebook: "https://facebook.com/ZuboPets",
-      twitter: "https://twitter.com/ZuboPets",
-      instagram: "https://instagram.com/ZuboPets",
-      linkedin: "https://linkedin.com/company/ZuboPets",
-      youtube: "https://youtube.com/ZuboPets",
-      tiktok: "https://tiktok.com/@ZuboPets",
+      facebook: "https://facebook.com/PawMates",
+      twitter: "https://twitter.com/PawMates",
+      instagram: "https://instagram.com/PawMates",
+      linkedin: "https://linkedin.com/company/PawMates",
+      youtube: "https://youtube.com/PawMates",
+      tiktok: "https://tiktok.com/@PawMates",
     } as SocialMedia,
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -81,11 +81,11 @@ export default function HomePage() {
     { name: "Twitter", icon: LucideIcons.Twitter, url: socialMedia.twitter },
     { name: "Instagram", icon: LucideIcons.Instagram, url: socialMedia.instagram },
     { name: "LinkedIn", icon: LucideIcons.Linkedin, url: socialMedia.linkedin },
-    { name: "YouTube", icon: LucideIcons.Youtube, url: socialMedia.youtube }
-  ].filter((platform) => platform.url) // Filter out platforms without a URL
+    { name: "YouTube", icon: LucideIcons.Youtube, url: socialMedia.youtube },
+  ].filter((platform) => platform.url)
 
   return (
-    <div className="flex flex-col min-h-[100dvh] bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <Toaster />
 
       <main className="flex-1">
@@ -96,26 +96,36 @@ export default function HomePage() {
             backgroundImage: `url(/placeholder.svg?height=1080&width=1920&query=happy-golden-retriever-and-calico-cat-playing-in-a-sunny-field)`,
           }}
         >
-
           <div className="absolute inset-0 bg-gradient-to-r from-blue-800/60 to-purple-800/60"></div>
           <div className="container px-4 md:px-6 text-center relative z-10">
-            <div className="flex flex-col items-center justify-center space-y-4">
-              <LucideIcons.PawPrint className="h-16 w-16 text-white animate-bounce" />
+            <div className="flex flex-col items-center justify-center space-y-6">
+              {/* Logo */}
+              <div className="flex items-center justify-center mb-4">
+                <img
+                  src="/logo/zubo-logo.svg"
+                  alt="PawMates Logo"
+                  className="h-20 w-auto md:h-24 lg:h-28 drop-shadow-lg"
+                />
+              </div>
+
               <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl text-white drop-shadow-lg">
-                {currentCompany.companyName}: {currentCompany.tagline}
+                {currentCompany.companyName}
               </h1>
+              <p className="text-2xl md:text-3xl lg:text-4xl font-semibold text-white/90 drop-shadow-md">
+                {currentCompany.tagline}
+              </p>
               <p className="max-w-[700px] text-lg text-gray-200 md:text-xl drop-shadow">{currentCompany.description}</p>
               <div className="space-x-4 pt-4">
                 <Button
                   asChild
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 text-lg rounded-full shadow-lg transition-transform transform hover:scale-105"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 text-lg rounded-full shadow-lg transition-transform transform hover:scale-105 font-semibold"
                 >
                   <Link href="/book-service">Book Now</Link>
                 </Button>
                 <Button
                   asChild
                   variant="outline"
-                  className="border-white text-white hover:bg-white hover:text-blue-600 px-8 py-3 text-lg rounded-full shadow-lg transition-transform transform hover:scale-105 bg-transparent"
+                  className="border-white text-white hover:bg-white hover:text-blue-600 px-8 py-3 text-lg rounded-full shadow-lg transition-transform transform hover:scale-105 bg-transparent font-semibold"
                 >
                   <Link href="/login">Login</Link>
                 </Button>
@@ -135,14 +145,13 @@ export default function HomePage() {
                 </p>
               </div>
             </div>
-            <div className="mx-auto grid max-w-5xl items-start gap-8 py-12 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mx-auto grid max-w-5xl items-start gap-8 py-12 sm:grid-cols-2 lg:grid-cols-4">
               {(currentCompany.services as ServiceItem[]).map((service, index) => {
-                // Access the icon component dynamically from the LucideIcons namespace
-                const IconComponent = LucideIcons[service.icon as keyof typeof LucideIcons] || LucideIcons.PawPrint // Fallback icon
+                const IconComponent = LucideIcons[service.icon as keyof typeof LucideIcons] || LucideIcons.PawPrint
                 return (
                   <Card
                     key={index}
-                    className="flex flex-col items-center text-center p-6 shadow-md hover:shadow-lg transition-shadow duration-300"
+                    className="flex flex-col items-center text-center p-6 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
                   >
                     <IconComponent className="h-12 w-12 text-blue-600 mb-4" />
                     <CardTitle className="text-xl font-semibold mb-2">{service.name}</CardTitle>
@@ -169,7 +178,7 @@ export default function HomePage() {
                   </p>
                 )}
                 <div className="flex flex-col gap-2 min-[400px]:flex-row">
-                  <Button>Learn More</Button>
+                  <Button className="font-semibold">Learn More</Button>
                 </div>
               </div>
               <Image
@@ -177,7 +186,7 @@ export default function HomePage() {
                 width={600}
                 height={400}
                 alt="About Us"
-                className="mx-auto aspect-video overflow-hidden rounded-xl object-cover object-center sm:w-full lg:order-last"
+                className="mx-auto aspect-video overflow-hidden rounded-xl object-cover object-center sm:w-full lg:order-last shadow-lg"
               />
             </div>
           </div>
@@ -185,10 +194,12 @@ export default function HomePage() {
 
         {/* Founder Section */}
         {founders.length > 0 && (
-          <section className="w-full py-12 md:py-24 lg:py-32 bg-gray-100 dark:bg-gray-800">
+          <section className="w-full py-12 md:py-24 lg:py-32 bg-white">
             <div className="container px-4 md:px-6 text-center">
               <div className="space-y-4">
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Meet Our Founders</h2>
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-gray-800">
+                  Meet Our Founders
+                </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mt-8">
                   {founders.map((founder, index) => (
                     <div key={index} className="flex flex-col items-center space-y-4">
@@ -197,15 +208,15 @@ export default function HomePage() {
                           src={founder.imageUrl || "/placeholder.svg?height=100&width=100&query=person-avatar"}
                           alt={founder.name}
                         />
-                        <AvatarFallback>
+                        <AvatarFallback className="text-lg font-semibold">
                           {founder.name
                             .split(" ")
                             .map((n) => n[0])
                             .join("")}
                         </AvatarFallback>
                       </Avatar>
-                      <h3 className="text-2xl font-bold">{founder.name}</h3>
-                      <p className="max-w-[700px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
+                      <h3 className="text-2xl font-bold text-gray-800">{founder.name}</h3>
+                      <p className="max-w-[700px] text-gray-600 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
                         {founder.bio}
                       </p>
                     </div>
@@ -304,9 +315,7 @@ export default function HomePage() {
                       description: "We'll get back to you shortly.",
                       variant: "default",
                     })
-                  }
-
-                  }
+                  }}
                   onError={(err) =>
                     toast({
                       title: "Failed to send message",
@@ -324,29 +333,24 @@ export default function HomePage() {
       {/* Footer */}
       <footer className="w-full py-8 bg-gray-800 text-white text-center">
         <div className="container px-4 md:px-6 flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
-          <div className="flex items-center gap-2">
-            <Image
-              src="/placeholder-logo.svg?height=24&width=24&query=ZuboPets-logo"
-              alt={`${currentCompany.companyName} Logo`}
-              width={24}
-              height={24}
-            />
+          <div className="flex items-center gap-3">
+            <img src="/logo/zubo-logo.svg" alt="PawMates Logo" className="h-6 w-auto brightness-0 invert" />
             <span className="font-semibold text-lg">{currentCompany.companyName}</span>
           </div>
           <nav className="flex gap-6 text-sm">
-            <Link href="#services" className="hover:text-blue-400 transition-colors">
+            <Link href="#services" className="hover:text-blue-400 transition-colors font-medium">
               Services
             </Link>
-            <Link href="#about" className="hover:text-blue-400 transition-colors">
+            <Link href="#about" className="hover:text-blue-400 transition-colors font-medium">
               About Us
             </Link>
-            <Link href="#contact" className="hover:text-blue-400 transition-colors">
+            <Link href="#contact" className="hover:text-blue-400 transition-colors font-medium">
               Contact
             </Link>
-            <Link href="/privacy-policy" className="hover:text-blue-400 transition-colors">
+            <Link href="/privacy-policy" className="hover:text-blue-400 transition-colors font-medium">
               Privacy Policy
             </Link>
-            <Link href="/terms-of-service" className="hover:text-blue-400 transition-colors">
+            <Link href="/terms-of-service" className="hover:text-blue-400 transition-colors font-medium">
               Terms of Service
             </Link>
           </nav>

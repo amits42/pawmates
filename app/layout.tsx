@@ -1,7 +1,7 @@
 import type React from "react"
 import "./globals.css"
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
+import { manrope } from "@/styles/fonts"
 import { ThemeProvider } from "@/components/theme-provider"
 import { AuthProvider } from "@/contexts/auth-context"
 import { ActiveUserPushNotifications } from "@/components/ActiveUserPushNotifications"
@@ -9,11 +9,9 @@ import { Toaster } from "sonner"
 
 export const dynamic = "force-dynamic"
 
-const inter = Inter({ subsets: ["latin"] })
-
 export const metadata: Metadata = {
-  title: "PetCare Booking",
-  description: "Professional pet care booking app",
+  title: "PawMates - Professional Pet Care",
+  description: "Professional pet care booking and matching platform",
   manifest: "/manifest.json",
   themeColor: "#3b82f6",
   viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no",
@@ -41,7 +39,7 @@ export default function RootLayout({
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="theme-color" content="#3b82f6" />
       </head>
-      <body className={inter.className}>
+      <body className={manrope.className}>
         <Toaster />
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} forcedTheme="light">
           <AuthProvider>
