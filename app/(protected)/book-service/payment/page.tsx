@@ -145,7 +145,6 @@ export default function PaymentPage() {
         setRecurringBookingId(recurringBookingIdParam)
         fetchSessionDetails(recurringBookingIdParam)
 
-
         // Get session details from params
         const sessionData = {
           amount: Number.parseFloat(searchParams.get("amount") || "0"),
@@ -234,15 +233,13 @@ export default function PaymentPage() {
   }
 
   const fetchSessionDetails = async (recurringBookingIdParam: string) => {
-    const response = await fetch(`/api/bookings/recurring/session/${recurringBookingIdParam}`, {
-
-    })
+    const response = await fetch(`/api/bookings/recurring/session/${recurringBookingIdParam}`, {})
     if (!response.ok) {
       throw new Error("Failed to fetch session")
     }
 
     const sessions = await response.json()
-    setRecurringBookingDetails(sessions.session);
+    setRecurringBookingDetails(sessions.session)
   }
 
   const fetchServiceDetails = async (serviceId: string) => {
@@ -333,7 +330,6 @@ export default function PaymentPage() {
         const notificationResult = await notificationResponse.json()
         console.log("📱 Notification result:", notificationResult)
 
-
         console.log("✅ Pay-later booking created:", result.bookingId)
 
         // Redirect to success page with same message as immediate payment
@@ -367,9 +363,7 @@ export default function PaymentPage() {
           userPhone: user?.phone,
           isExistingBooking: true,
         }
-      }
-
-      else if (isExistingBooking && existingBooking) {
+      } else if (isExistingBooking && existingBooking) {
         // For existing bookings, use the existing booking data
         bookingData = {
           bookingId: existingBooking.id,
@@ -519,7 +513,7 @@ export default function PaymentPage() {
     return (
       <div className="container mx-auto p-4 md:p-6 pb-20 md:pb-6">
         <div className="flex items-center justify-center min-h-[400px]">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-zubo-accent-600"></div>
         </div>
       </div>
     )
@@ -529,29 +523,29 @@ export default function PaymentPage() {
     <div className="container mx-auto p-4 md:p-6 pb-20 md:pb-6">
       <div className="text-center mb-8">
         <h1 className="text-3xl md:text-4xl font-bold mb-4 gradient-text flex items-center justify-center">
-          <CreditCard className="mr-3 h-8 w-8 text-green-600" />
+          <CreditCard className="mr-3 h-8 w-8 text-zubo-accent-600" />
           Secure Payment
-          <Sparkles className="ml-3 h-6 w-6 text-yellow-500 animate-bounce" />
+          <Sparkles className="ml-3 h-6 w-6 text-zubo-highlight-2-500 animate-bounce" />
         </h1>
-        <p className="text-gray-600">Complete your booking payment securely with Razorpay</p>
+        <p className="text-zubo-text-600">Complete your booking payment securely with Razorpay</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Booking Summary */}
         <div>
-          <Card className="card-hover bg-gradient-to-r from-blue-50 to-indigo-100 border-blue-200">
+          <Card className="card-hover bg-gradient-to-r from-zubo-primary-50 to-zubo-primary-100 border-zubo-primary-200">
             <CardHeader>
-              <CardTitle className="flex items-center text-blue-800">📋 Booking Summary</CardTitle>
-              <CardDescription className="text-blue-600">Review your booking details</CardDescription>
+              <CardTitle className="flex items-center text-zubo-primary-800">📋 Booking Summary</CardTitle>
+              <CardDescription className="text-zubo-primary-600">Review your booking details</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {isRecurringPayment && sessionDetails ? (
                 <>
-                  <div className="flex justify-between p-2 bg-white/50 rounded-lg">
+                  <div className="flex justify-between p-2 bg-zubo-background-50/50 rounded-lg">
                     <span className="font-medium">🔄 Session:</span>
                     <span>#{sessionDetails.sequenceNumber}</span>
                   </div>
-                  <div className="flex justify-between p-2 bg-white/50 rounded-lg">
+                  <div className="flex justify-between p-2 bg-zubo-background-50/50 rounded-lg">
                     <span className="font-medium">📅 Date:</span>
                     <span>
                       {sessionDetails.sessionDate
@@ -559,11 +553,11 @@ export default function PaymentPage() {
                         : "Not scheduled"}
                     </span>
                   </div>
-                  <div className="flex justify-between p-2 bg-white/50 rounded-lg">
+                  <div className="flex justify-between p-2 bg-zubo-background-50/50 rounded-lg">
                     <span className="font-medium">⏰ Time:</span>
                     <span>{sessionDetails.sessionTime}</span>
                   </div>
-                  <div className="flex justify-between p-2 bg-white/50 rounded-lg">
+                  <div className="flex justify-between p-2 bg-zubo-background-50/50 rounded-lg">
                     <span className="font-medium">🛠️ Service:</span>
                     <span>{sessionDetails.serviceName}</span>
                   </div>
@@ -571,32 +565,32 @@ export default function PaymentPage() {
               ) : (
                 <>
                   {bookingDetails.date && (
-                    <div className="flex justify-between p-2 bg-white/50 rounded-lg">
+                    <div className="flex justify-between p-2 bg-zubo-background-50/50 rounded-lg">
                       <span className="font-medium">📅 Date:</span>
                       <span>{format(bookingDetails.date, "PPP")}</span>
                     </div>
                   )}
                   {bookingDetails.time && (
-                    <div className="flex justify-between p-2 bg-white/50 rounded-lg">
+                    <div className="flex justify-between p-2 bg-zubo-background-50/50 rounded-lg">
                       <span className="font-medium">⏰ Time:</span>
                       <span>{bookingDetails.time}</span>
                     </div>
                   )}
                   {serviceName && (
-                    <div className="flex justify-between p-2 bg-white/50 rounded-lg">
+                    <div className="flex justify-between p-2 bg-zubo-background-50/50 rounded-lg">
                       <span className="font-medium">🛠️ Service:</span>
                       <span>{serviceName}</span>
                     </div>
                   )}
                   {petName && (
-                    <div className="flex justify-between p-2 bg-white/50 rounded-lg">
+                    <div className="flex justify-between p-2 bg-zubo-background-50/50 rounded-lg">
                       <span className="font-medium">🐾 Pet:</span>
                       <span>{petName}</span>
                     </div>
                   )}
                   {bookingDetails.recurring && (
                     <>
-                      <div className="flex justify-between p-2 bg-white/50 rounded-lg">
+                      <div className="flex justify-between p-2 bg-zubo-background-50/50 rounded-lg">
                         <span className="font-medium">🔄 Recurring:</span>
                         <span>
                           {bookingDetails.pattern}{" "}
@@ -607,7 +601,7 @@ export default function PaymentPage() {
                         const sessions = Number.parseInt(searchParams?.get("sessions") || "1")
                         const singlePrice = servicePrice / sessions
                         return sessions > 1 ? (
-                          <div className="p-3 bg-white/70 rounded-lg border border-blue-200">
+                          <div className="p-3 bg-zubo-background-50/70 rounded-lg border border-zubo-primary-200">
                             <div className="grid grid-cols-2 gap-2 text-sm">
                               <div className="flex justify-between">
                                 <span className="font-medium">📅 Sessions:</span>
@@ -628,12 +622,12 @@ export default function PaymentPage() {
 
               <Separator />
 
-              <div className="flex justify-between text-lg font-bold p-3 bg-gradient-to-r from-green-100 to-emerald-100 rounded-lg">
+              <div className="flex justify-between text-lg font-bold p-3 bg-gradient-to-r from-zubo-accent-100 to-zubo-accent-200 rounded-lg">
                 <span>💳 Total Amount:</span>
-                <span className="text-green-700">₹{servicePrice}</span>
+                <span className="text-zubo-accent-700">₹{servicePrice}</span>
               </div>
 
-              <div className="text-xs text-blue-700 bg-blue-100 p-2 rounded">
+              <div className="text-xs text-zubo-primary-700 bg-zubo-primary-100 p-2 rounded">
                 💡 Secure payment powered by Razorpay - India's most trusted payment gateway
               </div>
             </CardContent>
@@ -642,13 +636,13 @@ export default function PaymentPage() {
 
         {/* Payment Section */}
         <div>
-          <Card className="card-hover bg-gradient-to-r from-green-50 to-emerald-100 border-green-200">
+          <Card className="card-hover bg-gradient-to-r from-zubo-accent-50 to-zubo-accent-100 border-zubo-accent-200">
             <CardHeader>
-              <CardTitle className="flex items-center text-green-800">
+              <CardTitle className="flex items-center text-zubo-accent-800">
                 <Shield className="mr-2 h-5 w-5" />
                 Secure Payment
               </CardTitle>
-              <CardDescription className="text-green-600">
+              <CardDescription className="text-zubo-accent-600">
                 Pay securely with Razorpay - supports all payment methods
               </CardDescription>
             </CardHeader>
@@ -657,20 +651,22 @@ export default function PaymentPage() {
                 {/* Only show payment options for new bookings, not for existing or recurring */}
                 {!isExistingBooking && !isRecurringPayment && (
                   <div>
-                    <h3 className="font-medium text-green-800 mb-3">Choose Payment Option</h3>
+                    <h3 className="font-medium text-zubo-accent-800 mb-3">Choose Payment Option</h3>
                     <RadioGroup value={paymentOption} onValueChange={setPaymentOption} className="flex flex-col gap-3">
-                      <div className="flex items-center space-x-2 p-3 border border-green-200 rounded-lg hover:bg-green-50">
+                      <div className="flex items-center space-x-2 p-3 border border-zubo-accent-200 rounded-lg hover:bg-zubo-accent-50">
                         <RadioGroupItem value="pay-now" id="pay-now" />
                         <Label htmlFor="pay-now" className="flex-1 cursor-pointer">
                           <div className="font-medium">Pay Now</div>
-                          <div className="text-sm text-green-600">Complete payment immediately and confirm booking</div>
+                          <div className="text-sm text-zubo-accent-600">
+                            Complete payment immediately and confirm booking
+                          </div>
                         </Label>
                       </div>
-                      <div className="flex items-center space-x-2 p-3 border border-green-200 rounded-lg hover:bg-green-50">
+                      <div className="flex items-center space-x-2 p-3 border border-zubo-accent-200 rounded-lg hover:bg-zubo-accent-50">
                         <RadioGroupItem value="pay-later" id="pay-later" />
                         <Label htmlFor="pay-later" className="flex-1 cursor-pointer">
                           <div className="font-medium">Pay Later</div>
-                          <div className="text-sm text-green-600">
+                          <div className="text-sm text-zubo-accent-600">
                             Create booking now, pay when service is completed
                           </div>
                         </Label>
@@ -680,31 +676,31 @@ export default function PaymentPage() {
                 )}
 
                 <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div className="flex items-center gap-2 p-2 bg-white/50 rounded">
-                    <CheckCircle className="h-4 w-4 text-green-600" />
+                  <div className="flex items-center gap-2 p-2 bg-zubo-background-50/50 rounded">
+                    <CheckCircle className="h-4 w-4 text-zubo-accent-600" />
                     <span>Credit/Debit Cards</span>
                   </div>
-                  <div className="flex items-center gap-2 p-2 bg-white/50 rounded">
-                    <CheckCircle className="h-4 w-4 text-green-600" />
+                  <div className="flex items-center gap-2 p-2 bg-zubo-background-50/50 rounded">
+                    <CheckCircle className="h-4 w-4 text-zubo-accent-600" />
                     <span>Net Banking</span>
                   </div>
-                  <div className="flex items-center gap-2 p-2 bg-white/50 rounded">
-                    <CheckCircle className="h-4 w-4 text-green-600" />
+                  <div className="flex items-center gap-2 p-2 bg-zubo-background-50/50 rounded">
+                    <CheckCircle className="h-4 w-4 text-zubo-accent-600" />
                     <span>UPI</span>
                   </div>
-                  <div className="flex items-center gap-2 p-2 bg-white/50 rounded">
-                    <CheckCircle className="h-4 w-4 text-green-600" />
+                  <div className="flex items-center gap-2 p-2 bg-zubo-background-50/50 rounded">
+                    <CheckCircle className="h-4 w-4 text-zubo-accent-600" />
                     <span>Wallets</span>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-green-100 p-3 rounded-lg">
-                <div className="flex items-center gap-2 text-green-800 font-medium mb-2">
+              <div className="bg-zubo-accent-100 p-3 rounded-lg">
+                <div className="flex items-center gap-2 text-zubo-accent-800 font-medium mb-2">
                   <Lock className="h-4 w-4" />
                   <span>Security Features</span>
                 </div>
-                <ul className="text-sm text-green-700 space-y-1">
+                <ul className="text-sm text-zubo-accent-700 space-y-1">
                   <li>• 256-bit SSL encryption</li>
                   <li>• PCI DSS compliant</li>
                   <li>• No card details stored</li>
@@ -715,12 +711,12 @@ export default function PaymentPage() {
             <CardFooter>
               <Button
                 onClick={handleRazorpayPayment}
-                className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 transition-all duration-300 hover:scale-105 shadow-lg"
+                className="w-full bg-gradient-to-r from-zubo-accent-600 to-zubo-accent-700 hover:from-zubo-accent-700 hover:to-zubo-accent-800 transition-all duration-300 hover:scale-105 shadow-lg"
                 disabled={loading || (!razorpayLoaded && (paymentOption === "pay-now" || isExistingBooking))}
               >
                 {loading ? (
                   <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-zubo-background-50 mr-2"></div>
                     {isRecurringPayment
                       ? "Processing Session Payment..."
                       : isExistingBooking
