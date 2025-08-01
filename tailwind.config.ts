@@ -113,7 +113,7 @@ const config = {
         "zubo-accent-soft-moss-green": {
           DEFAULT: "#AAB89B",
           50: "#F5F7F3",
-          100: "#EBF0E7",
+          100: "#F0F3ED",
           200: "#D7E0CE",
           300: "#C3D0B5",
           400: "#AFC09C",
@@ -126,13 +126,13 @@ const config = {
         },
         "zubo-text-graphite-gray": {
           DEFAULT: "#2D2D2D",
-          50: "#EFEFEF",
+          50: "#F0F0F0",
           100: "#DFDFDF",
           200: "#BFBFBF",
           300: "#9F9F9F",
           400: "#7F7F7F",
-          500: "#5F5F5F",
-          600: "#474747",
+          500: "#606060",
+          600: "#484848",
           700: "#2D2D2D", // Default
           800: "#1F1F1F",
           900: "#101010",

@@ -416,23 +416,58 @@ export default function BookingDetailsPage() {
 
   const getStatusBadge = (status: string, paymentStatus?: string) => {
     const statusConfig = {
-      upcoming: { variant: "default" as const, icon: "⏳", color: "bg-blue-50 text-blue-700 border-blue-200" },
-      confirmed: { variant: "default" as const, icon: "✅", color: "bg-green-50 text-green-700 border-green-200" },
-      pending: { variant: "outline" as const, icon: "⏳", color: "bg-amber-50 text-amber-700 border-amber-200" },
-      ongoing: { variant: "secondary" as const, icon: "🔄", color: "bg-orange-50 text-orange-700 border-orange-200" },
+      upcoming: {
+        variant: "default" as const,
+        icon: "⏳",
+        color:
+          "bg-zubo-primary-royal-midnight-blue-50 text-zubo-primary-royal-midnight-blue-700 border-zubo-primary-royal-midnight-blue-200",
+      },
+      confirmed: {
+        variant: "default" as const,
+        icon: "✅",
+        color:
+          "bg-zubo-accent-soft-moss-green-50 text-zubo-accent-soft-moss-green-700 border-zubo-accent-soft-moss-green-200",
+      },
+      pending: {
+        variant: "outline" as const,
+        icon: "⏳",
+        color:
+          "bg-zubo-highlight-2-bronze-clay-50 text-zubo-highlight-2-bronze-clay-700 border-zubo-highlight-2-bronze-clay-200",
+      },
+      ongoing: {
+        variant: "secondary" as const,
+        icon: "🔄",
+        color:
+          "bg-zubo-highlight-1-blush-coral-50 text-zubo-highlight-1-blush-coral-700 border-zubo-highlight-1-blush-coral-200",
+      },
       "in-progress": {
         variant: "secondary" as const,
         icon: "🔄",
-        color: "bg-orange-50 text-orange-700 border-orange-200",
+        color:
+          "bg-zubo-highlight-1-blush-coral-50 text-zubo-highlight-1-blush-coral-700 border-zubo-highlight-1-blush-coral-200",
       },
       completed: {
         variant: "outline" as const,
         icon: "✅",
-        color: "bg-emerald-50 text-emerald-700 border-emerald-200",
+        color:
+          "bg-zubo-accent-soft-moss-green-50 text-zubo-accent-soft-moss-green-700 border-zubo-accent-soft-moss-green-200",
       },
-      cancelled: { variant: "destructive" as const, icon: "❌", color: "bg-red-50 text-red-700 border-red-200" },
-      usercancelled: { variant: "destructive" as const, icon: "❌", color: "bg-red-50 text-red-700 border-red-200" },
-      assigned: { variant: "default" as const, icon: "👤", color: "bg-purple-50 text-purple-700 border-purple-200" },
+      cancelled: {
+        variant: "destructive" as const,
+        icon: "❌",
+        color: "bg-destructive text-destructive-foreground border-destructive",
+      },
+      usercancelled: {
+        variant: "destructive" as const,
+        icon: "❌",
+        color: "bg-destructive text-destructive-foreground border-destructive",
+      },
+      assigned: {
+        variant: "default" as const,
+        icon: "👤",
+        color:
+          "bg-zubo-primary-royal-midnight-blue-50 text-zubo-primary-royal-midnight-blue-700 border-zubo-primary-royal-midnight-blue-200",
+      },
     }
 
     const normalizedStatus = status?.toLowerCase() || "pending"
@@ -453,9 +488,17 @@ export default function BookingDetailsPage() {
 
   const getPaymentStatusBadge = (paymentStatus: string) => {
     const config = {
-      PAID: { color: "bg-green-50 text-green-700 border-green-200", icon: "💳" },
-      PENDING: { color: "bg-amber-50 text-amber-700 border-amber-200", icon: "⏳" },
-      FAILED: { color: "bg-red-50 text-red-700 border-red-200", icon: "❌" },
+      PAID: {
+        color:
+          "bg-zubo-accent-soft-moss-green-50 text-zubo-accent-soft-moss-green-700 border-zubo-accent-soft-moss-green-200",
+        icon: "💳",
+      },
+      PENDING: {
+        color:
+          "bg-zubo-highlight-2-bronze-clay-50 text-zubo-highlight-2-bronze-clay-700 border-zubo-highlight-2-bronze-clay-200",
+        icon: "⏳",
+      },
+      FAILED: { color: "bg-destructive text-destructive-foreground border-destructive", icon: "❌" },
     }
 
     const normalizedStatus = paymentStatus?.toUpperCase() || "PENDING"
@@ -471,9 +514,17 @@ export default function BookingDetailsPage() {
 
   const getRefundStatusBadge = (status: string) => {
     const config = {
-      INITIATED: { color: "bg-blue-50 text-blue-700 border-blue-200", icon: "⏳" },
-      PROCESSED: { color: "bg-green-50 text-green-700 border-green-200", icon: "✅" },
-      FAILED: { color: "bg-red-50 text-red-700 border-red-200", icon: "❌" },
+      INITIATED: {
+        color:
+          "bg-zubo-primary-royal-midnight-blue-50 text-zubo-primary-royal-midnight-blue-700 border-zubo-primary-royal-midnight-blue-200",
+        icon: "⏳",
+      },
+      PROCESSED: {
+        color:
+          "bg-zubo-accent-soft-moss-green-50 text-zubo-accent-soft-moss-green-700 border-zubo-accent-soft-moss-green-200",
+        icon: "✅",
+      },
+      FAILED: { color: "bg-destructive text-destructive-foreground border-destructive", icon: "❌" },
     }
 
     const normalizedStatus = status?.toUpperCase() || "INITIATED"
@@ -602,13 +653,13 @@ export default function BookingDetailsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
+      <div className="min-h-screen bg-zubo-background-porcelain-white-300">
         <div className="container mx-auto p-4 pb-20">
           <div className="flex items-center justify-center min-h-[50vh]">
             <div className="text-center">
-              <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
-              <h3 className="text-lg font-semibold text-gray-800 mb-2">Loading booking details</h3>
-              <p className="text-sm text-gray-600">Please wait...</p>
+              <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-zubo-primary-royal-midnight-blue-600" />
+              <h3 className="text-lg font-semibold text-zubo-text-graphite-gray-800 mb-2">Loading booking details</h3>
+              <p className="text-sm text-zubo-text-graphite-gray-600">Please wait...</p>
             </div>
           </div>
         </div>
@@ -618,22 +669,22 @@ export default function BookingDetailsPage() {
 
   if (error || !booking) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
+      <div className="min-h-screen bg-zubo-background-porcelain-white-300">
         <div className="container mx-auto p-4 pb-20">
           <div className="mb-6">
             <Button
               variant="ghost"
               onClick={() => router.back()}
-              className="flex items-center gap-2 text-gray-600 hover:text-gray-800"
+              className="flex items-center gap-2 text-zubo-text-graphite-gray-600 hover:text-zubo-text-graphite-gray-800"
             >
               <ArrowLeft className="h-4 w-4" />
               Back
             </Button>
           </div>
 
-          <Alert className="border-red-200 bg-red-50 max-w-md mx-auto">
-            <AlertCircle className="h-4 w-4 text-red-600" />
-            <AlertDescription className="text-red-800">{error || "Booking not found"}</AlertDescription>
+          <Alert className="border-destructive bg-destructive/10 max-w-md mx-auto">
+            <AlertCircle className="h-4 w-4 text-destructive" />
+            <AlertDescription className="text-destructive">{error || "Booking not found"}</AlertDescription>
           </Alert>
         </div>
       </div>
@@ -666,14 +717,14 @@ export default function BookingDetailsPage() {
   const displayedSessions = showAllSessions ? sessions : sessions.slice(0, 3)
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
+    <div className="min-h-screen bg-zubo-background-porcelain-white-300">
       <div className="container mx-auto p-4 pb-20 max-w-6xl">
         {/* Header */}
         <div className="mb-6">
           <Button
             variant="ghost"
             onClick={() => router.back()}
-            className="flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-4"
+            className="flex items-center gap-2 text-zubo-text-graphite-gray-600 hover:text-zubo-text-graphite-gray-800 mb-4"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to My Bookings
@@ -681,15 +732,15 @@ export default function BookingDetailsPage() {
 
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">
+              <h1 className="text-2xl font-bold text-zubo-text-graphite-gray-900 mb-2">
                 {booking.recurring ? "Recurring Booking Details" : "Booking Details"}
               </h1>
-              <div className="flex items-center gap-2 text-sm text-gray-600">
+              <div className="flex items-center gap-2 text-sm text-zubo-text-graphite-gray-600">
                 <span>Booking ID: #{booking.id}</span>
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-6 w-6 p-0 hover:bg-gray-100"
+                  className="h-6 w-6 p-0 hover:bg-zubo-background-porcelain-white-100"
                   onClick={() => copyToClipboard(booking.id.toString(), "Booking ID")}
                 >
                   <Copy className="h-3 w-3" />
@@ -705,14 +756,16 @@ export default function BookingDetailsPage() {
           <div className="lg:col-span-2 space-y-6">
             {/* Service Overview */}
             <Card className="overflow-hidden">
-              <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b">
+              <CardHeader className="bg-gradient-to-r from-zubo-primary-royal-midnight-blue-50 to-zubo-highlight-1-blush-coral-50 border-b border-zubo-primary-royal-midnight-blue-200">
                 <CardTitle className="flex items-center gap-3">
-                  <div className="p-2 bg-white rounded-lg shadow-sm">
+                  <div className="p-2 bg-zubo-background-porcelain-white-50 rounded-lg shadow-sm">
                     <span className="text-2xl">{getServiceIcon(booking.serviceName || "pet care")}</span>
                   </div>
                   <div>
-                    <h2 className="text-xl font-semibold text-gray-900">{booking.serviceName || "Pet Care Service"}</h2>
-                    <p className="text-sm text-gray-600 mt-1">
+                    <h2 className="text-xl font-semibold text-zubo-text-graphite-gray-900">
+                      {booking.serviceName || "Pet Care Service"}
+                    </h2>
+                    <p className="text-sm text-zubo-text-graphite-gray-600 mt-1">
                       Booked on {format(new Date(booking.createdAt || booking.date), "PPP")}
                     </p>
                   </div>
@@ -721,39 +774,43 @@ export default function BookingDetailsPage() {
               <CardContent className="p-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-4">
-                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                      <Calendar className="h-5 w-5 text-blue-600" />
+                    <div className="flex items-center gap-3 p-3 bg-zubo-background-porcelain-white-50 rounded-lg">
+                      <Calendar className="h-5 w-5 text-zubo-primary-royal-midnight-blue-600" />
                       <div>
-                        <p className="text-sm text-gray-500">Service Date</p>
-                        <p className="font-medium">{formatDate(booking.date)}</p>
+                        <p className="text-sm text-zubo-text-graphite-gray-500">Service Date</p>
+                        <p className="font-medium text-zubo-text-graphite-gray-900">{formatDate(booking.date)}</p>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                      <Clock className="h-5 w-5 text-green-600" />
+                    <div className="flex items-center gap-3 p-3 bg-zubo-background-porcelain-white-50 rounded-lg">
+                      <Clock className="h-5 w-5 text-zubo-accent-soft-moss-green-600" />
                       <div>
-                        <p className="text-sm text-gray-500">Time</p>
-                        <p className="font-medium">{booking.time || "Not scheduled"}</p>
+                        <p className="text-sm text-zubo-text-graphite-gray-500">Time</p>
+                        <p className="font-medium text-zubo-text-graphite-gray-900">
+                          {booking.time || "Not scheduled"}
+                        </p>
                       </div>
                     </div>
                   </div>
 
                   <div className="space-y-4">
-                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                      <DollarSign className="h-5 w-5 text-purple-600" />
+                    <div className="flex items-center gap-3 p-3 bg-zubo-background-porcelain-white-50 rounded-lg">
+                      <DollarSign className="h-5 w-5 text-zubo-highlight-2-bronze-clay-600" />
                       <div>
-                        <p className="text-sm text-gray-500">{booking.recurring ? "Total Amount" : "Amount"}</p>
-                        <p className="font-medium text-lg">
+                        <p className="text-sm text-zubo-text-graphite-gray-500">
+                          {booking.recurring ? "Total Amount" : "Amount"}
+                        </p>
+                        <p className="font-medium text-lg text-zubo-text-graphite-gray-900">
                           ₹{booking.recurring ? totalAmount.toFixed(2) : booking.totalPrice?.toFixed(2) || "0.00"}
                         </p>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                      <CreditCard className="h-5 w-5 text-orange-600" />
+                    <div className="flex items-center gap-3 p-3 bg-zubo-background-porcelain-white-50 rounded-lg">
+                      <CreditCard className="h-5 w-5 text-zubo-highlight-1-blush-coral-600" />
                       <div>
-                        <p className="text-sm text-gray-500">Payment Status</p>
-                        <p className="font-medium">
+                        <p className="text-sm text-zubo-text-graphite-gray-500">Payment Status</p>
+                        <p className="font-medium text-zubo-text-graphite-gray-900">
                           {booking.recurring
                             ? `${paidSessions}/${totalSessions} sessions paid`
                             : booking.paymentStatus === "PENDING"
@@ -767,26 +824,28 @@ export default function BookingDetailsPage() {
 
                 {/* Recurring Pattern */}
                 {booking.recurring && (
-                  <div className="mt-6 p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border border-purple-200">
+                  <div className="mt-6 p-4 bg-gradient-to-r from-zubo-highlight-2-bronze-clay-50 to-zubo-highlight-1-blush-coral-50 rounded-lg border border-zubo-highlight-2-bronze-clay-200">
                     <div className="flex items-center gap-2 mb-2">
-                      <Repeat className="h-5 w-5 text-purple-600" />
-                      <span className="font-medium text-purple-900">Recurring Service</span>
+                      <Repeat className="h-5 w-5 text-zubo-highlight-2-bronze-clay-600" />
+                      <span className="font-medium text-zubo-highlight-2-bronze-clay-900">Recurring Service</span>
                     </div>
-                    <p className="text-purple-800">{formatRecurringPattern(booking.recurringPattern)}</p>
+                    <p className="text-zubo-highlight-2-bronze-clay-800">
+                      {formatRecurringPattern(booking.recurringPattern)}
+                    </p>
                     {booking.recurringEndDate && (
-                      <p className="text-sm text-purple-700 mt-1">
+                      <p className="text-sm text-zubo-highlight-2-bronze-clay-700 mt-1">
                         Until {format(new Date(booking.recurringEndDate), "PPP")}
                       </p>
                     )}
                     {booking.recurring && (
                       <div className="grid grid-cols-2 gap-4 mt-3 text-sm">
                         <div>
-                          <p className="text-purple-600">Total Sessions</p>
-                          <p className="font-semibold text-purple-900">{totalSessions}</p>
+                          <p className="text-zubo-highlight-2-bronze-clay-600">Total Sessions</p>
+                          <p className="font-semibold text-zubo-highlight-2-bronze-clay-900">{totalSessions}</p>
                         </div>
                         <div>
-                          <p className="text-purple-600">Amount Paid</p>
-                          <p className="font-semibold text-green-600">₹{paidAmount.toFixed(2)}</p>
+                          <p className="text-zubo-highlight-2-bronze-clay-600">Amount Paid</p>
+                          <p className="font-semibold text-zubo-accent-soft-moss-green-600">₹{paidAmount.toFixed(2)}</p>
                         </div>
                       </div>
                     )}
@@ -797,10 +856,10 @@ export default function BookingDetailsPage() {
 
             {/* Refund Status */}
             {refunds.length > 0 && (
-              <Card className="border-green-200 bg-gradient-to-r from-green-50 to-emerald-50">
+              <Card className="border-zubo-accent-soft-moss-green-200 bg-gradient-to-r from-zubo-accent-soft-moss-green-50 to-zubo-accent-soft-moss-green-100">
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-lg text-green-800">
+                    <div className="flex items-center gap-2 text-lg text-zubo-accent-soft-moss-green-800">
                       <RefreshCw className="h-5 w-5" />
                       Refund Status ({refunds.length})
                     </div>
@@ -808,7 +867,7 @@ export default function BookingDetailsPage() {
                       variant="ghost"
                       size="sm"
                       onClick={() => setShowRefunds(!showRefunds)}
-                      className="text-green-700 hover:text-green-800"
+                      className="text-zubo-accent-soft-moss-green-700 hover:text-zubo-accent-soft-moss-green-800"
                     >
                       {showRefunds ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                     </Button>
@@ -817,30 +876,39 @@ export default function BookingDetailsPage() {
                 {showRefunds && (
                   <CardContent className="space-y-3">
                     {refunds.map((refund) => (
-                      <div key={refund.id} className="bg-white p-4 rounded-lg border border-green-200">
+                      <div
+                        key={refund.id}
+                        className="bg-zubo-background-porcelain-white-50 p-4 rounded-lg border border-zubo-accent-soft-moss-green-200"
+                      >
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-2">
-                            <span className="font-medium text-sm">Refund #{refund.refundId.slice(-8)}</span>
+                            <span className="font-medium text-sm text-zubo-text-graphite-gray-900">
+                              Refund #{refund.refundId.slice(-8)}
+                            </span>
                             {getRefundStatusBadge(refund.status)}
                           </div>
-                          <span className="font-semibold text-green-600">₹{refund.amount.toFixed(2)}</span>
+                          <span className="font-semibold text-zubo-accent-soft-moss-green-600">
+                            ₹{refund.amount.toFixed(2)}
+                          </span>
                         </div>
 
                         {refund.sequenceNumber && (
-                          <p className="text-xs text-gray-600 mb-1">
+                          <p className="text-xs text-zubo-text-graphite-gray-600 mb-1">
                             Session {refund.sequenceNumber} - {formatDateShort(refund.sessionDate || "")}
                           </p>
                         )}
 
-                        <div className="flex items-center gap-2 text-xs text-gray-600">
+                        <div className="flex items-center gap-2 text-xs text-zubo-text-graphite-gray-600">
                           <Clock className="h-3 w-3" />
                           <span>{refund.estimatedProcessingTime}</span>
                         </div>
 
                         {refund.failureReason && (
-                          <Alert className="mt-2 border-red-200 bg-red-50">
-                            <AlertCircle className="h-4 w-4 text-red-600" />
-                            <AlertDescription className="text-red-800 text-xs">{refund.failureReason}</AlertDescription>
+                          <Alert className="mt-2 border-destructive bg-destructive/10">
+                            <AlertCircle className="h-4 w-4 text-destructive" />
+                            <AlertDescription className="text-destructive text-xs">
+                              {refund.failureReason}
+                            </AlertDescription>
                           </Alert>
                         )}
                       </div>
@@ -852,9 +920,9 @@ export default function BookingDetailsPage() {
 
             {/* Cancellation Policy Info for Non-Recurring Bookings */}
             {cancellationPolicy && showCancelButton && !booking.recurring && (
-              <Card className="border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50">
+              <Card className="border-zubo-highlight-2-bronze-clay-200 bg-gradient-to-r from-zubo-highlight-2-bronze-clay-50 to-zubo-highlight-1-blush-coral-50">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-lg text-amber-800">
+                  <CardTitle className="flex items-center gap-2 text-lg text-zubo-highlight-2-bronze-clay-800">
                     <Info className="h-5 w-5" />
                     Cancellation & Refund Policy
                   </CardTitle>
@@ -863,36 +931,40 @@ export default function BookingDetailsPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                     <div className="space-y-2">
                       <div className="flex justify-between">
-                        <span className="text-amber-700">Original Amount:</span>
-                        <span className="font-semibold">₹{booking.totalPrice?.toFixed(2)}</span>
+                        <span className="text-zubo-highlight-2-bronze-clay-700">Original Amount:</span>
+                        <span className="font-semibold text-zubo-text-graphite-gray-900">
+                          ₹{booking.totalPrice?.toFixed(2)}
+                        </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-amber-700">
+                        <span className="text-zubo-highlight-2-bronze-clay-700">
                           Cancellation Fee ({cancellationPolicy.percentageDeduction}%):
                         </span>
-                        <span className="font-semibold text-red-600">
+                        <span className="font-semibold text-destructive">
                           -₹{cancellationPolicy.deductionAmount.toFixed(2)}
                         </span>
                       </div>
-                      <div className="flex justify-between border-t border-amber-200 pt-2">
-                        <span className="text-amber-800 font-medium">Refund Amount:</span>
-                        <span className="font-bold text-green-600">₹{cancellationPolicy.refundAmount.toFixed(2)}</span>
+                      <div className="flex justify-between border-t border-zubo-highlight-2-bronze-clay-200 pt-2">
+                        <span className="text-zubo-highlight-2-bronze-clay-800 font-medium">Refund Amount:</span>
+                        <span className="font-bold text-zubo-accent-soft-moss-green-600">
+                          ₹{cancellationPolicy.refundAmount.toFixed(2)}
+                        </span>
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <div className="flex items-center gap-2 text-amber-700">
+                      <div className="flex items-center gap-2 text-zubo-highlight-2-bronze-clay-700">
                         <Clock className="h-4 w-4" />
                         <span>Processing Time: {cancellationPolicy.processingTime}</span>
                       </div>
-                      <div className="flex items-center gap-2 text-amber-700">
+                      <div className="flex items-center gap-2 text-zubo-highlight-2-bronze-clay-700">
                         <RefreshCw className="h-4 w-4" />
                         <span>Refund via original payment method</span>
                       </div>
                     </div>
                   </div>
-                  <Alert className="border-blue-200 bg-blue-50">
-                    <Info className="h-4 w-4 text-blue-600" />
-                    <AlertDescription className="text-blue-800 text-sm">
+                  <Alert className="border-zubo-primary-royal-midnight-blue-200 bg-zubo-primary-royal-midnight-blue-50">
+                    <Info className="h-4 w-4 text-zubo-primary-royal-midnight-blue-600" />
+                    <AlertDescription className="text-zubo-primary-royal-midnight-blue-800 text-sm">
                       {cancellationPolicy.description}
                     </AlertDescription>
                   </Alert>
@@ -904,12 +976,12 @@ export default function BookingDetailsPage() {
             {booking.recurring && (
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-lg">
-                    <Repeat className="h-5 w-5 text-blue-600" />
+                  <CardTitle className="flex items-center gap-2 text-lg text-zubo-text-graphite-gray-900">
+                    <Repeat className="h-5 w-5 text-zubo-primary-royal-midnight-blue-600" />
                     Recurring Sessions ({totalSessions})
                   </CardTitle>
                   {booking.recurring && (
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-zubo-text-graphite-gray-600">
                       You can cancel individual sessions. Each session has its own cancellation policy.
                     </p>
                   )}
@@ -918,61 +990,71 @@ export default function BookingDetailsPage() {
                   {sessionsLoading ? (
                     <div className="flex items-center justify-center py-8">
                       <div className="text-center">
-                        <Loader2 className="h-6 w-6 animate-spin mx-auto mb-2 text-blue-600" />
-                        <p className="text-sm text-gray-600">Loading sessions...</p>
+                        <Loader2 className="h-6 w-6 animate-spin mx-auto mb-2 text-zubo-primary-royal-midnight-blue-600" />
+                        <p className="text-sm text-zubo-text-graphite-gray-600">Loading sessions...</p>
                       </div>
                     </div>
                   ) : sessions.length === 0 ? (
                     <div className="flex items-center justify-center py-8">
                       <div className="text-center">
-                        <Calendar className="h-6 w-6 mx-auto mb-2 text-gray-400" />
-                        <p className="text-sm text-gray-600">No sessions found</p>
+                        <Calendar className="h-6 w-6 mx-auto mb-2 text-zubo-text-graphite-gray-400" />
+                        <p className="text-sm text-zubo-text-graphite-gray-600">No sessions found</p>
                       </div>
                     </div>
                   ) : (
                     <div className="space-y-4">
                       {displayedSessions.map((session) => (
-                        <Card key={session.id} className="border-l-4 border-l-blue-500">
+                        <Card key={session.id} className="border-l-4 border-l-zubo-primary-royal-midnight-blue-500">
                           <CardContent className="p-4">
                             <div className="flex items-center justify-between mb-3">
                               <div className="flex items-center gap-2">
-                                <span className="font-semibold text-sm">Session {session.sequenceNumber}</span>
+                                <span className="font-semibold text-sm text-zubo-text-graphite-gray-900">
+                                  Session {session.sequenceNumber}
+                                </span>
                                 {getStatusBadge(session.status)}
                                 {getPaymentStatusBadge(session.paymentStatus)}
                               </div>
-                              <div className="text-sm font-semibold text-gray-800">
+                              <div className="text-sm font-semibold text-zubo-text-graphite-gray-800">
                                 ₹{session.sessionPrice.toFixed(2)}
                               </div>
                             </div>
 
                             <div className="grid grid-cols-2 gap-4 text-sm mb-3">
                               <div className="flex items-center gap-2">
-                                <Calendar className="h-3 w-3 text-blue-600" />
+                                <Calendar className="h-3 w-3 text-zubo-primary-royal-midnight-blue-600" />
                                 <span>{formatDateShort(session.sessionDate)}</span>
                               </div>
                               <div className="flex items-center gap-2">
-                                <Clock className="h-3 w-3 text-green-600" />
+                                <Clock className="h-3 w-3 text-zubo-accent-soft-moss-green-600" />
                                 <span>{session.sessionTime}</span>
                               </div>
                             </div>
 
-                            {session.notes && <p className="text-xs text-gray-600 mb-3">{session.notes}</p>}
+                            {session.notes && (
+                              <p className="text-xs text-zubo-text-graphite-gray-600 mb-3">{session.notes}</p>
+                            )}
 
                             {/* Session OTPs */}
                             {(session.startOtp || session.endOtp) && (
-                              <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-3">
-                                <h4 className="text-xs font-semibold text-green-800 mb-2">🔐 Service OTPs</h4>
+                              <div className="bg-zubo-accent-soft-moss-green-50 border border-zubo-accent-soft-moss-green-200 rounded-lg p-3 mb-3">
+                                <h4 className="text-xs font-semibold text-zubo-accent-soft-moss-green-800 mb-2">
+                                  🔐 Service OTPs
+                                </h4>
                                 <div className="grid grid-cols-2 gap-2 text-xs">
                                   {session.startOtp && (
-                                    <div className="bg-white p-2 rounded border">
-                                      <div className="text-green-600 font-medium">START OTP</div>
-                                      <div className="font-mono font-bold text-green-800">{session.startOtp}</div>
+                                    <div className="bg-zubo-background-porcelain-white-50 p-2 rounded border border-zubo-accent-soft-moss-green-100">
+                                      <div className="text-zubo-accent-soft-moss-green-600 font-medium">START OTP</div>
+                                      <div className="font-mono font-bold text-zubo-accent-soft-moss-green-800">
+                                        {session.startOtp}
+                                      </div>
                                     </div>
                                   )}
                                   {session.endOtp && (
-                                    <div className="bg-white p-2 rounded border">
-                                      <div className="text-green-600 font-medium">END OTP</div>
-                                      <div className="font-mono font-bold text-green-800">{session.endOtp}</div>
+                                    <div className="bg-zubo-background-porcelain-white-50 p-2 rounded border border-zubo-accent-soft-moss-green-100">
+                                      <div className="text-zubo-accent-soft-moss-green-600 font-medium">END OTP</div>
+                                      <div className="font-mono font-bold text-zubo-accent-soft-moss-green-800">
+                                        {session.endOtp}
+                                      </div>
                                     </div>
                                   )}
                                 </div>
@@ -983,12 +1065,12 @@ export default function BookingDetailsPage() {
                             <div className="flex justify-between items-center">
                               <div className="flex items-center gap-2">
                                 {session.paymentStatus === "PAID" ? (
-                                  <div className="flex items-center gap-1 text-green-600 text-xs">
+                                  <div className="flex items-center gap-1 text-zubo-accent-soft-moss-green-600 text-xs">
                                     <CheckCircle className="h-3 w-3" />
                                     <span>Paid</span>
                                   </div>
                                 ) : (
-                                  <div className="flex items-center gap-1 text-amber-600 text-xs">
+                                  <div className="flex items-center gap-1 text-zubo-highlight-2-bronze-clay-600 text-xs">
                                     <AlertCircle className="h-3 w-3" />
                                     <span>Payment Pending</span>
                                   </div>
@@ -1008,7 +1090,7 @@ export default function BookingDetailsPage() {
                                 <Button
                                   size="sm"
                                   onClick={() => handlePayForSession(session)}
-                                  className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white text-xs"
+                                  className="bg-gradient-to-r from-zubo-accent-soft-moss-green-600 to-zubo-primary-royal-midnight-blue-600 hover:from-zubo-accent-soft-moss-green-700 hover:to-zubo-primary-royal-midnight-blue-700 text-zubo-background-porcelain-white-50 text-xs"
                                 >
                                   <CreditCard className="h-3 w-3 mr-1" />
                                   Pay ₹{session.sessionPrice.toFixed(2)}
@@ -1025,7 +1107,7 @@ export default function BookingDetailsPage() {
                           <Button
                             variant="outline"
                             onClick={() => setShowAllSessions(!showAllSessions)}
-                            className="flex items-center gap-2"
+                            className="flex items-center gap-2 border-zubo-primary-royal-midnight-blue-300 text-zubo-primary-royal-midnight-blue-600 hover:bg-zubo-primary-royal-midnight-blue-50 bg-transparent"
                           >
                             {showAllSessions ? (
                               <>
@@ -1052,19 +1134,21 @@ export default function BookingDetailsPage() {
               {/* Pet Info */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-lg">
-                    <Heart className="h-5 w-5 text-pink-600" />
+                  <CardTitle className="flex items-center gap-2 text-lg text-zubo-text-graphite-gray-900">
+                    <Heart className="h-5 w-5 text-zubo-highlight-1-blush-coral-600" />
                     Pet Information
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
-                    <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                  <div className="flex items-center gap-3 p-3 bg-zubo-accent-soft-moss-green-50 rounded-lg">
+                    <div className="w-12 h-12 bg-zubo-accent-soft-moss-green-100 rounded-full flex items-center justify-center">
                       <span className="text-xl">🐾</span>
                     </div>
                     <div>
-                      <p className="font-medium text-gray-900">{booking.petName || "Not specified"}</p>
-                      <p className="text-sm text-gray-600">Your beloved pet</p>
+                      <p className="font-medium text-zubo-text-graphite-gray-900">
+                        {booking.petName || "Not specified"}
+                      </p>
+                      <p className="text-sm text-zubo-text-graphite-gray-600">Your beloved pet</p>
                     </div>
                   </div>
                 </CardContent>
@@ -1073,24 +1157,24 @@ export default function BookingDetailsPage() {
               {/* Sitter Info */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-lg">
-                    <User className="h-5 w-5 text-blue-600" />
+                  <CardTitle className="flex items-center gap-2 text-lg text-zubo-text-graphite-gray-900">
+                    <User className="h-5 w-5 text-zubo-primary-royal-midnight-blue-600" />
                     Pet Sitter
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex items-center gap-3 p-3 bg-purple-50 rounded-lg">
-                    <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-                      <User className="h-6 w-6 text-purple-600" />
+                  <div className="flex items-center gap-3 p-3 bg-zubo-primary-royal-midnight-blue-50 rounded-lg">
+                    <div className="w-12 h-12 bg-zubo-primary-royal-midnight-blue-100 rounded-full flex items-center justify-center">
+                      <User className="h-6 w-6 text-zubo-primary-royal-midnight-blue-600" />
                     </div>
                     <div>
-                      <p className="font-medium text-gray-900">
+                      <p className="font-medium text-zubo-text-graphite-gray-900">
                         {sitterName || "To be assigned"}
                         {booking.sitterId && !sitterName && (
-                          <span className="text-amber-600 text-sm ml-2">(Loading...)</span>
+                          <span className="text-zubo-highlight-2-bronze-clay-600 text-sm ml-2">(Loading...)</span>
                         )}
                       </p>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-zubo-text-graphite-gray-600">
                         {hasSitterAssigned ? "Professional pet sitter" : "Will be assigned soon"}
                       </p>
                     </div>
@@ -1105,75 +1189,87 @@ export default function BookingDetailsPage() {
               ["upcoming", "confirmed", "pending", "assigned"].includes(booking.status?.toLowerCase() || "") && (
                 <Card>
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-lg">
-                      <Shield className="h-5 w-5 text-amber-600" />
+                    <CardTitle className="flex items-center gap-2 text-lg text-zubo-text-graphite-gray-900">
+                      <Shield className="h-5 w-5 text-zubo-highlight-2-bronze-clay-600" />
                       Service OTPs
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {/* START OTP */}
                     {booking.startOtp && (
-                      <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg border border-green-200">
+                      <div className="bg-gradient-to-r from-zubo-accent-soft-moss-green-50 to-zubo-accent-soft-moss-green-100 p-4 rounded-lg border border-zubo-accent-soft-moss-green-200">
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-2">
-                            <Play className="h-4 w-4 text-green-600" />
-                            <span className="font-medium text-green-800">START Service OTP</span>
+                            <Play className="h-4 w-4 text-zubo-accent-soft-moss-green-600" />
+                            <span className="font-medium text-zubo-accent-soft-moss-green-800">START Service OTP</span>
                           </div>
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="h-8 w-8 p-0 hover:bg-green-100"
+                            className="h-8 w-8 p-0 hover:bg-zubo-accent-soft-moss-green-100"
                             onClick={() => copyToClipboard(booking.startOtp!, "START OTP")}
                           >
                             <Copy className="h-4 w-4" />
                           </Button>
                         </div>
-                        <div className="text-2xl font-mono font-bold text-green-900 mb-2">{booking.startOtp}</div>
-                        <p className="text-sm text-green-700">Share this OTP with your sitter to START the service</p>
+                        <div className="text-2xl font-mono font-bold text-zubo-accent-soft-moss-green-900 mb-2">
+                          {booking.startOtp}
+                        </div>
+                        <p className="text-sm text-zubo-accent-soft-moss-green-700">
+                          Share this OTP with your sitter to START the service
+                        </p>
                       </div>
                     )}
 
                     {/* END OTP */}
                     {booking.endOtp && (
-                      <div className="bg-gradient-to-r from-red-50 to-rose-50 p-4 rounded-lg border border-red-200">
+                      <div className="bg-gradient-to-r from-zubo-highlight-1-blush-coral-50 to-zubo-highlight-1-blush-coral-100 p-4 rounded-lg border border-zubo-highlight-1-blush-coral-200">
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-2">
-                            <Square className="h-4 w-4 text-red-600" />
-                            <span className="font-medium text-red-800">END Service OTP</span>
+                            <Square className="h-4 w-4 text-zubo-highlight-1-blush-coral-600" />
+                            <span className="font-medium text-zubo-highlight-1-blush-coral-800">END Service OTP</span>
                           </div>
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="h-8 w-8 p-0 hover:bg-red-100"
+                            className="h-8 w-8 p-0 hover:bg-zubo-highlight-1-blush-coral-100"
                             onClick={() => copyToClipboard(booking.endOtp!, "END OTP")}
                           >
                             <Copy className="h-4 w-4" />
                           </Button>
                         </div>
-                        <div className="text-2xl font-mono font-bold text-red-900 mb-2">{booking.endOtp}</div>
-                        <p className="text-sm text-red-700">Share this OTP with your sitter to END the service</p>
+                        <div className="text-2xl font-mono font-bold text-zubo-highlight-1-blush-coral-900 mb-2">
+                          {booking.endOtp}
+                        </div>
+                        <p className="text-sm text-zubo-highlight-1-blush-coral-700">
+                          Share this OTP with your sitter to END the service
+                        </p>
                       </div>
                     )}
 
                     {/* Legacy Service OTP */}
                     {!booking.startOtp && !booking.endOtp && booking.serviceOtp && (
-                      <div className="bg-gradient-to-r from-amber-50 to-yellow-50 p-4 rounded-lg border border-amber-200">
+                      <div className="bg-gradient-to-r from-zubo-highlight-2-bronze-clay-50 to-zubo-highlight-2-bronze-clay-100 p-4 rounded-lg border border-zubo-highlight-2-bronze-clay-200">
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-2">
-                            <Shield className="h-4 w-4 text-amber-600" />
-                            <span className="font-medium text-amber-800">Service OTP</span>
+                            <Shield className="h-4 w-4 text-zubo-highlight-2-bronze-clay-600" />
+                            <span className="font-medium text-zubo-highlight-2-bronze-clay-800">Service OTP</span>
                           </div>
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="h-8 w-8 p-0 hover:bg-amber-100"
+                            className="h-8 w-8 p-0 hover:bg-zubo-highlight-2-bronze-clay-100"
                             onClick={() => copyToClipboard(booking.serviceOtp!, "Service OTP")}
                           >
                             <Copy className="h-4 w-4" />
                           </Button>
                         </div>
-                        <div className="text-2xl font-mono font-bold text-amber-900 mb-2">{booking.serviceOtp}</div>
-                        <p className="text-sm text-amber-700">Share this OTP with your sitter to start the service</p>
+                        <div className="text-2xl font-mono font-bold text-zubo-highlight-2-bronze-clay-900 mb-2">
+                          {booking.serviceOtp}
+                        </div>
+                        <p className="text-sm text-zubo-highlight-2-bronze-clay-700">
+                          Share this OTP with your sitter to start the service
+                        </p>
                       </div>
                     )}
                   </CardContent>
@@ -1186,13 +1282,13 @@ export default function BookingDetailsPage() {
             {/* Quick Actions */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Quick Actions</CardTitle>
+                <CardTitle className="text-lg text-zubo-text-graphite-gray-900">Quick Actions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 {!booking.recurring && booking.paymentStatus === "PENDING" && (
                   <Button
                     onClick={handlePayNow}
-                    className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+                    className="w-full bg-gradient-to-r from-zubo-accent-soft-moss-green-600 to-zubo-primary-royal-midnight-blue-600 hover:from-zubo-accent-soft-moss-green-700 hover:to-zubo-primary-royal-midnight-blue-700 text-zubo-background-porcelain-white-50"
                   >
                     <CreditCard className="mr-2 h-4 w-4" />
                     Pay Now
@@ -1203,7 +1299,7 @@ export default function BookingDetailsPage() {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="w-full text-red-600 border-red-300 hover:bg-red-50 text-xs bg-transparent"
+                    className="w-full text-destructive border-destructive/30 hover:bg-destructive/10 text-xs bg-transparent"
                     onClick={() => setShowBookingCancellationDialog(true)}
                   >
                     <XCircle className="mr-2 h-3 w-3" />
@@ -1214,7 +1310,7 @@ export default function BookingDetailsPage() {
                 <Button
                   variant="outline"
                   onClick={handleGetHelp}
-                  className="w-full border-blue-300 text-blue-600 hover:bg-blue-50 bg-transparent"
+                  className="w-full border-zubo-primary-royal-midnight-blue-300 text-zubo-primary-royal-midnight-blue-600 hover:bg-zubo-primary-royal-midnight-blue-50 bg-transparent"
                 >
                   <HelpCircle className="mr-2 h-4 w-4" />
                   Get Help & Support
@@ -1225,7 +1321,7 @@ export default function BookingDetailsPage() {
                     variant="outline"
                     onClick={handleChatWithSitter}
                     disabled={isLoading}
-                    className="w-full border-green-300 text-green-600 hover:bg-green-50 bg-transparent"
+                    className="w-full border-zubo-accent-soft-moss-green-300 text-zubo-accent-soft-moss-green-600 hover:bg-zubo-accent-soft-moss-green-50 bg-transparent"
                   >
                     {isLoading ? (
                       <>
@@ -1252,17 +1348,17 @@ export default function BookingDetailsPage() {
             {/* Booking Timeline */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Booking Timeline</CardTitle>
+                <CardTitle className="text-lg text-zubo-text-graphite-gray-900">Booking Timeline</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                      <CheckCircle className="h-4 w-4 text-green-600" />
+                    <div className="w-8 h-8 bg-zubo-accent-soft-moss-green-100 rounded-full flex items-center justify-center">
+                      <CheckCircle className="h-4 w-4 text-zubo-accent-soft-moss-green-600" />
                     </div>
                     <div>
-                      <p className="font-medium text-sm">Booking Created</p>
-                      <p className="text-xs text-gray-600">
+                      <p className="font-medium text-sm text-zubo-text-graphite-gray-900">Booking Created</p>
+                      <p className="text-xs text-zubo-text-graphite-gray-600">
                         {format(new Date(booking.createdAt || booking.date), "PPp")}
                       </p>
                     </div>
@@ -1270,14 +1366,14 @@ export default function BookingDetailsPage() {
 
                   {(booking.paymentStatus === "paid" || (booking.recurring && paidSessions > 0)) && (
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                        <CreditCard className="h-4 w-4 text-blue-600" />
+                      <div className="w-8 h-8 bg-zubo-primary-royal-midnight-blue-100 rounded-full flex items-center justify-center">
+                        <CreditCard className="h-4 w-4 text-zubo-primary-royal-midnight-blue-600" />
                       </div>
                       <div>
-                        <p className="font-medium text-sm">
+                        <p className="font-medium text-sm text-zubo-text-graphite-gray-900">
                           {booking.recurring ? `${paidSessions} Sessions Paid` : "Payment Completed"}
                         </p>
-                        <p className="text-xs text-gray-600">
+                        <p className="text-xs text-zubo-text-graphite-gray-600">
                           {booking.recurring
                             ? `₹${paidAmount.toFixed(2)} of ₹${totalAmount.toFixed(2)} paid`
                             : "Payment processed successfully"}
@@ -1288,25 +1384,25 @@ export default function BookingDetailsPage() {
 
                   {hasSitterAssigned && (
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                        <User className="h-4 w-4 text-purple-600" />
+                      <div className="w-8 h-8 bg-zubo-highlight-2-bronze-clay-100 rounded-full flex items-center justify-center">
+                        <User className="h-4 w-4 text-zubo-highlight-2-bronze-clay-600" />
                       </div>
                       <div>
-                        <p className="font-medium text-sm">Sitter Assigned</p>
-                        <p className="text-xs text-gray-600">{sitterName}</p>
+                        <p className="font-medium text-sm text-zubo-text-graphite-gray-900">Sitter Assigned</p>
+                        <p className="text-xs text-zubo-text-graphite-gray-600">{sitterName}</p>
                       </div>
                     </div>
                   )}
 
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-                      <Calendar className="h-4 w-4 text-gray-600" />
+                    <div className="w-8 h-8 bg-zubo-background-porcelain-white-100 rounded-full flex items-center justify-center">
+                      <Calendar className="h-4 w-4 text-zubo-text-graphite-gray-600" />
                     </div>
                     <div>
-                      <p className="font-medium text-sm">
+                      <p className="font-medium text-sm text-zubo-text-graphite-gray-900">
                         {booking.recurring ? "Recurring Schedule" : "Scheduled Service"}
                       </p>
-                      <p className="text-xs text-gray-600">
+                      <p className="text-xs text-zubo-text-graphite-gray-600">
                         {booking.recurring
                           ? formatRecurringPattern(booking.recurringPattern)
                           : `${formatDate(booking.date)} at ${booking.time}`}
@@ -1318,20 +1414,20 @@ export default function BookingDetailsPage() {
             </Card>
 
             {/* Need Help */}
-            <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+            <Card className="bg-gradient-to-r from-zubo-primary-royal-midnight-blue-50 to-zubo-highlight-1-blush-coral-50 border-zubo-primary-royal-midnight-blue-200">
               <CardContent className="p-4 text-center">
-                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <HelpCircle className="h-6 w-6 text-blue-600" />
+                <div className="w-12 h-12 bg-zubo-primary-royal-midnight-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <HelpCircle className="h-6 w-6 text-zubo-primary-royal-midnight-blue-600" />
                 </div>
-                <h3 className="font-medium text-blue-900 mb-2">Need Help?</h3>
-                <p className="text-sm text-blue-700 mb-3">
+                <h3 className="font-medium text-zubo-primary-royal-midnight-blue-900 mb-2">Need Help?</h3>
+                <p className="text-sm text-zubo-primary-royal-midnight-blue-700 mb-3">
                   Our support team is here to help you with any questions or concerns.
                 </p>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={handleGetHelp}
-                  className="border-blue-300 text-blue-600 hover:bg-blue-100 bg-transparent"
+                  className="border-zubo-primary-royal-midnight-blue-300 text-zubo-primary-royal-midnight-blue-600 hover:bg-zubo-primary-royal-midnight-blue-100 bg-transparent"
                 >
                   Contact Support
                 </Button>
