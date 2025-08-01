@@ -59,7 +59,8 @@ export default function Navigation() {
       <header className="hidden md:block border-b bg-white shadow-sm sticky top-0 z-40">
         <div className="container flex h-16 items-center px-4">
           <Link href="/landing" className="mr-4 flex items-center hover:opacity-80 transition-opacity">
-            <img src="/logo/zubo-logo.svg" alt="ZuboPets Logo" className="h-12 w-auto" />
+            {/* Increased logo size here */}
+            <img src="/logo/zubo-logo.svg" alt="ZuboPets Logo" className="h-16 w-auto" />
           </Link>
 
           {/* Main Navigation - 4 items */}

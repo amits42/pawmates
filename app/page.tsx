@@ -50,7 +50,15 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-3">
-              <Image src="/logo/zubo-logo.svg" alt="ZuboPets" width={120} height={40} className="h-8 w-auto" priority />
+              {/* Increased logo size here */}
+              <Image
+                src="/logo/zubo-logo.svg"
+                alt="ZuboPets"
+                width={160}
+                height={60}
+                className="h-12 w-auto"
+                priority
+              />
             </div>
             <div className="hidden md:flex items-center space-x-8">
               <Link href="#services" className="text-zubo-text hover:text-zubo-primary transition-colors font-medium">
@@ -86,12 +94,13 @@ export default function HomePage() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <div className="mb-8 flex justify-center">
+              {/* Increased logo size here */}
               <Image
                 src="/logo/zubo-logo.svg"
                 alt="ZuboPets"
-                width={280}
-                height={120}
-                className="h-24 sm:h-28 md:h-32 lg:h-40 w-auto drop-shadow-lg"
+                width={320}
+                height={140}
+                className="h-28 sm:h-32 md:h-36 lg:h-44 w-auto drop-shadow-lg"
                 priority
               />
             </div>
