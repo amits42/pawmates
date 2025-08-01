@@ -55,69 +55,64 @@ const config = {
         },
         // ZuboPets Brand Colors
         "zubo-primary": {
-          DEFAULT: "#253347", // Royal Midnight Blue
-          50: "#E8EBF0",
-          100: "#D1D7E0",
-          200: "#A3B0C0",
-          300: "#7588A0",
-          400: "#476180",
-          500: "#253347", // DEFAULT
-          600: "#1F2A3A",
-          700: "#19222E",
-          800: "#131923",
-          900: "#0D1117",
-          950: "#06080B",
+          50: "#E9ECF0",
+          100: "#C8D0D9",
+          200: "#A7B4C2",
+          300: "#8698AC",
+          400: "#657C95",
+          500: "#44607F", // PrimaryRoyal Midnight Blue #253347 (closest to 500)
+          600: "#3A516C",
+          700: "#30435A",
+          800: "#253347", // PrimaryRoyal Midnight Blue #253347
+          900: "#1B2431",
+          950: "#10151B",
         },
         "zubo-background": {
-          DEFAULT: "#FBF9F6", // Porcelain White
-          50: "#FFFFFF",
-          100: "#FDFCFB",
-          200: "#FBF9F6", // DEFAULT
-          300: "#F8F6F3",
-          400: "#F6F4F0",
-          500: "#F3F1ED",
-          600: "#C4C2BF",
-          700: "#949290",
-          800: "#656361",
-          900: "#353432",
-          950: "#1C1B1A",
+          50: "#FCFAFA",
+          100: "#FBF9F6", // Porcelain White #FBF9F6
+          200: "#F7F4F0",
+          300: "#F2EFEA",
+          400: "#EDEAE5",
+          500: "#E8E5E0",
+          600: "#D3D0CB",
+          700: "#BEBBBA",
+          800: "#A9A6A4",
+          900: "#94918F",
+          950: "#807C7A",
         },
         "zubo-highlight-1": {
-          DEFAULT: "#E7A79D", // Blush Coral
           50: "#FDF4F3",
-          100: "#FBE9E6",
-          200: "#F7D4CE",
-          300: "#F2BFA5",
-          400: "#EDAA9D",
-          500: "#E7A79D", // DEFAULT
-          600: "#D1968C",
-          700: "#BB857B",
-          800: "#A5746A",
-          900: "#8F6359",
-          950: "#795248",
+          100: "#FBEBE9",
+          200: "#F8E2E0",
+          300: "#F5D9D6",
+          400: "#F2D0CD",
+          500: "#EFA79D", // Blush Coral #E7A79D (closest to 500)
+          600: "#D9978E",
+          700: "#C3877F",
+          800: "#AD7770",
+          900: "#976761",
+          950: "#815752",
         },
         "zubo-highlight-2": {
-          DEFAULT: "#B8835C", // Bronze Clay
-          50: "#F8F2ED",
-          100: "#F1E5DB",
-          200: "#E4CCB7",
-          300: "#D6B393",
-          400: "#C99A6F",
-          500: "#B8835C", // DEFAULT
-          600: "#A67652",
-          700: "#946948",
-          800: "#825C3E",
-          900: "#704F34",
-          950: "#5E422A",
+          50: "#FBF7F3",
+          100: "#F7F0E7",
+          200: "#F2E9DB",
+          300: "#EEDFCF",
+          400: "#E9D6C3",
+          500: "#B8835C", // Bronze Clay #B8835C (closest to 500)
+          600: "#A67753",
+          700: "#946B4A",
+          800: "#825F41",
+          900: "#705338",
+          950: "#5E472F",
         },
         "zubo-accent": {
-          DEFAULT: "#AAB89B", // Soft Moss Green
-          50: "#F5F7F3",
-          100: "#EBF0E7",
-          200: "#D7E0CE",
-          300: "#C3D0B5",
-          400: "#AFC19C",
-          500: "#AAB89B", // DEFAULT
+          50: "#F5F8F3",
+          100: "#EBF1E7",
+          200: "#E0EADF",
+          300: "#D6E3D7",
+          400: "#CCDCD0",
+          500: "#AAB89B", // Soft Moss Green #AAB89B (closest to 500)
           600: "#99A78C",
           700: "#88967D",
           800: "#77856E",
@@ -125,18 +120,17 @@ const config = {
           950: "#556350",
         },
         "zubo-text": {
-          DEFAULT: "#2D2D2D", // Graphite Gray
           50: "#F0F0F0",
           100: "#E0E0E0",
-          200: "#C0C0C0",
-          300: "#A0A0A0",
-          400: "#808080",
-          500: "#606060",
-          600: "#404040",
-          700: "#2D2D2D", // DEFAULT
-          800: "#1A1A1A",
-          900: "#0D0D0D",
-          950: "#000000",
+          200: "#D1D1D1",
+          300: "#C2C2C2",
+          400: "#B3B3B3",
+          500: "#A3A3A3",
+          600: "#7A7A7A",
+          700: "#525252",
+          800: "#2D2D2D", // Graphite Gray #2D2D2D
+          900: "#1F1F1F",
+          950: "#141414",
         },
       },
       borderRadius: {

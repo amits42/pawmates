@@ -176,11 +176,11 @@ export default function SitterWalletPage() {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "completed":
-        return <CheckCircle className="h-4 w-4 text-green-500" />
+        return <CheckCircle className="h-4 w-4 text-zubo-accent-500" />
       case "pending":
-        return <Clock className="h-4 w-4 text-yellow-500" />
+        return <Clock className="h-4 w-4 text-zubo-highlight-2-500" />
       case "failed":
-        return <AlertCircle className="h-4 w-4 text-red-500" />
+        return <AlertCircle className="h-4 w-4 text-zubo-highlight-1-500" />
       default:
         return null
     }
@@ -189,13 +189,13 @@ export default function SitterWalletPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "completed":
-        return "bg-green-100 text-green-800"
+        return "bg-zubo-accent-100 text-zubo-accent-800"
       case "pending":
-        return "bg-yellow-100 text-yellow-800"
+        return "bg-zubo-highlight-2-100 text-zubo-highlight-2-800"
       case "failed":
-        return "bg-red-100 text-red-800"
+        return "bg-zubo-highlight-1-100 text-zubo-highlight-1-800"
       default:
-        return "bg-gray-100 text-gray-800"
+        return "bg-zubo-background-100 text-zubo-text-800"
     }
   }
 
@@ -203,22 +203,22 @@ export default function SitterWalletPage() {
     switch (type) {
       case "earning":
       case "bonus":
-        return <ArrowDownRight className="h-4 w-4 text-green-500" />
+        return <ArrowDownRight className="h-4 w-4 text-zubo-accent-500" />
       case "withdrawal":
-        return <ArrowUpRight className="h-4 w-4 text-red-500" />
+        return <ArrowUpRight className="h-4 w-4 text-zubo-highlight-1-500" />
       default:
-        return <Wallet className="h-4 w-4 text-gray-500" />
+        return <Wallet className="h-4 w-4 text-zubo-text-500" />
     }
   }
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 bg-zubo-background-100">
         <div className="animate-pulse space-y-6">
-          <div className="h-8 bg-gray-200 rounded w-1/4"></div>
+          <div className="h-8 bg-zubo-background-200 rounded w-1/4"></div>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="h-32 bg-gray-200 rounded"></div>
+              <div key={i} className="h-32 bg-zubo-background-200 rounded"></div>
             ))}
           </div>
         </div>
@@ -228,85 +228,93 @@ export default function SitterWalletPage() {
 
   if (error || !walletData) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 bg-zubo-background-100">
         <div className="text-center">
-          <AlertCircle className="mx-auto h-12 w-12 text-red-500 mb-4" />
-          <h2 className="text-xl font-semibold mb-2">Error Loading Wallet</h2>
-          <p className="text-gray-600 mb-4">{error || "Failed to load wallet data"}</p>
-          <Button onClick={() => window.location.reload()}>Try Again</Button>
+          <AlertCircle className="mx-auto h-12 w-12 text-zubo-highlight-1-500 mb-4" />
+          <h2 className="text-xl font-semibold mb-2 text-zubo-text-900">Error Loading Wallet</h2>
+          <p className="text-zubo-text-600 mb-4">{error || "Failed to load wallet data"}</p>
+          <Button
+            onClick={() => window.location.reload()}
+            className="bg-zubo-primary-500 hover:bg-zubo-primary-600 text-zubo-background-50"
+          >
+            Try Again
+          </Button>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 bg-zubo-background-100 text-zubo-text-800">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Wallet</h1>
-        <p className="text-gray-600">Manage your earnings and withdrawals</p>
+        <h1 className="text-3xl font-bold text-zubo-text-900 mb-2">Wallet</h1>
+        <p className="text-zubo-text-600">Manage your earnings and withdrawals</p>
       </div>
 
       {/* Wallet Overview */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <Card>
+        <Card className="bg-zubo-background-50 border-zubo-background-200">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Available Balance</CardTitle>
-            <Wallet className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium text-zubo-text-700">Available Balance</CardTitle>
+            <Wallet className="h-4 w-4 text-zubo-text-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">₹{walletData.balance.toFixed(2)}</div>
-            <p className="text-xs text-muted-foreground">Ready for withdrawal</p>
+            <div className="text-2xl font-bold text-zubo-accent-600">₹{walletData.balance.toFixed(2)}</div>
+            <p className="text-xs text-zubo-text-400">Ready for withdrawal</p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-zubo-background-50 border-zubo-background-200">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pending Earnings</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium text-zubo-text-700">Pending Earnings</CardTitle>
+            <Clock className="h-4 w-4 text-zubo-text-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-yellow-600">₹{walletData.pendingAmount.toFixed(2)}</div>
-            <p className="text-xs text-muted-foreground">Processing (3-day hold)</p>
+            <div className="text-2xl font-bold text-zubo-highlight-2-600">₹{walletData.pendingAmount.toFixed(2)}</div>
+            <p className="text-xs text-zubo-text-400">Processing (3-day hold)</p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-zubo-background-50 border-zubo-background-200">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">This Month</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium text-zubo-text-700">This Month</CardTitle>
+            <TrendingUp className="h-4 w-4 text-zubo-text-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">₹{walletData.thisMonthEarnings.toFixed(2)}</div>
-            <p className="text-xs text-muted-foreground">Current month earnings</p>
+            <div className="text-2xl font-bold text-zubo-text-900">₹{walletData.thisMonthEarnings.toFixed(2)}</div>
+            <p className="text-xs text-zubo-text-400">Current month earnings</p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-zubo-background-50 border-zubo-background-200">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Earnings</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium text-zubo-text-700">Total Earnings</CardTitle>
+            <TrendingUp className="h-4 w-4 text-zubo-text-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">₹{walletData.totalEarnings.toFixed(2)}</div>
-            <p className="text-xs text-muted-foreground">All time earnings</p>
+            <div className="text-2xl font-bold text-zubo-text-900">₹{walletData.totalEarnings.toFixed(2)}</div>
+            <p className="text-xs text-zubo-text-400">All time earnings</p>
           </CardContent>
         </Card>
       </div>
 
       {/* Pending Withdrawals */}
       {walletData.pendingWithdrawals.length > 0 && (
-        <Card className="mb-8">
+        <Card className="mb-8 bg-zubo-background-50 border-zubo-background-200">
           <CardHeader>
-            <CardTitle>Pending Withdrawals</CardTitle>
-            <CardDescription>Your withdrawal requests being processed</CardDescription>
+            <CardTitle className="text-zubo-text-900">Pending Withdrawals</CardTitle>
+            <CardDescription className="text-zubo-text-600">Your withdrawal requests being processed</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               {walletData.pendingWithdrawals.map((withdrawal) => (
-                <div key={withdrawal.id} className="flex items-center justify-between p-4 border rounded-lg">
+                <div
+                  key={withdrawal.id}
+                  className="flex items-center justify-between p-4 border border-zubo-background-200 rounded-lg bg-zubo-background-100"
+                >
                   <div>
-                    <p className="font-medium">₹{withdrawal.amount.toFixed(2)}</p>
-                    <p className="text-sm text-gray-500">
+                    <p className="font-medium text-zubo-text-900">₹{withdrawal.amount.toFixed(2)}</p>
+                    <p className="text-sm text-zubo-text-500">
                       Requested on {new Date(withdrawal.requestedAt).toLocaleDateString()}
                     </p>
                   </div>
@@ -320,26 +328,35 @@ export default function SitterWalletPage() {
 
       {/* Withdraw Button */}
       <div className="mb-8">
-        <Card>
+        <Card className="bg-zubo-background-50 border-zubo-background-200">
           <CardHeader>
-            <CardTitle>Withdraw Funds</CardTitle>
-            <CardDescription>Transfer your available balance to your bank account or UPI</CardDescription>
+            <CardTitle className="text-zubo-text-900">Withdraw Funds</CardTitle>
+            <CardDescription className="text-zubo-text-600">
+              Transfer your available balance to your bank account or UPI
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <Dialog open={withdrawalDialogOpen} onOpenChange={setWithdrawalDialogOpen}>
               <DialogTrigger asChild>
-                <Button disabled={walletData.balance <= 0} className="w-full sm:w-auto">
+                <Button
+                  disabled={walletData.balance <= 0}
+                  className="w-full sm:w-auto bg-zubo-primary-500 hover:bg-zubo-primary-600 text-zubo-background-50"
+                >
                   Withdraw ₹{walletData.balance.toFixed(2)}
                 </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px]">
+              <DialogContent className="sm:max-w-[425px] bg-zubo-background-50 text-zubo-text-800">
                 <DialogHeader>
-                  <DialogTitle>Withdraw Funds</DialogTitle>
-                  <DialogDescription>Available balance: ₹{walletData.balance.toFixed(2)}</DialogDescription>
+                  <DialogTitle className="text-zubo-text-900">Withdraw Funds</DialogTitle>
+                  <DialogDescription className="text-zubo-text-600">
+                    Available balance: ₹{walletData.balance.toFixed(2)}
+                  </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4">
                   <div>
-                    <Label htmlFor="amount">Withdrawal Amount</Label>
+                    <Label htmlFor="amount" className="text-zubo-text-700">
+                      Withdrawal Amount
+                    </Label>
                     <Input
                       id="amount"
                       type="number"
@@ -348,26 +365,29 @@ export default function SitterWalletPage() {
                       onChange={(e) => setWithdrawalAmount(e.target.value)}
                       max={walletData.balance}
                       min="100"
+                      className="bg-zubo-background-100 border-zubo-background-300 text-zubo-text-800 placeholder:text-zubo-text-400 focus:border-zubo-primary-500 focus:ring-zubo-primary-500"
                     />
-                    <p className="text-xs text-gray-500 mt-1">Minimum withdrawal: ₹100</p>
+                    <p className="text-xs text-zubo-text-500 mt-1">Minimum withdrawal: ₹100</p>
                   </div>
 
                   <div>
-                    <Label htmlFor="payment-method">Payment Method</Label>
+                    <Label htmlFor="payment-method" className="text-zubo-text-700">
+                      Payment Method
+                    </Label>
                     <Select value={paymentMethod} onValueChange={setPaymentMethod}>
-                      <SelectTrigger>
+                      <SelectTrigger className="bg-zubo-background-100 border-zubo-background-300 text-zubo-text-800 focus:border-zubo-primary-500 focus:ring-zubo-primary-500">
                         <SelectValue placeholder="Select payment method" />
                       </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="bank_transfer">
+                      <SelectContent className="bg-zubo-background-50 text-zubo-text-800 border-zubo-background-200">
+                        <SelectItem value="bank_transfer" className="hover:bg-zubo-background-100">
                           <div className="flex items-center">
-                            <CreditCard className="h-4 w-4 mr-2" />
+                            <CreditCard className="h-4 w-4 mr-2 text-zubo-text-600" />
                             Bank Transfer
                           </div>
                         </SelectItem>
-                        <SelectItem value="upi">
+                        <SelectItem value="upi" className="hover:bg-zubo-background-100">
                           <div className="flex items-center">
-                            <Smartphone className="h-4 w-4 mr-2" />
+                            <Smartphone className="h-4 w-4 mr-2 text-zubo-text-600" />
                             UPI
                           </div>
                         </SelectItem>
@@ -378,30 +398,39 @@ export default function SitterWalletPage() {
                   {paymentMethod === "bank_transfer" && (
                     <div className="space-y-3">
                       <div>
-                        <Label htmlFor="account-number">Account Number</Label>
+                        <Label htmlFor="account-number" className="text-zubo-text-700">
+                          Account Number
+                        </Label>
                         <Input
                           id="account-number"
                           value={bankDetails.accountNumber}
                           onChange={(e) => setBankDetails({ ...bankDetails, accountNumber: e.target.value })}
                           placeholder="Enter account number"
+                          className="bg-zubo-background-100 border-zubo-background-300 text-zubo-text-800 placeholder:text-zubo-text-400 focus:border-zubo-primary-500 focus:ring-zubo-primary-500"
                         />
                       </div>
                       <div>
-                        <Label htmlFor="ifsc-code">IFSC Code</Label>
+                        <Label htmlFor="ifsc-code" className="text-zubo-text-700">
+                          IFSC Code
+                        </Label>
                         <Input
                           id="ifsc-code"
                           value={bankDetails.ifscCode}
                           onChange={(e) => setBankDetails({ ...bankDetails, ifscCode: e.target.value })}
                           placeholder="Enter IFSC code"
+                          className="bg-zubo-background-100 border-zubo-background-300 text-zubo-text-800 placeholder:text-zubo-text-400 focus:border-zubo-primary-500 focus:ring-zubo-primary-500"
                         />
                       </div>
                       <div>
-                        <Label htmlFor="account-name">Account Holder Name</Label>
+                        <Label htmlFor="account-name" className="text-zubo-text-700">
+                          Account Holder Name
+                        </Label>
                         <Input
                           id="account-name"
                           value={bankDetails.accountName}
                           onChange={(e) => setBankDetails({ ...bankDetails, accountName: e.target.value })}
                           placeholder="Enter account holder name"
+                          className="bg-zubo-background-100 border-zubo-background-300 text-zubo-text-800 placeholder:text-zubo-text-400 focus:border-zubo-primary-500 focus:ring-zubo-primary-500"
                         />
                       </div>
                     </div>
@@ -409,12 +438,15 @@ export default function SitterWalletPage() {
 
                   {paymentMethod === "upi" && (
                     <div>
-                      <Label htmlFor="upi-id">UPI ID</Label>
+                      <Label htmlFor="upi-id" className="text-zubo-text-700">
+                        UPI ID
+                      </Label>
                       <Input
                         id="upi-id"
                         value={upiId}
                         onChange={(e) => setUpiId(e.target.value)}
                         placeholder="Enter UPI ID (e.g., user@paytm)"
+                        className="bg-zubo-background-100 border-zubo-background-300 text-zubo-text-800 placeholder:text-zubo-text-400 focus:border-zubo-primary-500 focus:ring-zubo-primary-500"
                       />
                     </div>
                   )}
@@ -422,30 +454,32 @@ export default function SitterWalletPage() {
                   <Button
                     onClick={handleWithdrawal}
                     disabled={withdrawalLoading || !withdrawalAmount}
-                    className="w-full"
+                    className="w-full bg-zubo-primary-500 hover:bg-zubo-primary-600 text-zubo-background-50"
                   >
                     {withdrawalLoading ? "Processing..." : "Submit Withdrawal Request"}
                   </Button>
                 </div>
               </DialogContent>
             </Dialog>
-            {walletData.balance <= 0 && <p className="text-sm text-gray-500 mt-2">No funds available for withdrawal</p>}
+            {walletData.balance <= 0 && (
+              <p className="text-sm text-zubo-text-500 mt-2">No funds available for withdrawal</p>
+            )}
           </CardContent>
         </Card>
       </div>
 
       {/* Transaction History */}
-      <Card>
+      <Card className="bg-zubo-background-50 border-zubo-background-200">
         <CardHeader>
-          <CardTitle>Transaction History</CardTitle>
-          <CardDescription>Your recent earnings and withdrawals</CardDescription>
+          <CardTitle className="text-zubo-text-900">Transaction History</CardTitle>
+          <CardDescription className="text-zubo-text-600">Your recent earnings and withdrawals</CardDescription>
         </CardHeader>
         <CardContent>
           {walletData.transactions.length === 0 ? (
             <div className="text-center py-8">
-              <Wallet className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No transactions yet</h3>
-              <p className="text-gray-500">Your transaction history will appear here</p>
+              <Wallet className="mx-auto h-12 w-12 text-zubo-text-400 mb-4" />
+              <h3 className="text-lg font-medium text-zubo-text-900 mb-2">No transactions yet</h3>
+              <p className="text-zubo-text-500">Your transaction history will appear here</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -455,8 +489,8 @@ export default function SitterWalletPage() {
                     <div className="flex items-center space-x-3">
                       {getTransactionIcon(transaction.type)}
                       <div>
-                        <p className="font-medium text-gray-900">{transaction.description}</p>
-                        <div className="text-sm text-gray-500">
+                        <p className="font-medium text-zubo-text-900">{transaction.description}</p>
+                        <div className="text-sm text-zubo-text-500">
                           <p>{new Date(transaction.date).toLocaleDateString()}</p>
                           {transaction.serviceDetails && (
                             <p>
@@ -472,7 +506,7 @@ export default function SitterWalletPage() {
                     <div className="flex items-center space-x-2">
                       <span
                         className={`text-lg font-semibold ${
-                          transaction.amount > 0 ? "text-green-600" : "text-red-600"
+                          transaction.amount > 0 ? "text-zubo-accent-600" : "text-zubo-highlight-1-600"
                         }`}
                       >
                         {transaction.amount > 0 ? "+" : ""}₹{Math.abs(transaction.amount).toFixed(2)}
@@ -483,7 +517,7 @@ export default function SitterWalletPage() {
                       </Badge>
                     </div>
                   </div>
-                  {index < walletData.transactions.length - 1 && <Separator />}
+                  {index < walletData.transactions.length - 1 && <Separator className="bg-zubo-background-200" />}
                 </div>
               ))}
             </div>
