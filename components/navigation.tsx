@@ -18,15 +18,14 @@ export default function Navigation() {
   const isSitterRoute = pathname?.startsWith("/sitter")
 
   const userNavItems = [
-    { href: "/home", label: "Home", icon: Home },
+    { href: "/landing", label: "Home", icon: Home },
     { href: "/book-service", label: "Book Service", icon: Calendar },
     { href: "/my-bookings", label: "My Bookings", icon: Calendar },
-    { href: "/chat", label: "Messages", icon: MessageCircle },
     { href: "/profile", label: "Profile", icon: User },
   ]
 
   const sitterNavItems = [
-    { href: "/sitter", label: "Dashboard", icon: Home },
+    { href: "/sitter", label: "Dashboardss", icon: Home },
     { href: "/sitter/bookings", label: "Bookings", icon: Calendar },
     { href: "/sitter/wallet", label: "Wallet", icon: Heart },
     { href: "/sitter/profile", label: "Profile", icon: Settings },
@@ -93,11 +92,10 @@ export default function Navigation() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    pathname === item.href
-                      ? "bg-blue-100 text-blue-700"
-                      : "text-gray-700 hover:text-blue-600 hover:bg-gray-100"
-                  }`}
+                  className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${pathname === item.href
+                    ? "bg-blue-100 text-blue-700"
+                    : "text-gray-700 hover:text-blue-600 hover:bg-gray-100"
+                    }`}
                 >
                   <item.icon className="h-4 w-4" />
                   <span>{item.label}</span>
@@ -118,11 +116,10 @@ export default function Navigation() {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex flex-col items-center justify-center p-2 rounded-lg transition-colors ${
-                pathname === item.href
-                  ? "bg-blue-100 text-blue-700"
-                  : "text-gray-600 hover:text-blue-600 hover:bg-gray-100"
-              }`}
+              className={`flex flex-col items-center justify-center p-2 rounded-lg transition-colors ${pathname === item.href
+                ? "bg-blue-100 text-blue-700"
+                : "text-gray-600 hover:text-blue-600 hover:bg-gray-100"
+                }`}
             >
               <item.icon className="h-5 w-5 mb-1" />
               <span className="text-xs font-medium">{item.label}</span>
