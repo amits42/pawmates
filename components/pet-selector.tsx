@@ -126,20 +126,22 @@ export function PetSelector({ pets, selectedPetId, onSelectPet, onPetsUpdate }: 
       {pets.length === 0 ? (
         <div className="text-center py-8">
           <div className="text-4xl mb-3">🐾</div>
-          <p className="text-slate-600 font-medium mb-2">No pets added yet</p>
-          <p className="text-slate-500 text-sm mb-4">Add your first pet to get started</p>
+          <p className="text-zubo-text-neutral-600 font-medium mb-2">No pets added yet</p>
+          <p className="text-zubo-text-neutral-500 text-sm mb-4">Add your first pet to get started</p>
 
           <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-blue-600 hover:bg-blue-700">
+              <Button className="bg-zubo-primary hover:bg-zubo-primary-700">
                 <Plus className="mr-2 h-4 w-4" />
                 Add Your First Pet
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[600px]">
               <DialogHeader>
-                <DialogTitle className="text-slate-800">Add New Pet</DialogTitle>
-                <DialogDescription className="text-slate-600">Enter your pet's information below.</DialogDescription>
+                <DialogTitle className="text-zubo-text-neutral-800">Add New Pet</DialogTitle>
+                <DialogDescription className="text-zubo-text-neutral-600">
+                  Enter your pet's information below.
+                </DialogDescription>
               </DialogHeader>
 
               <Tabs defaultValue="basic" className="w-full">
@@ -158,24 +160,24 @@ export function PetSelector({ pets, selectedPetId, onSelectPet, onPetsUpdate }: 
                   />
 
                   <div className="space-y-2">
-                    <Label htmlFor="pet-name" className="text-sm font-medium text-slate-700">
+                    <Label htmlFor="pet-name" className="text-sm font-medium text-zubo-text-neutral-700">
                       Pet Name *
                     </Label>
                     <Input
                       id="pet-name"
                       value={newPet.name}
                       onChange={(e) => handleNewPetChange("name", e.target.value)}
-                      className="border-slate-300 focus:border-blue-500 focus:ring-blue-500"
+                      className="border-zubo-text-neutral-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500"
                       placeholder="Enter pet name"
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-2">
-                      <Label htmlFor="pet-type" className="text-sm font-medium text-slate-700">
+                      <Label htmlFor="pet-type" className="text-sm font-medium text-zubo-text-neutral-700">
                         Type
                       </Label>
                       <Select value={newPet.type} onValueChange={(value) => handleNewPetChange("type", value)}>
-                        <SelectTrigger className="border-slate-300 focus:border-blue-500 focus:ring-blue-500">
+                        <SelectTrigger className="border-zubo-text-neutral-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -187,52 +189,52 @@ export function PetSelector({ pets, selectedPetId, onSelectPet, onPetsUpdate }: 
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="pet-breed" className="text-sm font-medium text-slate-700">
+                      <Label htmlFor="pet-breed" className="text-sm font-medium text-zubo-text-neutral-700">
                         Breed
                       </Label>
                       <Input
                         id="pet-breed"
                         value={newPet.breed}
                         onChange={(e) => handleNewPetChange("breed", e.target.value)}
-                        className="border-slate-300 focus:border-blue-500 focus:ring-blue-500"
+                        className="border-zubo-text-neutral-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500"
                         placeholder="Breed"
                       />
                     </div>
                   </div>
                   <div className="grid grid-cols-3 gap-3">
                     <div className="space-y-2">
-                      <Label htmlFor="pet-age" className="text-sm font-medium text-slate-700">
+                      <Label htmlFor="pet-age" className="text-sm font-medium text-zubo-text-neutral-700">
                         Age
                       </Label>
                       <Input
                         id="pet-age"
                         value={newPet.age}
                         onChange={(e) => handleNewPetChange("age", e.target.value)}
-                        className="border-slate-300 focus:border-blue-500 focus:ring-blue-500"
+                        className="border-zubo-text-neutral-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500"
                         placeholder="Age"
                         type="number"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="pet-weight" className="text-sm font-medium text-slate-700">
+                      <Label htmlFor="pet-weight" className="text-sm font-medium text-zubo-text-neutral-700">
                         Weight (kg)
                       </Label>
                       <Input
                         id="pet-weight"
                         value={newPet.weight}
                         onChange={(e) => handleNewPetChange("weight", e.target.value)}
-                        className="border-slate-300 focus:border-blue-500 focus:ring-blue-500"
+                        className="border-zubo-text-neutral-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500"
                         placeholder="Weight"
                         type="number"
                         step="0.1"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="pet-gender" className="text-sm font-medium text-slate-700">
+                      <Label htmlFor="pet-gender" className="text-sm font-medium text-zubo-text-neutral-700">
                         Gender
                       </Label>
                       <Select value={newPet.gender} onValueChange={(value) => handleNewPetChange("gender", value)}>
-                        <SelectTrigger className="border-slate-300 focus:border-blue-500 focus:ring-blue-500">
+                        <SelectTrigger className="border-zubo-text-neutral-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -247,28 +249,34 @@ export function PetSelector({ pets, selectedPetId, onSelectPet, onPetsUpdate }: 
 
                 <TabsContent value="medical" className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="pet-medical" className="text-sm font-medium text-slate-700 flex items-center">
-                      <HeartPulse className="h-4 w-4 mr-1 text-blue-600" />
+                    <Label
+                      htmlFor="pet-medical"
+                      className="text-sm font-medium text-zubo-text-neutral-700 flex items-center"
+                    >
+                      <HeartPulse className="h-4 w-4 mr-1 text-zubo-primary-600" />
                       Medical Information
                     </Label>
                     <Textarea
                       id="pet-medical"
                       value={newPet.medicalInfo}
                       onChange={(e) => handleNewPetChange("medicalInfo", e.target.value)}
-                      className="border-slate-300 focus:border-blue-500 focus:ring-blue-500 min-h-[100px]"
+                      className="border-zubo-text-neutral-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500 min-h-[100px]"
                       placeholder="Any medical conditions, medications, or health history"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="pet-allergies" className="text-sm font-medium text-slate-700 flex items-center">
-                      <AlertTriangle className="h-4 w-4 mr-1 text-amber-600" />
+                    <Label
+                      htmlFor="pet-allergies"
+                      className="text-sm font-medium text-zubo-text-neutral-700 flex items-center"
+                    >
+                      <AlertTriangle className="h-4 w-4 mr-1 text-zubo-highlight-2" />
                       Allergies
                     </Label>
                     <Textarea
                       id="pet-allergies"
                       value={newPet.allergies}
                       onChange={(e) => handleNewPetChange("allergies", e.target.value)}
-                      className="border-slate-300 focus:border-blue-500 focus:ring-blue-500 min-h-[100px]"
+                      className="border-zubo-text-neutral-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500 min-h-[100px]"
                       placeholder="Any known allergies to food, medication, or environment"
                     />
                   </div>
@@ -276,15 +284,18 @@ export function PetSelector({ pets, selectedPetId, onSelectPet, onPetsUpdate }: 
 
                 <TabsContent value="behavior" className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="pet-behavior" className="text-sm font-medium text-slate-700 flex items-center">
-                      <Brain className="h-4 w-4 mr-1 text-purple-600" />
+                    <Label
+                      htmlFor="pet-behavior"
+                      className="text-sm font-medium text-zubo-text-neutral-700 flex items-center"
+                    >
+                      <Brain className="h-4 w-4 mr-1 text-zubo-highlight-1" />
                       Behavioral Notes
                     </Label>
                     <Textarea
                       id="pet-behavior"
                       value={newPet.behavioralNotes}
                       onChange={(e) => handleNewPetChange("behavioralNotes", e.target.value)}
-                      className="border-slate-300 focus:border-blue-500 focus:ring-blue-500 min-h-[150px]"
+                      className="border-zubo-text-neutral-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500 min-h-[150px]"
                       placeholder="Temperament, training level, special behaviors, likes/dislikes, etc."
                     />
                   </div>
@@ -292,15 +303,18 @@ export function PetSelector({ pets, selectedPetId, onSelectPet, onPetsUpdate }: 
 
                 <TabsContent value="description" className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="pet-description" className="text-sm font-medium text-slate-700 flex items-center">
-                      <Info className="h-4 w-4 mr-1 text-green-600" />
+                    <Label
+                      htmlFor="pet-description"
+                      className="text-sm font-medium text-zubo-text-neutral-700 flex items-center"
+                    >
+                      <Info className="h-4 w-4 mr-1 text-zubo-accent-600" />
                       General Description
                     </Label>
                     <Textarea
                       id="pet-description"
                       value={newPet.description}
                       onChange={(e) => handleNewPetChange("description", e.target.value)}
-                      className="border-slate-300 focus:border-blue-500 focus:ring-blue-500 min-h-[150px]"
+                      className="border-zubo-text-neutral-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500 min-h-[150px]"
                       placeholder="General description, personality, and any other information about your pet"
                     />
                   </div>
@@ -323,8 +337,8 @@ export function PetSelector({ pets, selectedPetId, onSelectPet, onPetsUpdate }: 
           {pets.map((pet) => (
             <Card
               key={pet.id}
-              className={`cursor-pointer transition-all border-slate-200 hover:border-blue-300 ${
-                selectedPetId === pet.id ? "ring-2 ring-blue-500 border-blue-500" : ""
+              className={`cursor-pointer transition-all border-zubo-text-neutral-200 hover:border-zubo-primary-300 ${
+                selectedPetId === pet.id ? "ring-2 ring-zubo-primary-500 border-zubo-primary-500" : ""
               }`}
               onClick={() => onSelectPet(pet.id)}
             >
@@ -333,7 +347,7 @@ export function PetSelector({ pets, selectedPetId, onSelectPet, onPetsUpdate }: 
                   {/* Pet Image or Emoji */}
                   <div className="relative">
                     {pet.image ? (
-                      <div className="w-10 h-10 rounded-lg overflow-hidden border-2 border-slate-200 bg-white relative">
+                      <div className="w-10 h-10 rounded-lg overflow-hidden border-2 border-zubo-text-neutral-200 bg-white relative">
                         <img
                           src={pet.image || "/placeholder.svg"}
                           alt={pet.name}
@@ -350,23 +364,23 @@ export function PetSelector({ pets, selectedPetId, onSelectPet, onPetsUpdate }: 
                           }}
                         />
                         {/* Small type icon overlay */}
-                        <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-white rounded-full border border-slate-200 flex items-center justify-center text-xs shadow-sm">
+                        <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-white rounded-full border border-zubo-text-neutral-200 flex items-center justify-center text-xs shadow-sm">
                           {getPetTypeEmoji(pet.type)}
                         </div>
                       </div>
                     ) : (
-                      <div className="w-10 h-10 rounded-lg border-2 border-slate-200 bg-white flex items-center justify-center text-xl">
+                      <div className="w-10 h-10 rounded-lg border-2 border-zubo-text-neutral-200 bg-white flex items-center justify-center text-xl">
                         {getPetTypeEmoji(pet.type)}
                       </div>
                     )}
                   </div>
 
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-medium text-slate-800 truncate">{pet.name}</h4>
-                    <p className="text-sm text-slate-600">
+                    <h4 className="font-medium text-zubo-text-neutral-800 truncate">{pet.name}</h4>
+                    <p className="text-sm text-zubo-text-neutral-600">
                       {pet.type} • {pet.breed || "Mixed"}
                     </p>
-                    <div className="flex items-center space-x-4 mt-1 text-xs text-slate-500">
+                    <div className="flex items-center space-x-4 mt-1 text-xs text-zubo-text-neutral-500">
                       <span>Age: {pet.age || "Unknown"}</span>
                       <span>Weight: {pet.weight || "Unknown"} kg</span>
                     </div>
@@ -378,21 +392,23 @@ export function PetSelector({ pets, selectedPetId, onSelectPet, onPetsUpdate }: 
 
           <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
             <Card
-              className="cursor-pointer border-dashed border-slate-300 hover:border-blue-400 transition-colors"
+              className="cursor-pointer border-dashed border-zubo-text-neutral-300 hover:border-zubo-primary-300 transition-colors"
               onClick={() => setIsAddDialogOpen(true)}
             >
               <CardContent className="p-4 flex flex-col items-center justify-center text-center min-h-[120px]">
-                <div className="rounded-full w-10 h-10 bg-slate-100 flex items-center justify-center mb-2">
-                  <Plus className="h-5 w-5 text-slate-600" />
+                <div className="rounded-full w-10 h-10 bg-zubo-background-100 flex items-center justify-center mb-2">
+                  <Plus className="h-5 w-5 text-zubo-text-neutral-600" />
                 </div>
-                <p className="font-medium text-slate-700 text-sm">Add New Pet</p>
+                <p className="font-medium text-zubo-text-neutral-700 text-sm">Add New Pet</p>
               </CardContent>
             </Card>
 
             <DialogContent className="sm:max-w-[600px]">
               <DialogHeader>
-                <DialogTitle className="text-slate-800">Add New Pet</DialogTitle>
-                <DialogDescription className="text-slate-600">Enter your pet's information below.</DialogDescription>
+                <DialogTitle className="text-zubo-text-neutral-800">Add New Pet</DialogTitle>
+                <DialogDescription className="text-zubo-text-neutral-600">
+                  Enter your pet's information below.
+                </DialogDescription>
               </DialogHeader>
 
               <Tabs defaultValue="basic" className="w-full">
@@ -411,24 +427,24 @@ export function PetSelector({ pets, selectedPetId, onSelectPet, onPetsUpdate }: 
                   />
 
                   <div className="space-y-2">
-                    <Label htmlFor="pet-name-2" className="text-sm font-medium text-slate-700">
+                    <Label htmlFor="pet-name-2" className="text-sm font-medium text-zubo-text-neutral-700">
                       Pet Name *
                     </Label>
                     <Input
                       id="pet-name-2"
                       value={newPet.name}
                       onChange={(e) => handleNewPetChange("name", e.target.value)}
-                      className="border-slate-300 focus:border-blue-500 focus:ring-blue-500"
+                      className="border-zubo-text-neutral-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500"
                       placeholder="Enter pet name"
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-2">
-                      <Label htmlFor="pet-type-2" className="text-sm font-medium text-slate-700">
+                      <Label htmlFor="pet-type-2" className="text-sm font-medium text-zubo-text-neutral-700">
                         Type
                       </Label>
                       <Select value={newPet.type} onValueChange={(value) => handleNewPetChange("type", value)}>
-                        <SelectTrigger className="border-slate-300 focus:border-blue-500 focus:ring-blue-500">
+                        <SelectTrigger className="border-zubo-text-neutral-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -440,52 +456,52 @@ export function PetSelector({ pets, selectedPetId, onSelectPet, onPetsUpdate }: 
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="pet-breed-2" className="text-sm font-medium text-slate-700">
+                      <Label htmlFor="pet-breed-2" className="text-sm font-medium text-zubo-text-neutral-700">
                         Breed
                       </Label>
                       <Input
                         id="pet-breed-2"
                         value={newPet.breed}
                         onChange={(e) => handleNewPetChange("breed", e.target.value)}
-                        className="border-slate-300 focus:border-blue-500 focus:ring-blue-500"
+                        className="border-zubo-text-neutral-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500"
                         placeholder="Breed"
                       />
                     </div>
                   </div>
                   <div className="grid grid-cols-3 gap-3">
                     <div className="space-y-2">
-                      <Label htmlFor="pet-age-2" className="text-sm font-medium text-slate-700">
+                      <Label htmlFor="pet-age-2" className="text-sm font-medium text-zubo-text-neutral-700">
                         Age
                       </Label>
                       <Input
                         id="pet-age-2"
                         value={newPet.age}
                         onChange={(e) => handleNewPetChange("age", e.target.value)}
-                        className="border-slate-300 focus:border-blue-500 focus:ring-blue-500"
+                        className="border-zubo-text-neutral-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500"
                         placeholder="Age"
                         type="number"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="pet-weight-2" className="text-sm font-medium text-slate-700">
+                      <Label htmlFor="pet-weight-2" className="text-sm font-medium text-zubo-text-neutral-700">
                         Weight (kg)
                       </Label>
                       <Input
                         id="pet-weight-2"
                         value={newPet.weight}
                         onChange={(e) => handleNewPetChange("weight", e.target.value)}
-                        className="border-slate-300 focus:border-blue-500 focus:ring-blue-500"
+                        className="border-zubo-text-neutral-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500"
                         placeholder="Weight"
                         type="number"
                         step="0.1"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="pet-gender-2" className="text-sm font-medium text-slate-700">
+                      <Label htmlFor="pet-gender-2" className="text-sm font-medium text-zubo-text-neutral-700">
                         Gender
                       </Label>
                       <Select value={newPet.gender} onValueChange={(value) => handleNewPetChange("gender", value)}>
-                        <SelectTrigger className="border-slate-300 focus:border-blue-500 focus:ring-blue-500">
+                        <SelectTrigger className="border-zubo-text-neutral-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -500,28 +516,34 @@ export function PetSelector({ pets, selectedPetId, onSelectPet, onPetsUpdate }: 
 
                 <TabsContent value="medical" className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="pet-medical-2" className="text-sm font-medium text-slate-700 flex items-center">
-                      <HeartPulse className="h-4 w-4 mr-1 text-blue-600" />
+                    <Label
+                      htmlFor="pet-medical-2"
+                      className="text-sm font-medium text-zubo-text-neutral-700 flex items-center"
+                    >
+                      <HeartPulse className="h-4 w-4 mr-1 text-zubo-primary-600" />
                       Medical Information
                     </Label>
                     <Textarea
                       id="pet-medical-2"
                       value={newPet.medicalInfo}
                       onChange={(e) => handleNewPetChange("medicalInfo", e.target.value)}
-                      className="border-slate-300 focus:border-blue-500 focus:ring-blue-500 min-h-[100px]"
+                      className="border-zubo-text-neutral-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500 min-h-[100px]"
                       placeholder="Any medical conditions, medications, or health history"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="pet-allergies-2" className="text-sm font-medium text-slate-700 flex items-center">
-                      <AlertTriangle className="h-4 w-4 mr-1 text-amber-600" />
+                    <Label
+                      htmlFor="pet-allergies-2"
+                      className="text-sm font-medium text-zubo-text-neutral-700 flex items-center"
+                    >
+                      <AlertTriangle className="h-4 w-4 mr-1 text-zubo-highlight-2" />
                       Allergies
                     </Label>
                     <Textarea
                       id="pet-allergies-2"
                       value={newPet.allergies}
                       onChange={(e) => handleNewPetChange("allergies", e.target.value)}
-                      className="border-slate-300 focus:border-blue-500 focus:ring-blue-500 min-h-[100px]"
+                      className="border-zubo-text-neutral-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500 min-h-[100px]"
                       placeholder="Any known allergies to food, medication, or environment"
                     />
                   </div>
@@ -529,15 +551,18 @@ export function PetSelector({ pets, selectedPetId, onSelectPet, onPetsUpdate }: 
 
                 <TabsContent value="behavior" className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="pet-behavior-2" className="text-sm font-medium text-slate-700 flex items-center">
-                      <Brain className="h-4 w-4 mr-1 text-purple-600" />
+                    <Label
+                      htmlFor="pet-behavior-2"
+                      className="text-sm font-medium text-zubo-text-neutral-700 flex items-center"
+                    >
+                      <Brain className="h-4 w-4 mr-1 text-zubo-highlight-1" />
                       Behavioral Notes
                     </Label>
                     <Textarea
                       id="pet-behavior-2"
                       value={newPet.behavioralNotes}
                       onChange={(e) => handleNewPetChange("behavioralNotes", e.target.value)}
-                      className="border-slate-300 focus:border-blue-500 focus:ring-blue-500 min-h-[150px]"
+                      className="border-zubo-text-neutral-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500 min-h-[150px]"
                       placeholder="Temperament, training level, special behaviors, likes/dislikes, etc."
                     />
                   </div>
@@ -545,15 +570,18 @@ export function PetSelector({ pets, selectedPetId, onSelectPet, onPetsUpdate }: 
 
                 <TabsContent value="description" className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="pet-description-2" className="text-sm font-medium text-slate-700 flex items-center">
-                      <Info className="h-4 w-4 mr-1 text-green-600" />
+                    <Label
+                      htmlFor="pet-description-2"
+                      className="text-sm font-medium text-zubo-text-neutral-700 flex items-center"
+                    >
+                      <Info className="h-4 w-4 mr-1 text-zubo-accent-600" />
                       General Description
                     </Label>
                     <Textarea
                       id="pet-description-2"
                       value={newPet.description}
                       onChange={(e) => handleNewPetChange("description", e.target.value)}
-                      className="border-slate-300 focus:border-blue-500 focus:ring-blue-500 min-h-[150px]"
+                      className="border-zubo-text-neutral-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500 min-h-[150px]"
                       placeholder="General description, personality, and any other information about your pet"
                     />
                   </div>

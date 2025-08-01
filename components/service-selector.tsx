@@ -22,7 +22,7 @@ export function ServiceSelector({ services, selectedServiceId, onSelectService }
           <CardHeader className="pb-2">
             <div className="flex justify-between items-start">
               <CardTitle className="text-lg">{service.name}</CardTitle>
-              <Badge variant="outline" className="text-green-700 border-green-300">
+              <Badge variant="outline" className="text-zubo-accent-700 border-zubo-accent-300">
                 ₹{service.price}
               </Badge>
             </div>

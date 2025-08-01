@@ -158,13 +158,13 @@ export function RecurringOptions({
             }}
             className="flex flex-col sm:flex-row gap-4 sm:gap-6"
           >
-            <div className="flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50">
+            <div className="flex items-center space-x-3 p-3 rounded-lg border border-zubo-text-neutral-200 hover:bg-zubo-text-neutral-50">
               <RadioGroupItem value="week" id="repeat-week" className="h-5 w-5" />
               <Label htmlFor="repeat-week" className="cursor-pointer text-base font-medium">
                 Week
               </Label>
             </div>
-            <div className="flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50">
+            <div className="flex items-center space-x-3 p-3 rounded-lg border border-zubo-text-neutral-200 hover:bg-zubo-text-neutral-50">
               <RadioGroupItem value="month" id="repeat-month" className="h-5 w-5" />
               <Label htmlFor="repeat-month" className="cursor-pointer text-base font-medium">
                 Month
@@ -175,7 +175,7 @@ export function RecurringOptions({
 
         {/* Weekly Options - Mobile Optimized */}
         {repeatType === "week" && (
-          <Card className="border-green-200 bg-green-50">
+          <Card className="border-zubo-accent-200 bg-zubo-accent-50">
             <CardContent className="p-4 sm:p-6">
               <div className="space-y-6">
                 {/* Week Interval - Mobile Friendly */}
@@ -200,7 +200,7 @@ export function RecurringOptions({
                       </SelectItem>
                     </SelectContent>
                   </Select>
-                  <p className="text-sm text-green-700 bg-green-100 p-2 rounded">
+                  <p className="text-sm text-zubo-accent-700 bg-zubo-accent-100 p-2 rounded">
                     {weekInterval === "1" ? "Service every week" : `Service every ${weekInterval} weeks`}
                   </p>
                 </div>
@@ -218,8 +218,8 @@ export function RecurringOptions({
                         className={`h-12 text-base transition-all ${
                           selectedDays.length === preset.days.length &&
                           preset.days.every((day) => selectedDays.includes(day))
-                            ? "bg-green-600 text-white border-green-600 hover:bg-green-700"
-                            : "bg-white text-green-700 border-green-300 hover:bg-green-100"
+                            ? "bg-zubo-accent text-white border-zubo-accent hover:bg-zubo-accent-700"
+                            : "bg-white text-zubo-accent-700 border-zubo-accent-300 hover:bg-zubo-accent-100"
                         }`}
                       >
                         {preset.label}
@@ -239,8 +239,8 @@ export function RecurringOptions({
                         key={day.value}
                         className={`flex items-center justify-between p-4 rounded-lg border-2 transition-all ${
                           selectedDays.includes(day.value)
-                            ? "border-green-500 bg-green-50"
-                            : "border-gray-200 bg-white hover:border-green-300"
+                            ? "border-zubo-accent-500 bg-zubo-accent-50"
+                            : "border-zubo-text-neutral-200 bg-white hover:border-zubo-accent-300"
                         }`}
                       >
                         <Label htmlFor={`day-${day.value}`} className="text-base font-medium cursor-pointer flex-1">
@@ -263,8 +263,8 @@ export function RecurringOptions({
                         key={day.value}
                         className={`flex flex-col items-center space-y-3 p-3 rounded-lg border-2 transition-all ${
                           selectedDays.includes(day.value)
-                            ? "border-green-500 bg-green-50"
-                            : "border-gray-200 bg-white hover:border-green-300"
+                            ? "border-zubo-accent-500 bg-zubo-accent-50"
+                            : "border-zubo-text-neutral-200 bg-white hover:border-zubo-accent-300"
                         }`}
                       >
                         <Label htmlFor={`day-${day.value}`} className="text-sm font-medium text-center cursor-pointer">
@@ -281,7 +281,7 @@ export function RecurringOptions({
                   </div>
 
                   {selectedDays.length > 0 && (
-                    <div className="p-3 bg-green-100 rounded-lg">
+                    <div className="p-3 bg-zubo-accent-100 rounded-lg">
                       <p className="text-sm text-green-800 font-medium">
                         Selected days:{" "}
                         {selectedDays.map((day) => daysOfWeek.find((d) => d.value === day)?.fullLabel).join(", ")}
@@ -296,7 +296,7 @@ export function RecurringOptions({
 
         {/* Monthly Options - Mobile Optimized */}
         {repeatType === "month" && (
-          <Card className="border-purple-200 bg-purple-50">
+          <Card className="border-zubo-highlight-1-200 bg-zubo-highlight-1-50">
             <CardContent className="p-4 sm:p-6">
               <div className="space-y-4">
                 {/* Mobile: Stack vertically, Desktop: Grid */}
@@ -347,8 +347,8 @@ export function RecurringOptions({
                     </Select>
                   </div>
                 </div>
-                <div className="p-3 bg-purple-100 rounded-lg">
-                  <p className="text-sm text-purple-700">
+                <div className="p-3 bg-zubo-highlight-1-100 rounded-lg">
+                  <p className="text-sm text-zubo-highlight-1-700">
                     <strong>Example:</strong> "Every 1 month on the 2nd Saturday" means the service will occur on the
                     second Saturday of every month
                   </p>
@@ -360,12 +360,12 @@ export function RecurringOptions({
       </div>
 
       {selectedPattern && (
-        <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+        <div className="p-4 bg-blue-50 rounded-lg border border-zubo-primary-200">
           <div className="flex items-center gap-2 mb-3">
-            <Repeat className="h-5 w-5 text-blue-600" />
-            <span className="font-medium text-blue-900 text-base">Recurring Schedule</span>
+            <Repeat className="h-5 w-5 text-zubo-primary-600" />
+            <span className="font-medium text-zubo-primary-900 text-base">Recurring Schedule</span>
           </div>
-          <p className="text-sm sm:text-base text-blue-700 leading-relaxed">
+          <p className="text-sm sm:text-base text-zubo-primary-700 leading-relaxed">
             Your pet will receive care: <strong>{getPatternDescription()}</strong>
             {endDate && ` until ${endDate.toLocaleDateString()}`}
           </p>
