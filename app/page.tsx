@@ -1,356 +1,338 @@
-"use client"
-
-import { useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { useAuth } from "@/contexts/auth-context"
-
-import Link from "next/link"
 import Image from "next/image"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardTitle } from "@/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import ContactForm from "@/components/contact-form"
-import * as LucideIcons from "lucide-react"
-import type { CompanyInfo, ServiceItem, Founder, SocialMedia } from "@/types/api"
-import { useToast } from "@/hooks/use-toast"
-import { Toaster } from "@/components/ui/toaster"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Heart, Shield, Clock, Star, Users, MapPin, Phone, Mail } from "lucide-react"
 
 export default function HomePage() {
-  const router = useRouter()
-  const { user, loading } = useAuth()
-  const { toast } = useToast()
-
-  useEffect(() => {
-    if (!loading) {
-      if (user?.isAuthenticated) {
-        // Redirect authenticated users to landing page
-        router.replace("/landing")
-      } else {
-        // Redirect unauthenticated users to onboarding
-        // router.replace("/onboarding")
-      }
-    }
-  }, [user, loading, router])
-
-  const currentCompany: CompanyInfo = {
-    id: "default-id",
-    companyName: "ZuboPets",
-    tagline: "Your Pet's Best Friend, Always.",
-    description:
-      "At ZuboPets, we connect loving pet owners with trusted and experienced pet sitters. Our mission is to provide peace of mind by ensuring your furry, feathered, or scaled family members receive the best care possible in the comfort of their own home or with a dedicated sitter.",
-    mission: "To provide exceptional, compassionate, and reliable pet care services.",
-    contactEmail: "support@zubopets.com",
-    contactPhone: "+1 (555) 123-4567",
-    address: "123 Pet Lovers Lane, Animal City, PA 12345",
-    operatingHours: "Mon-Fri: 9 AM - 6 PM, Sat: 10 AM - 4 PM",
-    services: [
-      { name: "Dog Walking", description: "Daily walks to keep your dog happy and healthy.", icon: "Dog" },
-      { name: "Pet Sitting", description: "Overnight stays or daily visits for all types of pets.", icon: "Home" },
-      { name: "Grooming", description: "Professional grooming services for a fresh look.", icon: "Scissors" },
-      { name: "Training", description: "Basic obedience and behavior training.", icon: "Book" },
-    ] as ServiceItem[],
-    founders: [
-      {
-        name: "Jane Doe",
-        bio: "Jane is a lifelong animal enthusiast with over 15 years of experience in pet care and animal welfare. She founded ZuboPets to create a reliable and compassionate community for pets and their owners.",
-        imageUrl: "/placeholder.svg?height=100&width=100",
-      },
-      {
-        name: "John Smith",
-        bio: "John brings a strong background in technology and operations, ensuring ZuboPets runs smoothly and efficiently. His passion for pets drives his commitment to innovative solutions.",
-        imageUrl: "/placeholder.svg?height=100&width=100",
-      },
-    ] as Founder[],
-    socialMedia: {
-      facebook: "https://facebook.com/ZuboPets",
-      twitter: "https://twitter.com/ZuboPets",
-      instagram: "https://instagram.com/ZuboPets",
-      linkedin: "https://linkedin.com/company/ZuboPets",
-      youtube: "https://youtube.com/ZuboPets",
-      tiktok: "https://tiktok.com/@ZuboPets",
-    } as SocialMedia,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  }
-
-  const founders = currentCompany.founders || []
-  const socialMedia = currentCompany.socialMedia || {}
-
-  const socialMediaPlatforms = [
-    { name: "Facebook", icon: LucideIcons.Facebook, url: socialMedia.facebook },
-    { name: "Twitter", icon: LucideIcons.Twitter, url: socialMedia.twitter },
-    { name: "Instagram", icon: LucideIcons.Instagram, url: socialMedia.instagram },
-    { name: "LinkedIn", icon: LucideIcons.Linkedin, url: socialMedia.linkedin },
-    { name: "YouTube", icon: LucideIcons.Youtube, url: socialMedia.youtube },
-  ].filter((platform) => platform.url)
-
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      <Toaster />
-
-      <main className="flex-1">
-        {/* Hero Section */}
-        <section
-          className="relative w-full h-[60vh] md:h-[70vh] lg:h-[80vh] flex items-center justify-center text-center bg-cover bg-center"
-          style={{
-            backgroundImage: `url(/placeholder.svg?height=1080&width=1920&query=happy-golden-retriever-and-calico-cat-playing-in-a-sunny-field)`,
-          }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-800/60 to-purple-800/60"></div>
-          <div className="container px-4 md:px-6 text-center relative z-10">
-            <div className="flex flex-col items-center justify-center space-y-6">
-              {/* Logo Only - No Text */}
-              <div className="flex items-center justify-center mb-4">
-                <img
-                  src="/logo/zubo-logo.svg"
-                  alt="ZuboPets Logo"
-                  className="h-24 w-auto md:h-32 lg:h-40 drop-shadow-2xl"
-                />
-              </div>
-
-              <p className="text-2xl md:text-3xl lg:text-4xl font-semibold text-white/90 drop-shadow-md">
-                {currentCompany.tagline}
-              </p>
-              <p className="max-w-[700px] text-lg text-gray-200 md:text-xl drop-shadow">{currentCompany.description}</p>
-              <div className="space-x-4 pt-4">
-                <Button
-                  asChild
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 text-lg rounded-full shadow-lg transition-transform transform hover:scale-105 font-semibold"
-                >
-                  <Link href="/book-service">Book Now</Link>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      {/* Navigation */}
+      <nav className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center space-x-3">
+              <Image src="/logo/zubo-logo.svg" alt="ZuboPets" width={120} height={40} className="h-8 w-auto" priority />
+            </div>
+            <div className="hidden md:flex items-center space-x-8">
+              <Link href="#services" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
+                Services
+              </Link>
+              <Link href="#about" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
+                About
+              </Link>
+              <Link href="#contact" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
+                Contact
+              </Link>
+              <Link href="/login">
+                <Button variant="outline" className="border-blue-200 text-blue-600 hover:bg-blue-50 bg-transparent">
+                  Sign In
                 </Button>
-                <Button
-                  asChild
-                  variant="outline"
-                  className="border-white text-white hover:bg-white hover:text-blue-600 px-8 py-3 text-lg rounded-full shadow-lg transition-transform transform hover:scale-105 bg-transparent font-semibold"
-                >
-                  <Link href="/login">Login</Link>
-                </Button>
-              </div>
+              </Link>
+              <Link href="/login">
+                <Button className="bg-blue-600 hover:bg-blue-700 text-white">Get Started</Button>
+              </Link>
             </div>
           </div>
-        </section>
+        </div>
+      </nav>
 
-        {/* Services Section */}
-        <section id="services" className="w-full py-12 md:py-24 lg:py-32 bg-white">
-          <div className="container px-4 md:px-6">
-            <div className="flex flex-col items-center justify-center space-y-4 text-center">
-              <div className="space-y-2">
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-gray-800">Our Services</h2>
-                <p className="max-w-[900px] text-gray-600 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  We offer a range of services tailored to your pet's needs, ensuring they receive the best care.
-                </p>
-              </div>
-            </div>
-            <div className="mx-auto grid max-w-5xl items-start gap-8 py-12 sm:grid-cols-2 lg:grid-cols-4">
-              {(currentCompany.services as ServiceItem[]).map((service, index) => {
-                const IconComponent = LucideIcons[service.icon as keyof typeof LucideIcons] || LucideIcons.PawPrint
-                return (
-                  <Card
-                    key={index}
-                    className="flex flex-col items-center text-center p-6 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
-                  >
-                    <IconComponent className="h-12 w-12 text-blue-600 mb-4" />
-                    <CardTitle className="text-xl font-semibold mb-2">{service.name}</CardTitle>
-                    <CardContent className="text-gray-600 text-sm">{service.description}</CardContent>
-                  </Card>
-                )
-              })}
-            </div>
-          </div>
-        </section>
-
-        {/* About Us Section */}
-        <section id="about" className="w-full py-12 md:py-24 lg:py-32 bg-gray-100">
-          <div className="container px-4 md:px-6">
-            <div className="grid gap-10 lg:grid-cols-2 lg:gap-16 items-center">
-              <div className="space-y-4">
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-gray-800">
-                  About {currentCompany.companyName}
-                </h2>
-                <p className="text-gray-600 md:text-xl/relaxed">{currentCompany.description}</p>
-                {currentCompany.mission && (
-                  <p className="text-gray-600 md:text-xl/relaxed">
-                    <span className="font-semibold">Our Mission:</span> {currentCompany.mission}
-                  </p>
-                )}
-                <div className="flex flex-col gap-2 min-[400px]:flex-row">
-                  <Button className="font-semibold">Learn More</Button>
-                </div>
-              </div>
+      {/* Hero Section */}
+      <section className="relative py-20 lg:py-32 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10"></div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <div className="mb-8 flex justify-center">
               <Image
-                src="/placeholder.svg?height=400&width=600"
-                width={600}
-                height={400}
-                alt="About Us"
-                className="mx-auto aspect-video overflow-hidden rounded-xl object-cover object-center sm:w-full lg:order-last shadow-lg"
+                src="/logo/zubo-logo.svg"
+                alt="ZuboPets"
+                width={280}
+                height={120}
+                className="h-24 sm:h-28 md:h-32 lg:h-40 w-auto drop-shadow-lg"
+                priority
               />
             </div>
-          </div>
-        </section>
-
-        {/* Founder Section */}
-        {founders.length > 0 && (
-          <section className="w-full py-12 md:py-24 lg:py-32 bg-white">
-            <div className="container px-4 md:px-6 text-center">
-              <div className="space-y-4">
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-gray-800">
-                  Meet Our Founders
-                </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mt-8">
-                  {founders.map((founder, index) => (
-                    <div key={index} className="flex flex-col items-center space-y-4">
-                      <Avatar className="h-24 w-24">
-                        <AvatarImage
-                          src={founder.imageUrl || "/placeholder.svg?height=100&width=100&query=person-avatar"}
-                          alt={founder.name}
-                        />
-                        <AvatarFallback className="text-lg font-semibold">
-                          {founder.name
-                            .split(" ")
-                            .map((n) => n[0])
-                            .join("")}
-                        </AvatarFallback>
-                      </Avatar>
-                      <h3 className="text-2xl font-bold text-gray-800">{founder.name}</h3>
-                      <p className="max-w-[700px] text-gray-600 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                        {founder.bio}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* Social Media Presence Section */}
-        {socialMediaPlatforms.length > 0 && (
-          <section className="w-full py-12 md:py-24 lg:py-32 bg-gradient-to-r from-purple-100 to-blue-100">
-            <div className="container px-4 md:px-6 text-center">
-              <div className="space-y-4">
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-gray-800">
-                  Join Our Community!
-                </h2>
-                <p className="max-w-[800px] mx-auto text-gray-700 md:text-xl/relaxed">
-                  Connect with us on social media for daily dose of adorable pets, helpful tips, and exclusive updates.
-                  We love sharing our passion for pets with you!
-                </p>
-                <div className="flex flex-wrap justify-center gap-6 py-8">
-                  {socialMediaPlatforms.map((platform, index) => {
-                    const IconComponent = platform.icon
-                    return (
-                      <Link
-                        key={index}
-                        href={platform.url!}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex flex-col items-center space-y-2 p-4 bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 group"
-                      >
-                        <IconComponent className="h-10 w-10 text-gray-600 group-hover:text-blue-600 transition-colors" />
-                        <span className="text-lg font-medium text-gray-700 group-hover:text-blue-700 transition-colors">
-                          {platform.name}
-                        </span>
-                      </Link>
-                    )
-                  })}
-                </div>
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* Contact Us Section */}
-        <section id="contact" className="w-full py-12 md:py-24 lg:py-32 bg-white">
-          <div className="container px-4 md:px-6">
-            <div className="flex flex-col items-center justify-center space-y-4 text-center mb-8">
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-gray-800">Contact Us</h2>
-              <p className="max-w-[900px] text-gray-600 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                Have questions or need assistance? Reach out to us!
-              </p>
-            </div>
-            <div className="grid gap-8 lg:grid-cols-2">
-              <div className="space-y-6">
-                <div className="flex items-center space-x-4">
-                  <LucideIcons.Mail className="h-8 w-8 text-blue-600" />
-                  <div>
-                    <h3 className="font-semibold text-lg text-gray-800">Email Us</h3>
-                    <p className="text-gray-600">{currentCompany.contactEmail}</p>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-4">
-                  <LucideIcons.Phone className="h-8 w-8 text-blue-600" />
-                  <div>
-                    <h3 className="font-semibold text-lg text-gray-800">Call Us</h3>
-                    <p className="text-gray-600">{currentCompany.contactPhone}</p>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-4">
-                  <LucideIcons.MapPin className="h-8 w-8 text-blue-600" />
-                  <div>
-                    <h3 className="font-semibold text-lg text-gray-800">Visit Us</h3>
-                    <p className="text-gray-600">{currentCompany.address}</p>
-                  </div>
-                </div>
-                {currentCompany.operatingHours && (
-                  <div className="flex items-center space-x-4">
-                    <LucideIcons.Clock className="h-8 w-8 text-blue-600" />
-                    <div>
-                      <h3 className="font-semibold text-lg text-gray-800">Operating Hours</h3>
-                      <p className="text-gray-600">{currentCompany.operatingHours}</p>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <div className="bg-gray-50 p-6 rounded-lg shadow-md">
-                <h3 className="font-semibold text-xl mb-4 text-gray-800">Send us a message</h3>
-                <ContactForm
-                  onSuccess={() => {
-                    toast({
-                      title: "Message Sent!",
-                      description: "We'll get back to you shortly.",
-                      variant: "default",
-                    })
-                  }}
-                  onError={(err) =>
-                    toast({
-                      title: "Failed to send message",
-                      description: err.message || "Please try again later.",
-                      variant: "destructive",
-                    })
-                  }
-                />
-              </div>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+              Your Pet's Best Friend,{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">Always</span>
+            </h1>
+            <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
+              Connect with trusted, verified pet sitters and caretakers in your area. Professional pet care services
+              that give you peace of mind and your pets the love they deserve.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <Link href="/login">
+                <Button
+                  size="lg"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all"
+                >
+                  Find Pet Care
+                </Button>
+              </Link>
+              <Link href="/sitter">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="border-blue-200 text-blue-600 hover:bg-blue-50 px-8 py-3 text-lg font-semibold bg-transparent"
+                >
+                  Become a Sitter
+                </Button>
+              </Link>
             </div>
           </div>
-        </section>
-      </main>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Why Choose ZuboPets?</h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              We're committed to providing the highest quality pet care services with complete transparency and trust.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-gradient-to-br from-blue-50 to-white">
+              <CardHeader>
+                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                  <Shield className="h-6 w-6 text-blue-600" />
+                </div>
+                <CardTitle className="text-xl font-semibold">Verified Sitters</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className="text-gray-600 leading-relaxed">
+                  All our pet sitters undergo thorough background checks and verification processes to ensure your pet's
+                  safety.
+                </CardDescription>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-gradient-to-br from-purple-50 to-white">
+              <CardHeader>
+                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
+                  <Clock className="h-6 w-6 text-purple-600" />
+                </div>
+                <CardTitle className="text-xl font-semibold">24/7 Support</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className="text-gray-600 leading-relaxed">
+                  Round-the-clock customer support and emergency assistance whenever you need help with your bookings.
+                </CardDescription>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-gradient-to-br from-green-50 to-white">
+              <CardHeader>
+                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
+                  <Heart className="h-6 w-6 text-green-600" />
+                </div>
+                <CardTitle className="text-xl font-semibold">Loving Care</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className="text-gray-600 leading-relaxed">
+                  Our sitters are passionate pet lovers who treat your furry friends like their own family members.
+                </CardDescription>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Services Section */}
+      <section id="services" className="py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Our Services</h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Comprehensive pet care services tailored to meet your pet's unique needs and your busy schedule.
+            </p>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <Card className="text-center hover:shadow-lg transition-shadow bg-white border-0">
+              <CardHeader>
+                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Users className="h-8 w-8 text-blue-600" />
+                </div>
+                <CardTitle className="text-lg font-semibold">Pet Sitting</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className="text-gray-600">
+                  In-home pet sitting services to keep your pets comfortable in their familiar environment.
+                </CardDescription>
+              </CardContent>
+            </Card>
+
+            <Card className="text-center hover:shadow-lg transition-shadow bg-white border-0">
+              <CardHeader>
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <MapPin className="h-8 w-8 text-green-600" />
+                </div>
+                <CardTitle className="text-lg font-semibold">Dog Walking</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className="text-gray-600">
+                  Regular dog walking services to keep your furry friend healthy, happy, and well-exercised.
+                </CardDescription>
+              </CardContent>
+            </Card>
+
+            <Card className="text-center hover:shadow-lg transition-shadow bg-white border-0">
+              <CardHeader>
+                <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Heart className="h-8 w-8 text-purple-600" />
+                </div>
+                <CardTitle className="text-lg font-semibold">Pet Boarding</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className="text-gray-600">
+                  Safe and comfortable boarding services in verified sitter homes for extended care periods.
+                </CardDescription>
+              </CardContent>
+            </Card>
+
+            <Card className="text-center hover:shadow-lg transition-shadow bg-white border-0">
+              <CardHeader>
+                <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Star className="h-8 w-8 text-orange-600" />
+                </div>
+                <CardTitle className="text-lg font-semibold">Special Care</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className="text-gray-600">
+                  Specialized care for senior pets, puppies, or pets with special medical or behavioral needs.
+                </CardDescription>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Section */}
+      <section className="py-20 bg-blue-600">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-4 gap-8 text-center text-white">
+            <div>
+              <div className="text-4xl font-bold mb-2">10,000+</div>
+              <div className="text-blue-100">Happy Pets</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold mb-2">500+</div>
+              <div className="text-blue-100">Verified Sitters</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold mb-2">50+</div>
+              <div className="text-blue-100">Cities Covered</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold mb-2">4.9★</div>
+              <div className="text-blue-100">Average Rating</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600">
+        <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl lg:text-4xl font-bold text-white mb-6">Ready to Give Your Pet the Best Care?</h2>
+          <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+            Join thousands of pet parents who trust ZuboPets for their pet care needs. Get started today and find the
+            perfect sitter for your furry friend.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="/login">
+              <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-3 text-lg font-semibold">
+                Book Pet Care Now
+              </Button>
+            </Link>
+            <Link href="/sitter">
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-white text-white hover:bg-white hover:text-blue-600 px-8 py-3 text-lg font-semibold bg-transparent"
+              >
+                Become a Sitter
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
 
       {/* Footer */}
-      <footer className="w-full py-8 bg-gray-800 text-white text-center">
-        <div className="container px-4 md:px-6 flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
-          <div className="flex items-center justify-center">
-            <img src="/logo/zubo-logo.svg" alt="ZuboPets Logo" className="h-8 w-auto brightness-0 invert" />
+      <footer className="bg-gray-900 text-white py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-4 gap-8">
+            <div className="md:col-span-2">
+              <div className="mb-6">
+                <Image
+                  src="/logo/zubo-logo.svg"
+                  alt="ZuboPets"
+                  width={160}
+                  height={60}
+                  className="h-12 w-auto brightness-0 invert"
+                />
+              </div>
+              <p className="text-gray-400 mb-6 max-w-md leading-relaxed">
+                Your trusted partner in pet care. Connecting loving pet owners with verified, professional pet sitters
+                for peace of mind and exceptional care.
+              </p>
+              <div className="flex space-x-4">
+                <Badge variant="secondary" className="bg-gray-800 text-gray-300">
+                  Trusted by 10,000+ pet parents
+                </Badge>
+              </div>
+            </div>
+
+            <div>
+              <h3 className="font-semibold text-lg mb-4">Quick Links</h3>
+              <ul className="space-y-3 text-gray-400">
+                <li>
+                  <Link href="/login" className="hover:text-white transition-colors">
+                    Find Pet Care
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/sitter" className="hover:text-white transition-colors">
+                    Become a Sitter
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#services" className="hover:text-white transition-colors">
+                    Our Services
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#about" className="hover:text-white transition-colors">
+                    About Us
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="font-semibold text-lg mb-4">Contact Info</h3>
+              <ul className="space-y-3 text-gray-400">
+                <li className="flex items-center space-x-2">
+                  <Phone className="h-4 w-4" />
+                  <span>+1 (555) 123-4567</span>
+                </li>
+                <li className="flex items-center space-x-2">
+                  <Mail className="h-4 w-4" />
+                  <span>support@zubopets.com</span>
+                </li>
+                <li className="flex items-center space-x-2">
+                  <MapPin className="h-4 w-4" />
+                  <span>Available in 50+ cities</span>
+                </li>
+              </ul>
+            </div>
           </div>
-          <nav className="flex gap-6 text-sm">
-            <Link href="#services" className="hover:text-blue-400 transition-colors font-medium">
-              Services
-            </Link>
-            <Link href="#about" className="hover:text-blue-400 transition-colors font-medium">
-              About Us
-            </Link>
-            <Link href="#contact" className="hover:text-blue-400 transition-colors font-medium">
-              Contact
-            </Link>
-            <Link href="/privacy-policy" className="hover:text-blue-400 transition-colors font-medium">
-              Privacy Policy
-            </Link>
-            <Link href="/terms-of-service" className="hover:text-blue-400 transition-colors font-medium">
-              Terms of Service
-            </Link>
-          </nav>
-          <p className="text-sm text-gray-400">&copy; {new Date().getFullYear()} ZuboPets. All rights reserved.</p>
+
+          <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
+            <p>&copy; 2024 ZuboPets. All rights reserved. Made with ❤️ for pet lovers everywhere.</p>
+          </div>
         </div>
       </footer>
     </div>

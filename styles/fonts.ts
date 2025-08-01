@@ -1,6 +1,5 @@
 import localFont from "next/font/local"
 
-// Define Manrope font with multiple weights
 export const manrope = localFont({
   src: [
     {
@@ -41,5 +40,4 @@ export const manrope = localFont({
   ],
   variable: "--font-manrope",
   display: "swap",
-  preload: true,
 })
