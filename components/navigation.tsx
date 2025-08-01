@@ -1,140 +1,237 @@
 "use client"
 
-import { useState } from "react"
 import Link from "next/link"
-import Image from "next/image"
-import { Button } from "@/components/ui/button"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Menu, X, Home, Calendar, MessageCircle, User, Heart, Settings } from "lucide-react"
-import { useAuth } from "@/contexts/auth-context"
 import { usePathname } from "next/navigation"
+import { useState } from "react"
+import { Home, Calendar, PlusCircle, User, HeadphonesIcon, LogOut, ChevronDown } from "lucide-react"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { useAuth } from "@/contexts/auth-context"
+
+const navItems = [
+  { href: "/landing", label: "Home", icon: Home },
+  { href: "/book-service", label: "Book", icon: PlusCircle },
+  { href: "/my-bookings", label: "Bookings", icon: Calendar },
+  { href: "/support", label: "Support", icon: HeadphonesIcon },
+]
 
 export default function Navigation() {
-  const [isOpen, setIsOpen] = useState(false)
-  const { user, sitter, logout } = useAuth()
   const pathname = usePathname()
+  const { user, logout } = useAuth()
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
 
-  const isAuthenticated = user || sitter
-  const isSitterRoute = pathname?.startsWith("/sitter")
+  // Only hide navigation on login or onboarding pages
+  if (pathname === "/login" || pathname === "/onboarding") {
+    return null
+  }
 
-  const userNavItems = [
-    { href: "/landing", label: "Home", icon: Home },
-    { href: "/book-service", label: "Book Service", icon: Calendar },
-    { href: "/my-bookings", label: "My Bookings", icon: Calendar },
-    { href: "/profile", label: "Profile", icon: User },
-  ]
+  const handleLogout = () => {
+    console.log("🚪 Logout clicked")
+    logout()
+  }
 
-  const sitterNavItems = [
-    { href: "/sitter", label: "Dashboardss", icon: Home },
-    { href: "/sitter/bookings", label: "Bookings", icon: Calendar },
-    { href: "/sitter/wallet", label: "Wallet", icon: Heart },
-    { href: "/sitter/profile", label: "Profile", icon: Settings },
-  ]
+  const getUserInitials = () => {
+    if (user?.name) {
+      return user.name
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2)
+    }
+    if (user?.phone) {
+      return user.phone.slice(-2)
+    }
+    return "U"
+  }
 
-  const navItems = isSitterRoute ? sitterNavItems : userNavItems
+  const toggleDropdown = () => {
+    console.log("🔄 Toggling dropdown:", !isDropdownOpen)
+    setIsDropdownOpen(!isDropdownOpen)
+  }
 
-  if (!isAuthenticated) {
-    return (
-      <nav className="bg-white/95 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href="/" className="flex items-center">
-              <Image src="/logo/zubo-logo.svg" alt="ZuboPets" width={120} height={40} className="h-8 w-auto" priority />
-            </Link>
-            <div className="hidden md:flex items-center space-x-6">
-              <Link href="/login">
-                <Button variant="ghost" className="text-gray-700 hover:text-blue-600">
-                  Sign In
-                </Button>
-              </Link>
-              <Link href="/login">
-                <Button className="bg-blue-600 hover:bg-blue-700 text-white">Get Started</Button>
-              </Link>
-            </div>
-            <div className="md:hidden">
-              <Sheet open={isOpen} onOpenChange={setIsOpen}>
-                <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    <Menu className="h-6 w-6" />
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="right" className="w-80">
-                  <div className="flex flex-col space-y-4 mt-8">
-                    <Link href="/login" onClick={() => setIsOpen(false)}>
-                      <Button variant="ghost" className="w-full justify-start">
-                        Sign In
-                      </Button>
-                    </Link>
-                    <Link href="/login" onClick={() => setIsOpen(false)}>
-                      <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">Get Started</Button>
-                    </Link>
-                  </div>
-                </SheetContent>
-              </Sheet>
-            </div>
-          </div>
-        </div>
-      </nav>
-    )
+  const closeDropdown = () => {
+    setIsDropdownOpen(false)
   }
 
   return (
     <>
-      {/* Desktop Navigation */}
-      <nav className="hidden md:block bg-white border-b border-gray-200 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href={isSitterRoute ? "/sitter" : "/home"} className="flex items-center">
-              <Image src="/logo/zubo-logo.svg" alt="ZuboPets" width={120} height={40} className="h-8 w-auto" priority />
-            </Link>
-            <div className="flex items-center space-x-6">
-              {navItems.map((item) => (
+      {/* Top navigation for desktop */}
+      <header className="hidden md:block border-b bg-white shadow-sm sticky top-0 z-40">
+        <div className="container flex h-16 items-center px-4">
+          <Link href="/landing" className="mr-4 flex items-center hover:opacity-80 transition-opacity">
+            <img src="/logo/zubo-logo.svg" alt="ZuboPets Logo" className="h-12 w-auto" />
+          </Link>
+
+          {/* Main Navigation - 4 items */}
+          <nav className="flex items-center space-x-6 flex-1">
+            {navItems.map((item) => {
+              const Icon = item.icon
+              const isActive = pathname === item.href
+
+              return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${pathname === item.href
-                    ? "bg-blue-100 text-blue-700"
-                    : "text-gray-700 hover:text-blue-600 hover:bg-gray-100"
-                    }`}
+                  className={`flex items-center px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                    isActive
+                      ? "text-blue-600 bg-blue-100 font-semibold"
+                      : "text-gray-600 hover:text-blue-600 hover:bg-blue-50 font-medium"
+                  }`}
                 >
-                  <item.icon className="h-4 w-4" />
-                  <span>{item.label}</span>
+                  <Icon className="mr-2 h-4 w-4" />
+                  {item.label}
                 </Link>
-              ))}
-              <Button onClick={logout} variant="ghost" className="text-gray-700 hover:text-red-600">
-                Logout
-              </Button>
-            </div>
-          </div>
-        </div>
-      </nav>
+              )
+            })}
+          </nav>
 
-      {/* Mobile Bottom Navigation */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
-        <div className="grid grid-cols-5 gap-1 p-2">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`flex flex-col items-center justify-center p-2 rounded-lg transition-colors ${pathname === item.href
-                ? "bg-blue-100 text-blue-700"
-                : "text-gray-600 hover:text-blue-600 hover:bg-gray-100"
-                }`}
-            >
-              <item.icon className="h-5 w-5 mb-1" />
-              <span className="text-xs font-medium">{item.label}</span>
-            </Link>
-          ))}
-          <Button
-            onClick={logout}
-            variant="ghost"
-            className="flex flex-col items-center justify-center p-2 rounded-lg text-gray-600 hover:text-red-600 hover:bg-gray-100"
-          >
-            <X className="h-5 w-5 mb-1" />
-            <span className="text-xs font-medium">Logout</span>
-          </Button>
+          {/* Profile Section */}
+          {user && (
+            <div className="flex items-center space-x-4">
+              <span className="text-sm text-gray-600 hidden lg:block">
+                Welcome, {user.name || user.phone?.replace("+", "")}!
+              </span>
+
+              {/* Custom Profile Dropdown */}
+              <div className="relative">
+                <button
+                  onClick={toggleDropdown}
+                  className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                >
+                  <Avatar className="h-8 w-8">
+                    <AvatarFallback className="bg-blue-100 text-blue-600 font-medium text-sm">
+                      {getUserInitials()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <ChevronDown
+                    className={`h-4 w-4 text-gray-500 transition-transform ${isDropdownOpen ? "rotate-180" : ""}`}
+                  />
+                </button>
+
+                {/* Dropdown Menu */}
+                {isDropdownOpen && (
+                  <>
+                    {/* Backdrop */}
+                    <div className="fixed inset-0 z-10" onClick={closeDropdown} />
+
+                    {/* Dropdown Content */}
+                    <div className="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-20">
+                      {/* User Info */}
+                      <div className="px-4 py-3 border-b border-gray-100">
+                        <p className="font-medium text-gray-900">{user.name || "User"}</p>
+                        <p className="text-sm text-gray-500">{user.phone}</p>
+                      </div>
+
+                      {/* Menu Items */}
+                      <div className="py-1">
+                        <Link
+                          href="/profile"
+                          onClick={closeDropdown}
+                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                        >
+                          <User className="mr-3 h-4 w-4" />
+                          Profile
+                        </Link>
+                        <hr className="my-1 border-gray-200" />
+                        <button
+                          onClick={() => {
+                            closeDropdown()
+                            handleLogout()
+                          }}
+                          className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                        >
+                          <LogOut className="mr-3 h-4 w-4" />
+                          Logout
+                        </button>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          )}
         </div>
-      </div>
+      </header>
+
+      {/* Bottom navigation for mobile */}
+      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-2 z-50 md:hidden">
+        <div className="flex justify-around items-center max-w-md mx-auto">
+          {navItems.map((item) => {
+            const Icon = item.icon
+            const isActive = pathname === item.href
+
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex flex-col items-center py-2 px-3 rounded-lg transition-colors ${
+                  isActive ? "text-blue-600 bg-blue-50" : "text-gray-600 hover:text-blue-600"
+                }`}
+              >
+                <Icon className="h-5 w-5 mb-1" />
+                <span className="text-xs font-medium">{item.label}</span>
+              </Link>
+            )
+          })}
+
+          {/* Mobile Profile Button */}
+          <button
+            onClick={toggleDropdown}
+            className={`flex flex-col items-center py-2 px-3 rounded-lg transition-colors ${
+              isDropdownOpen ? "text-blue-600 bg-blue-50" : "text-gray-600 hover:text-blue-600"
+            }`}
+          >
+            <div className="relative">
+              <Avatar className="h-5 w-5">
+                <AvatarFallback className="bg-blue-100 text-blue-600 font-medium text-xs">
+                  {getUserInitials()}
+                </AvatarFallback>
+              </Avatar>
+            </div>
+            <span className="text-xs font-medium mt-1">Profile</span>
+          </button>
+        </div>
+
+        {/* Mobile Dropdown */}
+        {isDropdownOpen && (
+          <>
+            {/* Backdrop */}
+            <div className="fixed inset-0 z-10" onClick={closeDropdown} />
+
+            {/* Mobile Dropdown Content */}
+            <div className="absolute bottom-16 right-4 w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-20">
+              {/* User Info */}
+              <div className="px-4 py-3 border-b border-gray-100">
+                <p className="font-medium text-gray-900">{user?.name || "User"}</p>
+                <p className="text-sm text-gray-500">{user?.phone}</p>
+              </div>
+
+              {/* Menu Items */}
+              <div className="py-1">
+                <Link
+                  href="/profile"
+                  onClick={closeDropdown}
+                  className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                >
+                  <User className="mr-3 h-4 w-4" />
+                  Profile
+                </Link>
+                <hr className="my-1 border-gray-200" />
+                <button
+                  onClick={() => {
+                    closeDropdown()
+                    handleLogout()
+                  }}
+                  className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                >
+                  <LogOut className="mr-3 h-4 w-4" />
+                  Logout
+                </button>
+              </div>
+            </div>
+          </>
+        )}
+      </nav>
     </>
   )
 }
