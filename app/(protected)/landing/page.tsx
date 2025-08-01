@@ -113,10 +113,10 @@ export default function LandingPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-zubo-background-200 via-zubo-background-50 to-zubo-background-200">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-lg font-medium text-gray-700">Loading PetCare...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-zubo-primary-500 mx-auto mb-4"></div>
+          <p className="text-lg font-medium text-zubo-text-700">Loading PetCare...</p>
         </div>
       </div>
     )
@@ -168,16 +168,16 @@ export default function LandingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 pb-20 md:pb-8 overflow-x-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-zubo-background-200 via-zubo-background-50 to-zubo-background-200 pb-20 md:pb-8 overflow-x-hidden">
       {/* Hero Section */}
       <div className="relative">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-zubo-primary-50 to-zubo-highlight-1-50"></div>
         <div className="relative container mx-auto px-4 py-6 md:py-12 max-w-7xl overflow-hidden">
           <div className="text-center max-w-4xl mx-auto">
             <div className="flex justify-center mb-6">
               <div className="relative">
-                <div className="absolute inset-0 bg-blue-600 rounded-full blur-xl opacity-20 animate-pulse"></div>
-                <div className="relative bg-white rounded-full p-4 shadow-lg">
+                <div className="absolute inset-0 bg-zubo-primary-500 rounded-full blur-xl opacity-20 animate-pulse"></div>
+                <div className="relative bg-zubo-background-50 rounded-full p-4 shadow-lg">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="48"
@@ -188,7 +188,7 @@ export default function LandingPage() {
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    className="h-12 w-12 text-blue-600"
+                    className="h-12 w-12 text-zubo-primary-500"
                   >
                     <path d="M10 5.172C10 3.782 8.423 2.679 6.5 3c-2.823.47-4.113 6.006-4 7 .08.703 1.725 1.722 3.656 1 1.261-.472 1.96-1.45 2.344-2.5" />
                     <path d="M14.267 5.172c0-1.39 1.577-2.493 3.5-2.172 2.823.47 4.113 6.006 4 7-.08.703-1.725 1.722-3.656 1-1.261-.472-1.855-1.45-2.239-2.5" />
@@ -201,8 +201,8 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 text-blue-600">Welcome to PetCare! 🐾</h1>
-            <p className="text-xl md:text-2xl text-gray-600 mb-8 leading-relaxed">
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 text-zubo-primary-500">Welcome to PetCare! 🐾</h1>
+            <p className="text-xl md:text-2xl text-zubo-text-600 mb-8 leading-relaxed">
               Your trusted companion for premium pet care services.
               <br className="hidden md:block" />
               Professional, reliable, and loving care for your furry friends.
@@ -212,7 +212,7 @@ export default function LandingPage() {
               <Link href="/book-service">
                 <Button
                   size="lg"
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                  className="bg-gradient-to-r from-zubo-primary-500 to-zubo-highlight-1-500 hover:from-zubo-primary-600 hover:to-zubo-highlight-1-600 text-white px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                 >
                   Book a Service
                   <ArrowRight className="ml-2 h-5 w-5" />
@@ -222,7 +222,7 @@ export default function LandingPage() {
                 <Button
                   variant="outline"
                   size="lg"
-                  className="border-2 border-blue-600 text-blue-600 hover:bg-blue-50 px-8 py-4 text-lg font-semibold transition-all duration-300"
+                  className="border-2 border-zubo-primary-500 text-zubo-primary-500 hover:bg-zubo-primary-50 px-8 py-4 text-lg font-semibold transition-all duration-300 bg-transparent"
                 >
                   View My Bookings
                 </Button>
@@ -235,76 +235,78 @@ export default function LandingPage() {
       <div className="container mx-auto px-4 max-w-7xl">
         {/* Upcoming Booking Section */}
         {bookingsLoading ? (
-          <Card className="mb-8 border-0 shadow-xl bg-gradient-to-r from-blue-50 to-purple-50">
+          <Card className="mb-8 border-0 shadow-xl bg-gradient-to-r from-zubo-background-100 to-zubo-background-200">
             <CardContent className="p-8 text-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-              <p className="text-blue-700">Loading your bookings...</p>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-zubo-primary-500 mx-auto mb-4"></div>
+              <p className="text-zubo-primary-700">Loading your bookings...</p>
             </CardContent>
           </Card>
         ) : upcomingBooking ? (
-          <Card className="mb-8 border-0 shadow-xl bg-gradient-to-r from-green-50 to-emerald-50 overflow-hidden">
+          <Card className="mb-8 border-0 shadow-xl bg-gradient-to-r from-zubo-accent-50 to-zubo-accent-100 overflow-hidden">
             <CardHeader className="relative">
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle className="text-2xl font-bold text-green-800 flex items-center">
-                    <CheckCircle className="mr-3 h-6 w-6 text-green-600" />
+                  <CardTitle className="text-2xl font-bold text-zubo-accent-800 flex items-center">
+                    <CheckCircle className="mr-3 h-6 w-6 text-zubo-accent-600" />
                     Your Upcoming Service
                   </CardTitle>
-                  <CardDescription className="text-green-600 text-lg">Next pet care appointment</CardDescription>
+                  <CardDescription className="text-zubo-accent-600 text-lg">Next pet care appointment</CardDescription>
                 </div>
                 <div className="hidden md:block">
-                  <div className="bg-white/80 backdrop-blur-sm rounded-full p-3">
-                    <Calendar className="h-8 w-8 text-green-600" />
+                  <div className="bg-zubo-background-50/80 backdrop-blur-sm rounded-full p-3">
+                    <Calendar className="h-8 w-8 text-zubo-accent-600" />
                   </div>
                 </div>
               </div>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                <div className="bg-white/70 backdrop-blur-sm rounded-xl p-4 border border-green-200">
+                <div className="bg-zubo-background-50/70 backdrop-blur-sm rounded-xl p-4 border border-zubo-accent-200">
                   <div className="flex items-center mb-2">
-                    <Calendar className="h-5 w-5 text-green-600 mr-2" />
-                    <span className="font-semibold text-green-800">Date</span>
+                    <Calendar className="h-5 w-5 text-zubo-accent-600 mr-2" />
+                    <span className="font-semibold text-zubo-accent-800">Date</span>
                   </div>
-                  <p className="text-green-700 font-medium">{formatDate(upcomingBooking.date)}</p>
+                  <p className="text-zubo-accent-700 font-medium">{formatDate(upcomingBooking.date)}</p>
                 </div>
-                <div className="bg-white/70 backdrop-blur-sm rounded-xl p-4 border border-green-200">
+                <div className="bg-zubo-background-50/70 backdrop-blur-sm rounded-xl p-4 border border-zubo-accent-200">
                   <div className="flex items-center mb-2">
-                    <Clock className="h-5 w-5 text-green-600 mr-2" />
-                    <span className="font-semibold text-green-800">Time</span>
+                    <Clock className="h-5 w-5 text-zubo-accent-600 mr-2" />
+                    <span className="font-semibold text-zubo-accent-800">Time</span>
                   </div>
-                  <p className="text-green-700 font-medium">{upcomingBooking.time}</p>
+                  <p className="text-zubo-accent-700 font-medium">{upcomingBooking.time}</p>
                 </div>
-                <div className="bg-white/70 backdrop-blur-sm rounded-xl p-4 border border-green-200">
+                <div className="bg-zubo-background-50/70 backdrop-blur-sm rounded-xl p-4 border border-zubo-accent-200">
                   <div className="flex items-center mb-2">
                     <span className="text-xl mr-2">{getPetEmoji(upcomingBooking.pet_type)}</span>
-                    <span className="font-semibold text-green-800">Pet</span>
+                    <span className="font-semibold text-zubo-accent-800">Pet</span>
                   </div>
-                  <p className="text-green-700 font-medium">{upcomingBooking.pet_name || "Your Pet"}</p>
+                  <p className="text-zubo-accent-700 font-medium">{upcomingBooking.pet_name || "Your Pet"}</p>
                 </div>
-                <div className="bg-white/70 backdrop-blur-sm rounded-xl p-4 border border-green-200">
+                <div className="bg-zubo-background-50/70 backdrop-blur-sm rounded-xl p-4 border border-zubo-accent-200">
                   <div className="flex items-center mb-2">
-                    <Star className="h-5 w-5 text-green-600 mr-2" />
-                    <span className="font-semibold text-green-800">Amount</span>
+                    <Star className="h-5 w-5 text-zubo-accent-600 mr-2" />
+                    <span className="font-semibold text-zubo-accent-800">Amount</span>
                   </div>
-                  <p className="text-green-700 font-medium">{formatPrice(upcomingBooking.total_price)}</p>
+                  <p className="text-zubo-accent-700 font-medium">{formatPrice(upcomingBooking.total_price)}</p>
                 </div>
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4 mb-4">
-                <div className="flex-1 bg-gradient-to-r from-blue-100 to-purple-100 rounded-xl p-4 border border-blue-200">
-                  <span className="font-semibold text-blue-800">Service: </span>
-                  <span className="text-blue-700">{upcomingBooking.service_name || "Pet Care Service"}</span>
+                <div className="flex-1 bg-gradient-to-r from-zubo-primary-100 to-zubo-highlight-1-100 rounded-xl p-4 border border-zubo-primary-200">
+                  <span className="font-semibold text-zubo-primary-800">Service: </span>
+                  <span className="text-zubo-primary-700">{upcomingBooking.service_name || "Pet Care Service"}</span>
                 </div>
-                <div className="flex-1 bg-gradient-to-r from-orange-100 to-yellow-100 rounded-xl p-4 border border-orange-200">
-                  <span className="font-semibold text-orange-800">Caretaker: </span>
-                  <span className="text-orange-700">{upcomingBooking.sitter_name || "Professional Caretaker"}</span>
+                <div className="flex-1 bg-gradient-to-r from-zubo-highlight-2-100 to-zubo-highlight-1-100 rounded-xl p-4 border border-zubo-highlight-2-200">
+                  <span className="font-semibold text-zubo-highlight-2-800">Caretaker: </span>
+                  <span className="text-zubo-highlight-2-700">
+                    {upcomingBooking.sitter_name || "Professional Caretaker"}
+                  </span>
                 </div>
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link href="/my-bookings">
-                  <Button className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 shadow-lg hover:shadow-xl transition-all duration-300">
+                  <Button className="w-full sm:w-auto bg-zubo-accent-600 hover:bg-zubo-accent-700 text-white font-semibold px-6 py-3 shadow-lg hover:shadow-xl transition-all duration-300">
                     View Full Details
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
@@ -312,7 +314,7 @@ export default function LandingPage() {
                 <Link href={`/support?bookingId=${upcomingBooking.id}`}>
                   <Button
                     variant="outline"
-                    className="w-full sm:w-auto border-green-600 text-green-600 hover:bg-green-50 font-semibold px-6 py-3 transition-all duration-300"
+                    className="w-full sm:w-auto border-zubo-accent-600 text-zubo-accent-600 hover:bg-zubo-accent-50 font-semibold px-6 py-3 transition-all duration-300 bg-transparent"
                   >
                     Get Help
                   </Button>
@@ -321,19 +323,23 @@ export default function LandingPage() {
             </CardContent>
           </Card>
         ) : (
-          <Card className="mb-8 border-0 shadow-xl bg-gradient-to-r from-blue-50 to-purple-50 overflow-hidden">
+          <Card className="mb-8 border-0 shadow-xl bg-gradient-to-r from-zubo-background-100 to-zubo-background-200 overflow-hidden">
             <CardHeader className="relative text-center">
-              <CardTitle className="text-2xl font-bold text-blue-800">Ready to Book Your First Service?</CardTitle>
-              <CardDescription className="text-blue-600 text-lg">Give your pet the care they deserve</CardDescription>
+              <CardTitle className="text-2xl font-bold text-zubo-primary-800">
+                Ready to Book Your First Service?
+              </CardTitle>
+              <CardDescription className="text-zubo-primary-600 text-lg">
+                Give your pet the care they deserve
+              </CardDescription>
             </CardHeader>
             <CardContent className="text-center">
-              <p className="text-blue-700 mb-6 text-lg">
+              <p className="text-zubo-primary-700 mb-6 text-lg">
                 Schedule professional pet care services with our trusted caretakers.
               </p>
               <Link href="/book-service">
                 <Button
                   size="lg"
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                  className="bg-gradient-to-r from-zubo-primary-500 to-zubo-highlight-1-500 hover:from-zubo-primary-600 hover:to-zubo-highlight-1-600 text-white px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                 >
                   Book Your First Service
                   <ArrowRight className="ml-2 h-5 w-5" />
@@ -345,34 +351,34 @@ export default function LandingPage() {
 
         {/* Services We Offer Section */}
         <div className="mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 bg-gradient-to-r from-zubo-primary-500 to-zubo-highlight-1-500 bg-clip-text text-transparent">
             Our Pet Care Services
           </h2>
-          <p className="text-center text-gray-600 text-lg mb-8 max-w-2xl mx-auto">
+          <p className="text-center text-zubo-text-600 text-lg mb-8 max-w-2xl mx-auto">
             Professional pet care services tailored to your pet's needs and your schedule.
           </p>
 
           {servicesLoading ? (
             <div className="text-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-              <p className="text-blue-700">Loading services...</p>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-zubo-primary-500 mx-auto mb-4"></div>
+              <p className="text-zubo-primary-700">Loading services...</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
               {services.map((service, index) => (
                 <Card
                   key={service.id}
-                  className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 bg-white/80 backdrop-blur-sm"
+                  className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 bg-zubo-background-50/80 backdrop-blur-sm"
                 >
                   <CardContent className="p-6 text-center">
-                    <div className="bg-gradient-to-r from-blue-100 to-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                    <div className="bg-gradient-to-r from-zubo-primary-100 to-zubo-highlight-1-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
                       <span className="text-2xl">{getServiceEmoji(service.name)}</span>
                     </div>
-                    <h3 className="font-bold text-lg mb-2 text-gray-800">{service.name}</h3>
-                    <p className="text-gray-600 mb-3 text-sm">{service.description}</p>
+                    <h3 className="font-bold text-lg mb-2 text-zubo-text-800">{service.name}</h3>
+                    <p className="text-zubo-text-600 mb-3 text-sm">{service.description}</p>
                     <div className="space-y-1">
-                      <p className="text-blue-600 font-semibold">{formatPrice(service.price)}</p>
-                      <p className="text-gray-500 text-sm">{service.duration} minutes</p>
+                      <p className="text-zubo-primary-600 font-semibold">{formatPrice(service.price)}</p>
+                      <p className="text-zubo-text-500 text-sm">{service.duration} minutes</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -384,7 +390,7 @@ export default function LandingPage() {
             <Link href="/book-service">
               <Button
                 size="lg"
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                className="bg-gradient-to-r from-zubo-primary-500 to-zubo-highlight-1-500 hover:from-zubo-primary-600 hover:to-zubo-highlight-1-600 text-white px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
               >
                 Book Any Service
                 <ArrowRight className="ml-2 h-5 w-5" />
@@ -395,10 +401,10 @@ export default function LandingPage() {
 
         {/* Why Choose PetCare Section */}
         <div className="mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 bg-gradient-to-r from-zubo-primary-500 to-zubo-highlight-1-500 bg-clip-text text-transparent">
             Why Choose PetCare?
           </h2>
-          <p className="text-center text-gray-600 text-lg mb-8 max-w-2xl mx-auto">
+          <p className="text-center text-zubo-text-600 text-lg mb-8 max-w-2xl mx-auto">
             We provide exceptional pet care services with the highest standards of safety and love.
           </p>
 
@@ -427,14 +433,14 @@ export default function LandingPage() {
             ].map((feature, index) => (
               <Card
                 key={index}
-                className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 bg-white/80 backdrop-blur-sm"
+                className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 bg-zubo-background-50/80 backdrop-blur-sm"
               >
                 <CardContent className="p-6 text-center">
-                  <div className="bg-gradient-to-r from-blue-100 to-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                    <feature.icon className="h-8 w-8 text-blue-600" />
+                  <div className="bg-gradient-to-r from-zubo-primary-100 to-zubo-highlight-1-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                    <feature.icon className="h-8 w-8 text-zubo-primary-600" />
                   </div>
-                  <h3 className="font-bold text-lg mb-2 text-gray-800">{feature.title}</h3>
-                  <p className="text-gray-600">{feature.description}</p>
+                  <h3 className="font-bold text-lg mb-2 text-zubo-text-800">{feature.title}</h3>
+                  <p className="text-zubo-text-600">{feature.description}</p>
                 </CardContent>
               </Card>
             ))}
