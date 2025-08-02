@@ -454,7 +454,7 @@ export default function MyBookingsPage() {
                 onClick={() => setStatusFilter(filter.key)}
                 className={`whitespace-nowrap text-xs h-8 px-3 ${
                   statusFilter === filter.key
-                    ? "bg-zubo-primary-royal-midnight-blue text-white hover:bg-zubo-primary-royal-midnight-blue-600"
+                    ? "bg-zubo-accent-soft-moss-green-600 text-white hover:bg-zubo-accent-soft-moss-green-700" // Updated color
                     : "border-zubo-primary-royal-midnight-blue-200 text-zubo-primary-royal-midnight-blue hover:bg-zubo-primary-royal-midnight-blue-50"
                 }`}
               >
