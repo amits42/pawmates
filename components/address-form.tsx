@@ -7,8 +7,9 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { fetchUserAddress, updateUserAddress } from "@/lib/api"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { MapPin, Save, CheckCircle, XCircle } from "lucide-react"
+import { fetchUserAddress, updateUserAddress } from "@/lib/api"
 import type { Address } from "@/types/api"
 
 interface AddressFormProps {
@@ -16,7 +17,18 @@ interface AddressFormProps {
 }
 
 export function AddressForm({ initialAddress }: AddressFormProps) {
-  const [address, setAddress] = useState<Address | null>(null)
+  const [address, setAddress] = useState<Partial<Address>>(
+    initialAddress || {
+      line1: "",
+      line2: "",
+      city: "",
+      state: "",
+      postalCode: "",
+      country: "USA", // Default country
+      landmark: "",
+      isDefault: true,
+    },
+  )
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -24,58 +36,47 @@ export function AddressForm({ initialAddress }: AddressFormProps) {
 
   useEffect(() => {
     const loadAddress = async () => {
+      if (initialAddress) {
+        setAddress(initialAddress)
+        setLoading(false)
+        return
+      }
       try {
         setError(null)
-        if (initialAddress) {
-          setAddress(initialAddress)
-        } else {
-          const addressData = await fetchUserAddress()
-          setAddress(addressData)
-        }
-      } catch (error) {
-        console.error("Error loading address:", error)
-        setError("Failed to load address")
-        setAddress({
-          id: "",
-          userId: "",
-          line1: "",
-          line2: "",
-          city: "",
-          state: "",
-          postalCode: "",
-          country: "USA",
-          landmark: "",
-          isDefault: true,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        })
+        const fetchedAddress = await fetchUserAddress()
+        setAddress(fetchedAddress)
+      } catch (err) {
+        console.error("Failed to fetch address:", err)
+        setError("Failed to load address. Please try again.")
       } finally {
         setLoading(false)
       }
     }
-
     loadAddress()
   }, [initialAddress])
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    if (!address) return
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
-    setAddress({ ...address, [name]: value })
+    setAddress((prev) => ({ ...prev, [name]: value }))
+  }
+
+  const handleSelectChange = (name: string, value: string) => {
+    setAddress((prev) => ({ ...prev, [name]: value }))
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!address) return
-
     setSaving(true)
     setError(null)
     setSuccessMessage(null)
+
     try {
-      await updateUserAddress(address)
+      const updatedAddress = await updateUserAddress(address)
+      setAddress(updatedAddress)
       setSuccessMessage("Address updated successfully!")
-    } catch (error) {
-      console.error("Error updating address:", error)
-      setError("Failed to save address")
+    } catch (err) {
+      console.error("Failed to update address:", err)
+      setError("Failed to save address. Please try again.")
     } finally {
       setSaving(false)
       setTimeout(() => setSuccessMessage(null), 3000)
@@ -90,9 +91,32 @@ export function AddressForm({ initialAddress }: AddressFormProps) {
             <MapPin className="mr-2 h-5 w-5 text-zubo-primary-600" />
             Address Information
           </CardTitle>
+          <CardDescription className="text-zubo-text-600 text-sm">Loading your address details...</CardDescription>
         </CardHeader>
-        <CardContent className="flex items-center justify-center py-8">
-          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-zubo-primary-600"></div>
+        <CardContent className="flex items-center justify-center min-h-[150px]">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-zubo-primary-600"></div>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  if (error && !address.id) {
+    return (
+      <Card className="border-zubo-highlight-1-200 bg-zubo-highlight-1-50 shadow-sm">
+        <CardHeader className="pb-4">
+          <CardTitle className="flex items-center text-zubo-highlight-1-800 text-lg">
+            <XCircle className="mr-2 h-5 w-5 text-zubo-highlight-1-600" />
+            Error Loading Address
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="text-center text-zubo-highlight-1-600">
+          <p>{error}</p>
+          <Button
+            onClick={() => window.location.reload()}
+            className="mt-4 border-zubo-primary-500 text-zubo-primary-700 hover:bg-zubo-primary-50 bg-transparent"
+          >
+            Retry
+          </Button>
         </CardContent>
       </Card>
     )
@@ -105,7 +129,9 @@ export function AddressForm({ initialAddress }: AddressFormProps) {
           <MapPin className="mr-2 h-5 w-5 text-zubo-primary-600" />
           Address Information
         </CardTitle>
-        <CardDescription className="text-zubo-text-600 text-sm">Update your address details</CardDescription>
+        <CardDescription className="text-zubo-text-600 text-sm">
+          Update your primary address for service bookings.
+        </CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-4">
@@ -116,9 +142,8 @@ export function AddressForm({ initialAddress }: AddressFormProps) {
             </div>
           )}
           {error && (
-            <div className="bg-zubo-highlight-1-50 border border-zubo-highlight-1-200 rounded-lg p-3 flex items-center">
-              <XCircle className="h-4 w-4 text-zubo-highlight-1-600 mr-2" />
-              <span className="text-zubo-highlight-1-800 text-sm">{error}</span>
+            <div className="text-zubo-highlight-1-600 text-sm bg-zubo-highlight-1-50 border border-zubo-highlight-1-200 p-2 rounded">
+              {error}
             </div>
           )}
           <div className="space-y-2">
@@ -128,11 +153,11 @@ export function AddressForm({ initialAddress }: AddressFormProps) {
             <Input
               id="line1"
               name="line1"
-              value={address?.line1 || ""}
-              onChange={handleInputChange}
+              value={address.line1 || ""}
+              onChange={handleChange}
               required
               className="border-zubo-background-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500 bg-zubo-background-100 text-zubo-text-800 placeholder:text-zubo-text-400"
-              placeholder="Street address"
+              placeholder="Street address, P.O. box, company name, c/o"
             />
           </div>
           <div className="space-y-2">
@@ -142,13 +167,13 @@ export function AddressForm({ initialAddress }: AddressFormProps) {
             <Input
               id="line2"
               name="line2"
-              value={address?.line2 || ""}
-              onChange={handleInputChange}
+              value={address.line2 || ""}
+              onChange={handleChange}
               className="border-zubo-background-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500 bg-zubo-background-100 text-zubo-text-800 placeholder:text-zubo-text-400"
-              placeholder="Apartment, suite, etc."
+              placeholder="Apartment, suite, unit, building, floor, etc."
             />
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="city" className="text-sm font-medium text-zubo-text-700">
                 City *
@@ -156,8 +181,8 @@ export function AddressForm({ initialAddress }: AddressFormProps) {
               <Input
                 id="city"
                 name="city"
-                value={address?.city || ""}
-                onChange={handleInputChange}
+                value={address.city || ""}
+                onChange={handleChange}
                 required
                 className="border-zubo-background-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500 bg-zubo-background-100 text-zubo-text-800 placeholder:text-zubo-text-400"
                 placeholder="City"
@@ -165,20 +190,20 @@ export function AddressForm({ initialAddress }: AddressFormProps) {
             </div>
             <div className="space-y-2">
               <Label htmlFor="state" className="text-sm font-medium text-zubo-text-700">
-                State *
+                State / Province / Region *
               </Label>
               <Input
                 id="state"
                 name="state"
-                value={address?.state || ""}
-                onChange={handleInputChange}
+                value={address.state || ""}
+                onChange={handleChange}
                 required
                 className="border-zubo-background-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500 bg-zubo-background-100 text-zubo-text-800 placeholder:text-zubo-text-400"
                 placeholder="State"
               />
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="postalCode" className="text-sm font-medium text-zubo-text-700">
                 Postal Code *
@@ -186,47 +211,57 @@ export function AddressForm({ initialAddress }: AddressFormProps) {
               <Input
                 id="postalCode"
                 name="postalCode"
-                value={address?.postalCode || ""}
-                onChange={handleInputChange}
+                value={address.postalCode || ""}
+                onChange={handleChange}
                 required
                 className="border-zubo-background-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500 bg-zubo-background-100 text-zubo-text-800 placeholder:text-zubo-text-400"
-                placeholder="ZIP Code"
+                placeholder="Postal Code"
               />
             </div>
             <div className="space-y-2">
               <Label htmlFor="country" className="text-sm font-medium text-zubo-text-700">
                 Country *
               </Label>
-              <Input
-                id="country"
-                name="country"
-                value={address?.country || ""}
-                onChange={handleInputChange}
-                required
-                className="border-zubo-background-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500 bg-zubo-background-100 text-zubo-text-800 placeholder:text-zubo-text-400"
-                placeholder="Country"
-              />
+              <Select value={address.country || "USA"} onValueChange={(value) => handleSelectChange("country", value)}>
+                <SelectTrigger className="border-zubo-background-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500 bg-zubo-background-100 text-zubo-text-800 placeholder:text-zubo-text-400">
+                  <SelectValue placeholder="Select a country" />
+                </SelectTrigger>
+                <SelectContent className="bg-zubo-background-50 text-zubo-text-800 border-zubo-background-200">
+                  <SelectItem value="USA" className="hover:bg-zubo-background-100">
+                    United States
+                  </SelectItem>
+                  <SelectItem value="CAN" className="hover:bg-zubo-background-100">
+                    Canada
+                  </SelectItem>
+                  <SelectItem value="GBR" className="hover:bg-zubo-background-100">
+                    United Kingdom
+                  </SelectItem>
+                  <SelectItem value="AUS" className="hover:bg-zubo-background-100">
+                    Australia
+                  </SelectItem>
+                  {/* Add more countries as needed */}
+                </SelectContent>
+              </Select>
             </div>
           </div>
           <div className="space-y-2">
             <Label htmlFor="landmark" className="text-sm font-medium text-zubo-text-700">
-              Landmark
+              Landmark / Directions
             </Label>
             <Textarea
               id="landmark"
               name="landmark"
-              value={address?.landmark || ""}
-              onChange={handleInputChange}
-              rows={2}
-              className="border-zubo-background-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500 bg-zubo-background-100 text-zubo-text-800 placeholder:text-zubo-text-400"
-              placeholder="Nearby landmark or directions"
+              value={address.landmark || ""}
+              onChange={handleChange}
+              className="border-zubo-background-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500 bg-zubo-background-100 text-zubo-text-800 placeholder:text-zubo-text-400 min-h-[80px]"
+              placeholder="E.g., Near the park, next to the blue house"
             />
           </div>
         </CardContent>
         <CardFooter className="pt-4">
           <Button
             type="submit"
-            disabled={saving || !address}
+            disabled={saving}
             className="bg-zubo-primary-600 hover:bg-zubo-primary-700 text-zubo-background-50"
           >
             <Save className="mr-2 h-4 w-4" />

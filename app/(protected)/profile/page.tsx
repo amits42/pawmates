@@ -2,65 +2,124 @@
 
 import type React from "react"
 
-import { useState, useEffect } from "react"
+import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { User, MapPin, PawPrint, Save, CheckCircle, XCircle } from "lucide-react"
-import { fetchUserProfile, updateUserProfile } from "@/lib/api"
-import type { UserProfile } from "@/types/api"
-import { PetList } from "@/components/pet-list"
+import { fetchUserProfile, updateUserProfile, fetchUserPets } from "@/lib/api"
+import PetList from "@/components/pet-list"
 import { AddressForm } from "@/components/address-form"
+import { User, PawPrint, MapPin, CheckCircle, Save, XCircle } from "lucide-react"
+import type { UserProfile, Pet } from "@/types/api"
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState<UserProfile | null>(null)
+  const [pets, setPets] = useState<Pet[]>([]) // Re-added pets state
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
 
+  // Function to load pets separately
+  const loadPets = async () => {
+    try {
+      console.log("🐾 Loading pets...")
+      const petsData = await fetchUserPets()
+      console.log("✅ Pets loaded:", petsData)
+      setPets(petsData)
+    } catch (error) {
+      console.error("❌ Error loading pets:", error)
+      // Optionally set an error specific to pet loading if needed
+    }
+  }
+
   useEffect(() => {
-    const loadProfile = async () => {
+    const loadProfileAndPets = async () => {
       try {
         setError(null)
-        const userProfile = await fetchUserProfile()
-        setProfile(userProfile)
+        console.log("🔍 Loading profile...")
+        const data = await fetchUserProfile()
+        console.log("✅ Profile loaded:", data)
+        setProfile(data)
+
+        // Load pets separately after profile is loaded
+        await loadPets()
       } catch (error) {
-        console.error("Error loading profile:", error)
-        setError("Failed to load profile. Please try again.")
+        console.error("❌ Error loading profile:", error)
+        setError("Failed to load profile")
       } finally {
         setLoading(false)
       }
     }
 
-    loadProfile()
+    loadProfileAndPets()
   }, [])
 
-  const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!profile) return
-    const { name, value } = e.target
-    setProfile({ ...profile, [name]: value })
-  }
-
-  const handleSaveProfile = async (e: React.FormEvent) => {
+  const handleProfileUpdate = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!profile) return
 
     setSaving(true)
     setError(null)
     setSuccessMessage(null)
+
     try {
-      await updateUserProfile(profile)
+      console.log("📝 Updating profile with:", {
+        firstName: profile.firstName,
+        lastName: profile.lastName,
+        email: profile.email,
+        phone: profile.phone,
+      })
+
+      const updatedProfile = await updateUserProfile({
+        firstName: profile.firstName,
+        lastName: profile.lastName,
+        email: profile.email,
+        phone: profile.phone,
+      })
+
+      setProfile({ ...profile, ...updatedProfile })
       setSuccessMessage("Profile updated successfully!")
+      setTimeout(() => setSuccessMessage(null), 3000)
     } catch (error) {
-      console.error("Error saving profile:", error)
-      setError("Failed to save profile. Please try again.")
+      console.error("❌ Error updating profile:", error)
+      setError("Failed to update profile")
     } finally {
       setSaving(false)
-      setTimeout(() => setSuccessMessage(null), 3000)
     }
+  }
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!profile) return
+    const { name, value } = e.target
+    console.log(`🔄 Input changed: ${name} = ${value}`)
+    setProfile({ ...profile, [name]: value })
+  }
+
+  const handlePetAdded = async (newPet: Pet) => {
+    console.log("🐾 Pet added, refreshing pets list:", newPet)
+    // Reload pets from database to ensure we have the latest data
+    await loadPets()
+    setSuccessMessage("Pet added successfully!")
+    setTimeout(() => setSuccessMessage(null), 3000)
+  }
+
+  const handlePetUpdated = async (updatedPet: Pet) => {
+    console.log("🐾 Pet updated, refreshing pets list:", updatedPet)
+    // Reload pets from database to ensure we have the latest data
+    await loadPets()
+    setSuccessMessage("Pet updated successfully!")
+    setTimeout(() => setSuccessMessage(null), 3000)
+  }
+
+  const handlePetDeleted = async (petId: string) => {
+    console.log("🐾 Pet deleted, refreshing pets list:", petId)
+    // Reload pets from database to ensure we have the latest data
+    await loadPets()
+    setSuccessMessage("Pet deleted successfully!")
+    setTimeout(() => setSuccessMessage(null), 3000)
   }
 
   if (loading) {
@@ -96,6 +155,18 @@ export default function ProfilePage() {
     )
   }
 
+  const petCount = pets.length
+
+  console.log("🔍 Profile state:", {
+    hasProfile: !!profile,
+    firstName: profile?.firstName,
+    lastName: profile?.lastName,
+    email: profile?.email,
+    phone: profile?.phone,
+    petsCount: petCount,
+    hasAddress: !!profile?.address,
+  })
+
   return (
     <div className="min-h-[calc(100vh-100px)] bg-zubo-background-100 p-4 md:p-6 lg:p-8">
       <div className="max-w-4xl mx-auto space-y-6">
@@ -103,7 +174,7 @@ export default function ProfilePage() {
           <div>
             <h1 className="text-3xl font-bold text-zubo-text-800">My Profile</h1>
             <p className="text-zubo-text-600">Manage your personal information, pets, and address.</p>
-            {profile && <p className="text-zubo-primary-600 mt-1">Welcome, {profile.firstName || "User"}!</p>}
+            {profile?.firstName && <p className="text-zubo-primary-600 mt-1">Welcome, {profile.firstName}!</p>}
           </div>
         </div>
 
@@ -126,7 +197,7 @@ export default function ProfilePage() {
               value="pets"
               className="data-[state=active]:bg-zubo-background-50 data-[state=active]:text-zubo-primary-700 text-zubo-text-600 hover:text-zubo-primary-700"
             >
-              <PawPrint className="mr-2 h-4 w-4" /> My Pets
+              <PawPrint className="mr-2 h-4 w-4" /> My Pets ({petCount})
             </TabsTrigger>
             <TabsTrigger
               value="address"
@@ -145,7 +216,7 @@ export default function ProfilePage() {
                 </CardTitle>
                 <CardDescription className="text-zubo-text-600 text-sm">Update your personal details</CardDescription>
               </CardHeader>
-              <form onSubmit={handleSaveProfile}>
+              <form onSubmit={handleProfileUpdate}>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
@@ -156,7 +227,7 @@ export default function ProfilePage() {
                         id="firstName"
                         name="firstName"
                         value={profile?.firstName || ""}
-                        onChange={handleProfileChange}
+                        onChange={handleInputChange}
                         required
                         className="border-zubo-background-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500 bg-zubo-background-100 text-zubo-text-800 placeholder:text-zubo-text-400"
                         placeholder="John"
@@ -170,7 +241,7 @@ export default function ProfilePage() {
                         id="lastName"
                         name="lastName"
                         value={profile?.lastName || ""}
-                        onChange={handleProfileChange}
+                        onChange={handleInputChange}
                         required
                         className="border-zubo-background-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500 bg-zubo-background-100 text-zubo-text-800 placeholder:text-zubo-text-400"
                         placeholder="Doe"
@@ -222,16 +293,10 @@ export default function ProfilePage() {
 
           <TabsContent value="pets" className="mt-6">
             <PetList
-              pets={profile?.pets || []}
-              onPetAdded={(newPet) => setProfile((prev) => (prev ? { ...prev, pets: [...prev.pets, newPet] } : null))}
-              onPetUpdated={(updatedPet) =>
-                setProfile((prev) =>
-                  prev ? { ...prev, pets: prev.pets.map((p) => (p.id === updatedPet.id ? updatedPet : p)) } : null,
-                )
-              }
-              onPetDeleted={(deletedPetId) =>
-                setProfile((prev) => (prev ? { ...prev, pets: prev.pets.filter((p) => p.id !== deletedPetId) } : null))
-              }
+              pets={pets} // Pass the separate pets state
+              onPetAdded={handlePetAdded}
+              onPetUpdated={handlePetUpdated}
+              onPetDeleted={handlePetDeleted}
             />
           </TabsContent>
 
