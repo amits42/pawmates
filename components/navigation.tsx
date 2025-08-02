@@ -60,7 +60,7 @@ export default function Navigation() {
         <div className="container flex h-16 items-center px-4">
           <Link href="/landing" className="mr-4 flex items-center hover:opacity-80 transition-opacity">
             {/* Increased logo size here */}
-            <img src="/logo/zubo-logo.svg" alt="ZuboPets Logo" className="h-20 w-auto" />
+            <img src="/logo/zubo-logo.svg" alt="ZuboPets Logo" className="h-16 w-auto" />
           </Link>
 
           {/* Main Navigation - 4 items */}
@@ -73,10 +73,11 @@ export default function Navigation() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center px-4 py-2 rounded-md text-sm font-medium transition-colors ${isActive
-                    ? "text-zubo-primary bg-zubo-highlight-1 bg-opacity-20 font-semibold"
-                    : "text-zubo-text hover:text-zubo-primary hover:bg-zubo-background font-medium"
-                    }`}
+                  className={`flex items-center px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                    isActive
+                      ? "text-zubo-primary bg-zubo-highlight-1 bg-opacity-20 font-semibold"
+                      : "text-zubo-text hover:text-zubo-primary hover:bg-zubo-background font-medium"
+                  }`}
                 >
                   <Icon className="mr-2 h-4 w-4" />
                   {item.label}
@@ -164,10 +165,11 @@ export default function Navigation() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex flex-col items-center py-2 px-3 rounded-lg transition-colors ${isActive
-                  ? "text-zubo-primary bg-zubo-highlight-1 bg-opacity-20"
-                  : "text-gray-600 hover:text-zubo-primary"
-                  }`}
+                className={`flex flex-col items-center py-2 px-3 rounded-lg transition-colors ${
+                  isActive
+                    ? "text-zubo-primary bg-zubo-highlight-1 bg-opacity-20"
+                    : "text-gray-600 hover:text-zubo-primary"
+                }`}
               >
                 <Icon className="h-5 w-5 mb-1" />
                 <span className="text-xs font-medium">{item.label}</span>
@@ -178,10 +180,11 @@ export default function Navigation() {
           {/* Mobile Profile Button */}
           <button
             onClick={toggleDropdown}
-            className={`flex flex-col items-center py-2 px-3 rounded-lg transition-colors ${isDropdownOpen
-              ? "text-zubo-primary bg-zubo-highlight-1 bg-opacity-20"
-              : "text-gray-600 hover:text-zubo-primary"
-              }`}
+            className={`flex flex-col items-center py-2 px-3 rounded-lg transition-colors ${
+              isDropdownOpen
+                ? "text-zubo-primary bg-zubo-highlight-1 bg-opacity-20"
+                : "text-gray-600 hover:text-zubo-primary"
+            }`}
           >
             <div className="relative">
               <Avatar className="h-5 w-5">

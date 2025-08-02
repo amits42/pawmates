@@ -122,8 +122,8 @@ export default function ProfilePage() {
       <div className="container mx-auto p-6 max-w-4xl">
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-slate-600">Loading profile...</p>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-zubo-primary-600 mx-auto mb-4"></div>
+            <p className="text-zubo-text-600">Loading profile...</p>
           </div>
         </div>
       </div>
@@ -133,13 +133,17 @@ export default function ProfilePage() {
   if (error && !profile) {
     return (
       <div className="container mx-auto p-6 max-w-4xl">
-        <Card className="border-red-200 bg-red-50">
+        <Card className="border-zubo-highlight-1-200 bg-zubo-highlight-1-50">
           <CardHeader>
-            <CardTitle className="text-red-800">Error</CardTitle>
-            <CardDescription className="text-red-600">{error}</CardDescription>
+            <CardTitle className="text-zubo-highlight-1-800">Error</CardTitle>
+            <CardDescription className="text-zubo-highlight-1-600">{error}</CardDescription>
           </CardHeader>
           <CardFooter>
-            <Button onClick={() => window.location.reload()} variant="outline">
+            <Button
+              onClick={() => window.location.reload()}
+              variant="outline"
+              className="border-zubo-primary-500 text-zubo-primary-700 hover:bg-zubo-primary-50"
+            >
               Retry
             </Button>
           </CardFooter>
@@ -163,49 +167,58 @@ export default function ProfilePage() {
     <div className="container mx-auto p-6 max-w-4xl space-y-6">
       {/* Header */}
       <div className="text-center space-y-2">
-        <h1 className="text-2xl font-bold text-slate-800">Profile Settings</h1>
-        <p className="text-slate-600">Manage your personal information and pets</p>
-        {profile?.name && <p className="text-blue-600 font-medium">Welcome back, {profile.name}!</p>}
+        <h1 className="text-2xl font-bold text-zubo-text-800">Profile Settings</h1>
+        <p className="text-zubo-text-600">Manage your personal information and pets</p>
+        {profile?.name && <p className="text-zubo-primary-600 font-medium">Welcome back, {profile.name}!</p>}
       </div>
 
       {/* Success Message */}
       {successMessage && (
-        <div className="bg-green-50 border border-green-200 rounded-lg p-3 flex items-center">
-          <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-          <span className="text-green-800 text-sm">{successMessage}</span>
+        <div className="bg-zubo-accent-50 border border-zubo-accent-200 rounded-lg p-3 flex items-center">
+          <CheckCircle className="h-4 w-4 text-zubo-accent-600 mr-2" />
+          <span className="text-zubo-accent-800 text-sm">{successMessage}</span>
         </div>
       )}
 
       {/* Tabs */}
       <Tabs defaultValue="personal" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3 bg-slate-100">
-          <TabsTrigger value="personal" className="data-[state=active]:bg-white">
+        <TabsList className="grid w-full grid-cols-3 bg-zubo-background-100">
+          <TabsTrigger
+            value="personal"
+            className="data-[state=active]:bg-zubo-background-50 data-[state=active]:text-zubo-primary-700 text-zubo-text-600 hover:text-zubo-primary-700"
+          >
             <User className="h-4 w-4 mr-2" />
             Personal
           </TabsTrigger>
-          <TabsTrigger value="pets" className="data-[state=active]:bg-white">
+          <TabsTrigger
+            value="pets"
+            className="data-[state=active]:bg-zubo-background-50 data-[state=active]:text-zubo-primary-700 text-zubo-text-600 hover:text-zubo-primary-700"
+          >
             <PawPrint className="h-4 w-4 mr-2" />
             Pets ({petCount})
           </TabsTrigger>
-          <TabsTrigger value="address" className="data-[state=active]:bg-white">
+          <TabsTrigger
+            value="address"
+            className="data-[state=active]:bg-zubo-background-50 data-[state=active]:text-zubo-primary-700 text-zubo-text-600 hover:text-zubo-primary-700"
+          >
             <MapPin className="h-4 w-4 mr-2" />
             Address
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="personal">
-          <Card className="border-slate-200 shadow-sm">
+          <Card className="border-zubo-background-200 shadow-sm bg-zubo-background-50">
             <CardHeader className="pb-4">
-              <CardTitle className="flex items-center text-slate-800 text-lg">
-                <User className="mr-2 h-5 w-5 text-blue-600" />
+              <CardTitle className="flex items-center text-zubo-text-800 text-lg">
+                <User className="mr-2 h-5 w-5 text-zubo-primary-600" />
                 Personal Information
               </CardTitle>
-              <CardDescription className="text-slate-600 text-sm">Update your personal details</CardDescription>
+              <CardDescription className="text-zubo-text-600 text-sm">Update your personal details</CardDescription>
             </CardHeader>
             <form onSubmit={handleProfileUpdate}>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="name" className="text-sm font-medium text-slate-700">
+                  <Label htmlFor="name" className="text-sm font-medium text-zubo-text-700">
                     Full Name *
                   </Label>
                   <Input
@@ -214,12 +227,12 @@ export default function ProfilePage() {
                     value={profile?.name || ""}
                     onChange={handleInputChange}
                     required
-                    className="border-slate-300 focus:border-blue-500 focus:ring-blue-500"
+                    className="border-zubo-background-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500 bg-zubo-background-100 text-zubo-text-800 placeholder:text-zubo-text-400"
                     placeholder="Enter your full name"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-sm font-medium text-slate-700">
+                  <Label htmlFor="email" className="text-sm font-medium text-zubo-text-700">
                     Email
                   </Label>
                   <Input
@@ -228,12 +241,12 @@ export default function ProfilePage() {
                     type="email"
                     value={profile?.email || ""}
                     onChange={handleInputChange}
-                    className="border-slate-300 focus:border-blue-500 focus:ring-blue-500"
+                    className="border-zubo-background-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500 bg-zubo-background-100 text-zubo-text-800 placeholder:text-zubo-text-400"
                     placeholder="Enter your email address"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="phone" className="text-sm font-medium text-slate-700">
+                  <Label htmlFor="phone" className="text-sm font-medium text-zubo-text-700">
                     Phone Number
                   </Label>
                   <Input
@@ -242,20 +255,22 @@ export default function ProfilePage() {
                     type="tel"
                     value={profile?.phone || ""}
                     disabled
-                    className="border-slate-300 bg-slate-50 text-slate-500"
+                    className="border-zubo-background-300 bg-zubo-background-200 text-zubo-text-500"
                     placeholder="Phone number (cannot be changed)"
                   />
-                  <p className="text-xs text-slate-500">Phone number cannot be changed</p>
+                  <p className="text-xs text-zubo-text-500">Phone number cannot be changed</p>
                 </div>
                 {error && (
-                  <div className="text-red-600 text-sm bg-red-50 border border-red-200 p-2 rounded">{error}</div>
+                  <div className="text-zubo-highlight-1-600 text-sm bg-zubo-highlight-1-50 border border-zubo-highlight-1-200 p-2 rounded">
+                    {error}
+                  </div>
                 )}
               </CardContent>
               <CardFooter className="pt-4">
                 <Button
                   type="submit"
                   disabled={saving || !profile}
-                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                  className="bg-zubo-primary-600 hover:bg-zubo-primary-700 text-zubo-background-50"
                 >
                   <Save className="mr-2 h-4 w-4" />
                   {saving ? "Saving..." : "Save Changes"}

@@ -50,7 +50,7 @@ export default function SitterNavigation() {
                 alt="ZuboPets Logo"
                 width={160} // Increased width
                 height={60} // Increased height
-                className="h-20 w-auto" // Tailwind classes for responsive sizing
+                className="h-12 w-auto" // Tailwind classes for responsive sizing
               />
               <span className="text-xl font-bold text-zubo-primary-800">Sitter Portal</span>
             </Link>
@@ -65,10 +65,11 @@ export default function SitterNavigation() {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${isActive
-                    ? "bg-zubo-primary-100 text-zubo-primary-700"
-                    : "text-zubo-text-600 hover:text-zubo-primary-800 hover:bg-zubo-background-100"
-                    }`}
+                  className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    isActive
+                      ? "bg-zubo-primary-100 text-zubo-primary-700"
+                      : "text-zubo-text-600 hover:text-zubo-primary-800 hover:bg-zubo-background-100"
+                  }`}
                 >
                   <Icon className="h-4 w-4" />
                   <span>{item.name}</span>
@@ -173,10 +174,11 @@ export default function SitterNavigation() {
                         key={item.name}
                         href={item.href}
                         onClick={() => setMobileMenuOpen(false)}
-                        className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium ${isActive
-                          ? "bg-zubo-primary-100 text-zubo-primary-700"
-                          : "text-zubo-text-600 hover:text-zubo-primary-800 hover:bg-zubo-background-100"
-                          }`}
+                        className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium ${
+                          isActive
+                            ? "bg-zubo-primary-100 text-zubo-primary-700"
+                            : "text-zubo-text-600 hover:text-zubo-primary-800 hover:bg-zubo-background-100"
+                        }`}
                       >
                         <Icon className="h-4 w-4" />
                         <span>{item.name}</span>
