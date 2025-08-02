@@ -315,11 +315,10 @@ export default function MyBookingsPage() {
                 variant={statusFilter === filter.key ? "default" : "outline"}
                 size="sm"
                 onClick={() => setStatusFilter(filter.key)}
-                className={`whitespace-nowrap text-xs h-8 px-3 ${
-                  statusFilter === filter.key
+                className={`whitespace-nowrap text-xs h-8 px-3 ${statusFilter === filter.key
                     ? "bg-zubo-primary-royal-midnight-blue text-white hover:bg-zubo-primary-royal-midnight-blue-600"
                     : "border-zubo-primary-royal-midnight-blue-200 text-zubo-primary-royal-midnight-blue hover:bg-zubo-primary-royal-midnight-blue-50"
-                }`}
+                  }`}
               >
                 <Filter className="mr-1 h-3 w-3" />
                 {filter.label} ({filter.count})
@@ -352,11 +351,10 @@ export default function MyBookingsPage() {
           {filteredBookings.map((booking) => (
             <Card
               key={booking.id}
-              className={`cursor-pointer hover:shadow-md transition-shadow border-l-4 ${
-                booking.recurring
+              className={`cursor-pointer hover:shadow-md transition-shadow border-l-4 ${booking.recurring
                   ? "border-l-zubo-highlight-2-bronze-clay"
                   : "border-l-zubo-primary-royal-midnight-blue"
-              }`}
+                }`}
               onClick={() => handleBookingClick(booking)}
             >
               <CardContent className="p-3">
