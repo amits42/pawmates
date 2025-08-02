@@ -1090,7 +1090,7 @@ export default function BookingDetailsPage() {
                                 <Button
                                   size="sm"
                                   onClick={() => handlePayForSession(session)}
-                                  className="bg-gradient-to-r from-zubo-accent-soft-moss-green-600 to-zubo-primary-royal-midnight-blue-600 hover:from-zubo-accent-soft-moss-green-700 hover:to-zubo-primary-royal-midnight-blue-700 text-zubo-background-porcelain-white-50 text-xs"
+                                  className="bg-zubo-primary-royal-midnight-blue-600 hover:bg-zubo-primary-royal-midnight-blue-700 text-zubo-background-porcelain-white-50 text-xs"
                                 >
                                   <CreditCard className="h-3 w-3 mr-1" />
                                   Pay ₹{session.sessionPrice.toFixed(2)}
