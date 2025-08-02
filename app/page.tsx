@@ -56,7 +56,7 @@ export default function HomePage() {
                 alt="ZuboPets"
                 width={160}
                 height={60}
-                className="h-12 w-auto"
+                className="h-16 w-auto"
                 priority
               />
             </div>
@@ -361,7 +361,7 @@ export default function HomePage() {
                   alt="ZuboPets"
                   width={160}
                   height={60}
-                  className="h-12 w-auto brightness-0 invert"
+                  className="h-16 w-auto brightness-0 invert"
                 />
               </div>
               <p className="text-gray-400 mb-6 max-w-md leading-relaxed">
