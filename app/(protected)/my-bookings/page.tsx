@@ -1,11 +1,20 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
+import { useState, useEffect, useMemo } from "react"
+import { useSearchParams, useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog"
 import {
   Calendar,
   Clock,
@@ -18,6 +27,10 @@ import {
   Repeat,
   CreditCard,
   AlertCircle,
+  Search,
+  Filter,
+  Phone,
+  CheckCircle,
 } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
 import { useToast } from "@/hooks/use-toast"
@@ -26,6 +39,19 @@ import { RebookButton } from "@/components/rebook-button"
 import type { Booking } from "@/types/api"
 import { format } from "date-fns"
 import { Toaster } from "@/components/ui/toaster"
+
+const formatDate = (dateString: string) => {
+  if (!dateString) return "Not scheduled"
+  try {
+    const date = new Date(dateString)
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+    })
+  } catch (error) {
+    return dateString
+  }
+}
 
 export default function MyBookingsPage() {
   const router = useRouter()
@@ -39,6 +65,17 @@ export default function MyBookingsPage() {
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false)
   const [isLoadingChat, setIsLoadingChat] = useState(false)
 
+  // Search and Filter states
+  const [searchQuery, setSearchQuery] = useState("")
+  const [statusFilter, setStatusFilter] = useState<string>("all")
+
+  const searchParams = useSearchParams()
+  // ✅ Success popup state
+  const success = searchParams?.get("success") === "true"
+  const bookingId = searchParams?.get("bookingId")
+  const payLater = searchParams?.get("payLater")
+  const [showSuccessModal, setShowSuccessModal] = useState(success && bookingId)
+
   useEffect(() => {
     if (user?.id) {
       fetchBookings()
@@ -50,10 +87,13 @@ export default function MyBookingsPage() {
       setLoading(true)
       setError(null)
 
+      if (!user?.id) throw new Error("User not authenticated")
+
       const response = await fetch(`/api/bookings?userId=${encodeURIComponent(user.id)}`, {
         headers: {
           "Content-Type": "application/json",
           "X-User-ID": user.id,
+          ...(user?.token ? { Authorization: `Bearer ${user.token}` } : {}),
         },
       })
 
@@ -62,19 +102,25 @@ export default function MyBookingsPage() {
       }
 
       const data = await response.json()
-      // Sort bookings by date, upcoming first
-      const sortedBookings = data.sort((a: Booking, b: Booking) => {
-        const dateA = new Date(a.date).getTime()
-        const dateB = new Date(b.date).getTime()
-        return dateA - dateB
-      })
-      setBookings(sortedBookings)
+      setBookings(Array.isArray(data) ? data : [])
     } catch (error) {
       console.error("Error fetching bookings:", error)
       setError("Failed to load your bookings. Please try again.")
+      setBookings([])
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleCloseSuccessModal = () => {
+    setShowSuccessModal(false)
+    // ✅ Remove query params from URL
+    router.replace("/my-bookings")
+  }
+
+  const handleViewBooking = () => {
+    router.push(`/booking-details/${bookingId}`)
+    handleCloseSuccessModal()
   }
 
   const handleCardClick = (booking: Booking) => {
@@ -192,12 +238,12 @@ export default function MyBookingsPage() {
       cancelled: {
         variant: "destructive" as const,
         icon: "❌",
-        color: "bg-destructive text-destructive-foreground border-destructive",
+        color: "bg-red-50 text-red-700 border-red-200",
       },
       usercancelled: {
         variant: "destructive" as const,
         icon: "❌",
-        color: "bg-destructive text-destructive-foreground border-destructive",
+        color: "bg-red-50 text-red-700 border-red-200",
       },
       assigned: {
         variant: "default" as const,
@@ -242,6 +288,38 @@ export default function MyBookingsPage() {
     return serviceIcons[service?.toLowerCase()] || "🐾"
   }
 
+  const filteredBookings = useMemo(() => {
+    let filtered = bookings
+
+    if (statusFilter !== "all") {
+      if (statusFilter === "upcoming") {
+        filtered = filtered.filter((b) =>
+          ["upcoming", "confirmed", "pending", "assigned"].includes(b.status?.toLowerCase() || ""),
+        )
+      } else if (statusFilter === "ongoing") {
+        filtered = filtered.filter((b) => ["ongoing", "in-progress"].includes(b.status?.toLowerCase() || ""))
+      } else if (statusFilter === "past") {
+        filtered = filtered.filter((b) =>
+          ["completed", "cancelled", "usercancelled"].includes(b.status?.toLowerCase() || ""),
+        )
+      } else {
+        filtered = filtered.filter((b) => b.status?.toLowerCase() === statusFilter)
+      }
+    }
+
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase()
+      filtered = filtered.filter(
+        (b) =>
+          b.serviceName?.toLowerCase().includes(query) ||
+          b.petName?.toLowerCase().includes(query) ||
+          b.id.toString().includes(query),
+      )
+    }
+
+    return filtered.sort((a, b) => new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime())
+  }, [bookings, statusFilter, searchQuery])
+
   const handlePayNow = (bookingId: string) => {
     router.push(`/book-service/payment?bookingId=${bookingId}&payExisting=true`)
   }
@@ -270,9 +348,21 @@ export default function MyBookingsPage() {
     return (
       <div className="min-h-screen bg-zubo-background-porcelain-white-300">
         <div className="container mx-auto p-4 pb-20">
-          <Alert className="border-destructive bg-destructive/10 max-w-md mx-auto">
-            <AlertCircle className="h-4 w-4 text-destructive" />
-            <AlertDescription className="text-destructive">{error}</AlertDescription>
+          <Alert className="mb-4 border-red-200 bg-red-50">
+            <AlertCircle className="h-4 w-4 text-red-600" />
+            <AlertDescription className="text-red-800 text-sm">
+              <div className="flex items-center justify-between">
+                <span>{error}</span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={fetchBookings}
+                  className="text-red-600 border-red-300 text-xs h-7 bg-transparent"
+                >
+                  Retry
+                </Button>
+              </div>
+            </AlertDescription>
           </Alert>
         </div>
       </div>
@@ -282,25 +372,122 @@ export default function MyBookingsPage() {
   return (
     <div className="min-h-screen bg-zubo-background-porcelain-white-300">
       <div className="container mx-auto p-4 pb-20 max-w-6xl">
+        {/* ✅ Success Popup */}
+        {showSuccessModal && (
+          <Dialog open={showSuccessModal} onOpenChange={setShowSuccessModal}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2 text-zubo-accent-soft-moss-green-700">
+                  <CheckCircle className="h-5 w-5" />
+                  Booking Confirmed 🎉
+                </DialogTitle>
+                <DialogDescription>
+                  {payLater === "true"
+                    ? "Your booking has been created. Complete payment to confirm."
+                    : "Your booking has been confirmed successfully."}
+                  <br />
+                  <span className="font-medium">Booking ID: {bookingId}</span>
+                  {payLater !== "true" && (
+                    <p className="flex items-center gap-1 text-sm mt-2 text-zubo-text-graphite-gray-700">
+                      <Phone className="h-4 w-4" /> Confirmation sent to WhatsApp.
+                    </p>
+                  )}
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter className="flex justify-between gap-2">
+                <Button onClick={handleCloseSuccessModal} variant="outline" className="w-full bg-transparent">
+                  Close
+                </Button>
+                <Button
+                  onClick={handleViewBooking}
+                  className="bg-zubo-accent-soft-moss-green-600 hover:bg-zubo-accent-soft-moss-green-700 text-white w-full"
+                >
+                  View Booking
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        )}
+
         <h1 className="text-3xl font-bold text-zubo-text-graphite-gray-900 mb-6">My Bookings</h1>
 
-        {bookings.length === 0 ? (
+        {/* Search and Filter */}
+        <div className="mb-6 space-y-3">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-zubo-text-graphite-gray-400" />
+            <Input
+              placeholder="Search bookings..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 text-sm h-9"
+            />
+          </div>
+
+          <div className="flex gap-2 overflow-x-auto pb-2">
+            {[
+              { key: "all", label: "All", count: bookings.length },
+              {
+                key: "upcoming",
+                label: "Upcoming",
+                count: bookings.filter((b) =>
+                  ["upcoming", "confirmed", "pending", "assigned"].includes(b.status?.toLowerCase() || ""),
+                ).length,
+              },
+              {
+                key: "ongoing",
+                label: "Ongoing",
+                count: bookings.filter((b) => ["ongoing", "in-progress"].includes(b.status?.toLowerCase() || ""))
+                  .length,
+              },
+              {
+                key: "past",
+                label: "Past",
+                count: bookings.filter((b) =>
+                  ["completed", "cancelled", "usercancelled"].includes(b.status?.toLowerCase() || ""),
+                ).length,
+              },
+            ].map((filter) => (
+              <Button
+                key={filter.key}
+                variant={statusFilter === filter.key ? "default" : "outline"}
+                size="sm"
+                onClick={() => setStatusFilter(filter.key)}
+                className={`whitespace-nowrap text-xs h-8 px-3 ${
+                  statusFilter === filter.key
+                    ? "bg-zubo-primary-royal-midnight-blue text-white hover:bg-zubo-primary-royal-midnight-blue-600"
+                    : "border-zubo-primary-royal-midnight-blue-200 text-zubo-primary-royal-midnight-blue hover:bg-zubo-primary-royal-midnight-blue-50"
+                }`}
+              >
+                <Filter className="mr-1 h-3 w-3" />
+                {filter.label} ({filter.count})
+              </Button>
+            ))}
+          </div>
+        </div>
+
+        {filteredBookings.length === 0 && !loading && !error ? (
           <div className="flex flex-col items-center justify-center py-12 bg-zubo-background-porcelain-white-50 rounded-lg shadow-sm border border-zubo-background-porcelain-white-200">
             <Calendar className="h-12 w-12 text-zubo-text-graphite-gray-400 mb-4" />
-            <p className="text-lg font-semibold text-zubo-text-graphite-gray-700 mb-2">No Bookings Yet</p>
-            <p className="text-sm text-zubo-text-graphite-gray-500 mb-6 text-center">
-              It looks like you haven't made any bookings. Let's get your first service scheduled!
+            <p className="text-lg font-semibold text-zubo-text-graphite-gray-700 mb-2">
+              {searchQuery || statusFilter !== "all" ? "No matching bookings" : "No Bookings Yet"}
             </p>
-            <Button
-              onClick={() => router.push("/book-service")}
-              className="bg-zubo-primary-royal-midnight-blue-600 hover:bg-zubo-primary-royal-midnight-blue-700 text-zubo-background-porcelain-white-50"
-            >
-              Book a Service
-            </Button>
+            <p className="text-sm text-zubo-text-graphite-gray-500 mb-6 text-center">
+              {searchQuery || statusFilter !== "all"
+                ? "Try adjusting your search or filter criteria."
+                : "It looks like you haven't made any bookings. Let's get your first service scheduled!"}
+            </p>
+            {!searchQuery && statusFilter === "all" && (
+              <Button
+                onClick={() => router.push("/book-service")}
+                className="bg-zubo-primary-royal-midnight-blue-600 hover:bg-zubo-primary-royal-midnight-blue-700 text-zubo-background-porcelain-white-50"
+              >
+                Book a Service
+              </Button>
+            )}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {bookings.map((booking) => {
+            {filteredBookings.map((booking) => {
               const sitterName = booking.sitter_name || booking.sitterName || booking.caretakerName
               const hasSitterAssigned =
                 booking.sitterId &&
