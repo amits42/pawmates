@@ -414,7 +414,7 @@ export default function BookingDetailsPage() {
     }
   }
 
-  const getStatusBadge = (status: string, paymentStatus?: string) => {
+  const getStatusBadge = (status: string, paymentStatus?: string, sitterId?: string, sitterName?: string) => {
     const statusConfig = {
       upcoming: {
         variant: "default" as const,
@@ -473,10 +473,15 @@ export default function BookingDetailsPage() {
     const normalizedStatus = status?.toLowerCase() || "pending"
     const config = statusConfig[normalizedStatus as keyof typeof statusConfig] || statusConfig.pending
 
-    const displayStatus =
-      normalizedStatus === "usercancelled"
-        ? "Cancelled by You"
-        : status?.charAt(0).toUpperCase() + status?.slice(1) || "Pending"
+    let displayStatus = status?.charAt(0).toUpperCase() + status?.slice(1) || "Pending"
+
+    if (normalizedStatus === "usercancelled") {
+      displayStatus = "Cancelled by You"
+    } else if (normalizedStatus === "pending" && !sitterId) {
+      displayStatus = "Sitter Unassigned"
+    } else if (normalizedStatus === "assigned" && sitterId) {
+      displayStatus = "Sitter Assigned"
+    }
 
     return (
       <Badge className={`${config.color} font-medium px-3 py-1 text-sm`}>
@@ -707,6 +712,12 @@ export default function BookingDetailsPage() {
   const showRebookButton = ["completed", "cancelled", "usercancelled"].includes(booking.status?.toLowerCase() || "")
   const showCancelButton = canCancelBooking(booking)
 
+  // Logic to display cancellation policy info for non-recurring bookings, even if cancelled
+  const showCancellationPolicyInfo =
+    cancellationPolicy &&
+    !booking.recurring &&
+    (canCancelBooking(booking) || ["cancelled", "usercancelled"].includes(booking.status?.toLowerCase() || ""))
+
   // Recurring sessions calculations
   const totalSessions = sessions.length
   const paidSessions = sessions.filter((s) => s.paymentStatus === "PAID").length
@@ -747,7 +758,7 @@ export default function BookingDetailsPage() {
                 </Button>
               </div>
             </div>
-            {(getStatusBadge(booking.status || "pending"), booking.paymentStatus)}
+            {getStatusBadge(booking.status || "pending", booking.paymentStatus, booking.sitterId, sitterName)}
           </div>
         </div>
 
@@ -919,7 +930,7 @@ export default function BookingDetailsPage() {
             )}
 
             {/* Cancellation Policy Info for Non-Recurring Bookings */}
-            {cancellationPolicy && showCancelButton && !booking.recurring && (
+            {showCancellationPolicyInfo && (
               <Card className="border-zubo-highlight-2-bronze-clay-200 bg-gradient-to-r from-zubo-highlight-2-bronze-clay-50 to-zubo-highlight-1-blush-coral-50">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-lg text-zubo-highlight-2-bronze-clay-800">
@@ -938,23 +949,23 @@ export default function BookingDetailsPage() {
                       </div>
                       <div className="flex justify-between">
                         <span className="text-zubo-highlight-2-bronze-clay-700">
-                          Cancellation Fee ({cancellationPolicy.percentageDeduction}%):
+                          Cancellation Fee ({cancellationPolicy!.percentageDeduction}%):
                         </span>
                         <span className="font-semibold text-destructive">
-                          -₹{cancellationPolicy.deductionAmount.toFixed(2)}
+                          -₹{cancellationPolicy!.deductionAmount.toFixed(2)}
                         </span>
                       </div>
                       <div className="flex justify-between border-t border-zubo-highlight-2-bronze-clay-200 pt-2">
                         <span className="text-zubo-highlight-2-bronze-clay-800 font-medium">Refund Amount:</span>
                         <span className="font-bold text-zubo-accent-soft-moss-green-600">
-                          ₹{cancellationPolicy.refundAmount.toFixed(2)}
+                          ₹{cancellationPolicy!.refundAmount.toFixed(2)}
                         </span>
                       </div>
                     </div>
                     <div className="space-y-2">
                       <div className="flex items-center gap-2 text-zubo-highlight-2-bronze-clay-700">
                         <Clock className="h-4 w-4" />
-                        <span>Processing Time: {cancellationPolicy.processingTime}</span>
+                        <span>Processing Time: {cancellationPolicy!.processingTime}</span>
                       </div>
                       <div className="flex items-center gap-2 text-zubo-highlight-2-bronze-clay-700">
                         <RefreshCw className="h-4 w-4" />
@@ -965,7 +976,7 @@ export default function BookingDetailsPage() {
                   <Alert className="border-zubo-primary-royal-midnight-blue-200 bg-zubo-primary-royal-midnight-blue-50">
                     <Info className="h-4 w-4 text-zubo-primary-royal-midnight-blue-600" />
                     <AlertDescription className="text-zubo-primary-royal-midnight-blue-800 text-sm">
-                      {cancellationPolicy.description}
+                      {cancellationPolicy!.description}
                     </AlertDescription>
                   </Alert>
                 </CardContent>
@@ -1011,7 +1022,7 @@ export default function BookingDetailsPage() {
                                 <span className="font-semibold text-sm text-zubo-text-graphite-gray-900">
                                   Session {session.sequenceNumber}
                                 </span>
-                                {getStatusBadge(session.status)}
+                                {getStatusBadge(session.status, undefined, booking.sitterId, sitterName)}
                                 {getPaymentStatusBadge(session.paymentStatus)}
                               </div>
                               <div className="text-sm font-semibold text-zubo-text-graphite-gray-800">

@@ -29,7 +29,7 @@ interface BookingDetailsDialogProps {
   booking: Booking | null
   open: boolean
   onOpenChange: (open: boolean) => void
-  getStatusBadge: (status: string) => JSX.Element
+  getStatusBadge: (status: string, paymentStatus?: string, sitterId?: string, sitterName?: string) => JSX.Element
   getServiceIcon: (service: string) => string
   router: any
   user: any
@@ -241,7 +241,7 @@ export function BookingDetailsDialog({
               <span className="text-lg">{getServiceIcon(booking.serviceName || "pet care")}</span>
               <DialogTitle className="text-base font-semibold">{booking.serviceName || "Pet Care Service"}</DialogTitle>
             </div>
-            {getStatusBadge(booking.status || "pending")}
+            {getStatusBadge(booking.status || "pending", booking.paymentStatus, booking.sitterId, sitterName)}
           </div>
           <div className="flex items-center justify-between gap-2">
             <p className="text-xs text-gray-500">Booking ID:</p>
