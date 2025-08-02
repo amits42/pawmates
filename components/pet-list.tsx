@@ -261,12 +261,37 @@ export function PetList({ pets: initialPets = [], onPetAdded, onPetUpdated, onPe
 
   const renderPetForm = (pet: any, isEdit = false) => (
     <Tabs defaultValue="basic" className="w-full">
-      <TabsList className="grid grid-cols-5 mb-4">
-        <TabsTrigger value="basic">Basic</TabsTrigger>
-        <TabsTrigger value="profile">Profile</TabsTrigger>
-        <TabsTrigger value="social">Social</TabsTrigger>
-        <TabsTrigger value="medical">Medical</TabsTrigger>
-        <TabsTrigger value="vet">Vet Info</TabsTrigger>
+      <TabsList className="grid grid-cols-5 mb-4 bg-zubo-background-100">
+        <TabsTrigger
+          value="basic"
+          className="data-[state=active]:bg-zubo-background-50 data-[state=active]:text-zubo-primary-700 text-zubo-text-600 hover:text-zubo-primary-700"
+        >
+          Basic
+        </TabsTrigger>
+        <TabsTrigger
+          value="profile"
+          className="data-[state=active]:bg-zubo-background-50 data-[state=active]:text-zubo-primary-700 text-zubo-text-600 hover:text-zubo-primary-700"
+        >
+          Profile
+        </TabsTrigger>
+        <TabsTrigger
+          value="social"
+          className="data-[state=active]:bg-zubo-background-50 data-[state=active]:text-zubo-primary-700 text-zubo-text-600 hover:text-zubo-primary-700"
+        >
+          Social
+        </TabsTrigger>
+        <TabsTrigger
+          value="medical"
+          className="data-[state=active]:bg-zubo-background-50 data-[state=active]:text-zubo-primary-700 text-zubo-text-600 hover:text-zubo-primary-700"
+        >
+          Medical
+        </TabsTrigger>
+        <TabsTrigger
+          value="vet"
+          className="data-[state=active]:bg-zubo-background-50 data-[state=active]:text-zubo-primary-700 text-zubo-text-600 hover:text-zubo-primary-700"
+        >
+          Vet Info
+        </TabsTrigger>
       </TabsList>
 
       <TabsContent value="basic" className="space-y-4">
@@ -279,7 +304,7 @@ export function PetList({ pets: initialPets = [], onPetAdded, onPetUpdated, onPe
         />
 
         <div className="space-y-2">
-          <Label htmlFor={`pet-name-${isEdit ? "edit" : "add"}`} className="text-sm font-medium text-slate-700">
+          <Label htmlFor={`pet-name-${isEdit ? "edit" : "add"}`} className="text-sm font-medium text-zubo-text-700">
             Pet Name *
           </Label>
           <Input
@@ -288,13 +313,13 @@ export function PetList({ pets: initialPets = [], onPetAdded, onPetUpdated, onPe
             onChange={(e) =>
               isEdit ? handleCurrentPetChange("name", e.target.value) : handleNewPetChange("name", e.target.value)
             }
-            className="border-slate-300 focus:border-blue-500 focus:ring-blue-500"
+            className="border-zubo-background-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500 bg-zubo-background-100 text-zubo-text-800 placeholder:text-zubo-text-400"
             placeholder="Enter pet name"
           />
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-2">
-            <Label htmlFor={`pet-type-${isEdit ? "edit" : "add"}`} className="text-sm font-medium text-slate-700">
+            <Label htmlFor={`pet-type-${isEdit ? "edit" : "add"}`} className="text-sm font-medium text-zubo-text-700">
               Type
             </Label>
             <Select
@@ -303,19 +328,27 @@ export function PetList({ pets: initialPets = [], onPetAdded, onPetUpdated, onPe
                 isEdit ? handleCurrentPetChange("type", value) : handleNewPetChange("type", value)
               }
             >
-              <SelectTrigger className="border-slate-300 focus:border-blue-500 focus:ring-blue-500">
+              <SelectTrigger className="border-zubo-background-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500 bg-zubo-background-100 text-zubo-text-800 placeholder:text-zubo-text-400">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="dog">🐕 Dog</SelectItem>
-                <SelectItem value="cat">🐱 Cat</SelectItem>
-                <SelectItem value="bird">🐦 Bird</SelectItem>
-                <SelectItem value="other">🐾 Other</SelectItem>
+              <SelectContent className="bg-zubo-background-50 text-zubo-text-800 border-zubo-background-200">
+                <SelectItem value="dog" className="hover:bg-zubo-background-100">
+                  🐕 Dog
+                </SelectItem>
+                <SelectItem value="cat" className="hover:bg-zubo-background-100">
+                  🐱 Cat
+                </SelectItem>
+                <SelectItem value="bird" className="hover:bg-zubo-background-100">
+                  🐦 Bird
+                </SelectItem>
+                <SelectItem value="other" className="hover:bg-zubo-background-100">
+                  🐾 Other
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div className="space-y-2">
-            <Label htmlFor={`pet-breed-${isEdit ? "edit" : "add"}`} className="text-sm font-medium text-slate-700">
+            <Label htmlFor={`pet-breed-${isEdit ? "edit" : "add"}`} className="text-sm font-medium text-zubo-text-700">
               Breed
             </Label>
             <Input
@@ -324,14 +357,14 @@ export function PetList({ pets: initialPets = [], onPetAdded, onPetUpdated, onPe
               onChange={(e) =>
                 isEdit ? handleCurrentPetChange("breed", e.target.value) : handleNewPetChange("breed", e.target.value)
               }
-              className="border-slate-300 focus:border-blue-500 focus:ring-blue-500"
+              className="border-zubo-background-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500 bg-zubo-background-100 text-zubo-text-800 placeholder:text-zubo-text-400"
               placeholder="Breed"
             />
           </div>
         </div>
         <div className="grid grid-cols-3 gap-3">
           <div className="space-y-2">
-            <Label htmlFor={`pet-age-${isEdit ? "edit" : "add"}`} className="text-sm font-medium text-slate-700">
+            <Label htmlFor={`pet-age-${isEdit ? "edit" : "add"}`} className="text-sm font-medium text-zubo-text-700">
               Age
             </Label>
             <Input
@@ -340,13 +373,13 @@ export function PetList({ pets: initialPets = [], onPetAdded, onPetUpdated, onPe
               onChange={(e) =>
                 isEdit ? handleCurrentPetChange("age", e.target.value) : handleNewPetChange("age", e.target.value)
               }
-              className="border-slate-300 focus:border-blue-500 focus:ring-blue-500"
+              className="border-zubo-background-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500 bg-zubo-background-100 text-zubo-text-800 placeholder:text-zubo-text-400"
               placeholder="Age"
               type="number"
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor={`pet-weight-${isEdit ? "edit" : "add"}`} className="text-sm font-medium text-slate-700">
+            <Label htmlFor={`pet-weight-${isEdit ? "edit" : "add"}`} className="text-sm font-medium text-zubo-text-700">
               Weight (kg)
             </Label>
             <Input
@@ -355,14 +388,14 @@ export function PetList({ pets: initialPets = [], onPetAdded, onPetUpdated, onPe
               onChange={(e) =>
                 isEdit ? handleCurrentPetChange("weight", e.target.value) : handleNewPetChange("weight", e.target.value)
               }
-              className="border-slate-300 focus:border-blue-500 focus:ring-blue-500"
+              className="border-zubo-background-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500 bg-zubo-background-100 text-zubo-text-800 placeholder:text-zubo-text-400"
               placeholder="Weight"
               type="number"
               step="0.1"
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor={`pet-gender-${isEdit ? "edit" : "add"}`} className="text-sm font-medium text-slate-700">
+            <Label htmlFor={`pet-gender-${isEdit ? "edit" : "add"}`} className="text-sm font-medium text-zubo-text-700">
               Gender
             </Label>
             <Select
@@ -371,13 +404,19 @@ export function PetList({ pets: initialPets = [], onPetAdded, onPetUpdated, onPe
                 isEdit ? handleCurrentPetChange("gender", value) : handleNewPetChange("gender", value)
               }
             >
-              <SelectTrigger className="border-slate-300 focus:border-blue-500 focus:ring-blue-500">
+              <SelectTrigger className="border-zubo-background-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500 bg-zubo-background-100 text-zubo-text-800 placeholder:text-zubo-text-400">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="male">Male</SelectItem>
-                <SelectItem value="female">Female</SelectItem>
-                <SelectItem value="unknown">Unknown</SelectItem>
+              <SelectContent className="bg-zubo-background-50 text-zubo-text-800 border-zubo-background-200">
+                <SelectItem value="male" className="hover:bg-zubo-background-100">
+                  Male
+                </SelectItem>
+                <SelectItem value="female" className="hover:bg-zubo-background-100">
+                  Female
+                </SelectItem>
+                <SelectItem value="unknown" className="hover:bg-zubo-background-100">
+                  Unknown
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -385,9 +424,9 @@ export function PetList({ pets: initialPets = [], onPetAdded, onPetUpdated, onPe
         <div className="space-y-2">
           <Label
             htmlFor={`pet-description-${isEdit ? "edit" : "add"}`}
-            className="text-sm font-medium text-slate-700 flex items-center"
+            className="text-sm font-medium text-zubo-text-700 flex items-center"
           >
-            <Info className="h-4 w-4 mr-1 text-green-600" />
+            <Info className="h-4 w-4 mr-1 text-zubo-accent-600" />
             General Description
           </Label>
           <Textarea
@@ -398,7 +437,7 @@ export function PetList({ pets: initialPets = [], onPetAdded, onPetUpdated, onPe
                 ? handleCurrentPetChange("description", e.target.value)
                 : handleNewPetChange("description", e.target.value)
             }
-            className="border-slate-300 focus:border-blue-500 focus:ring-blue-500 min-h-[100px]"
+            className="border-zubo-background-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500 bg-zubo-background-100 text-zubo-text-800 placeholder:text-zubo-text-400 min-h-[100px]"
             placeholder="General description, personality, and any other information about your pet"
           />
         </div>
@@ -408,9 +447,9 @@ export function PetList({ pets: initialPets = [], onPetAdded, onPetUpdated, onPe
         <div className="space-y-2">
           <Label
             htmlFor={`pet-birthday-${isEdit ? "edit" : "add"}`}
-            className="text-sm font-medium text-slate-700 flex items-center"
+            className="text-sm font-medium text-zubo-text-700 flex items-center"
           >
-            <Calendar className="h-4 w-4 mr-1 text-blue-600" />
+            <Calendar className="h-4 w-4 mr-1 text-zubo-primary-600" />
             Adoption or Birthday
           </Label>
           <Input
@@ -422,32 +461,38 @@ export function PetList({ pets: initialPets = [], onPetAdded, onPetUpdated, onPe
                 ? handleCurrentPetChange("adoptionOrBirthday", e.target.value)
                 : handleNewPetChange("adoptionOrBirthday", e.target.value)
             }
-            className="border-slate-300 focus:border-blue-500 focus:ring-blue-500"
+            className="border-zubo-background-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500 bg-zubo-background-100 text-zubo-text-800 placeholder:text-zubo-text-400"
           />
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label className="text-sm font-medium text-slate-700">Microchipped</Label>
+            <Label className="text-sm font-medium text-zubo-text-700">Microchipped</Label>
             <Select
               value={pet.microchipped}
               onValueChange={(value) =>
                 isEdit ? handleCurrentPetChange("microchipped", value) : handleNewPetChange("microchipped", value)
               }
             >
-              <SelectTrigger className="border-slate-300 focus:border-blue-500 focus:ring-blue-500">
+              <SelectTrigger className="border-zubo-background-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500 bg-zubo-background-100 text-zubo-text-800 placeholder:text-zubo-text-400">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="yes">Yes</SelectItem>
-                <SelectItem value="no">No</SelectItem>
-                <SelectItem value="not_sure">Not Sure</SelectItem>
+              <SelectContent className="bg-zubo-background-50 text-zubo-text-800 border-zubo-background-200">
+                <SelectItem value="yes" className="hover:bg-zubo-background-100">
+                  Yes
+                </SelectItem>
+                <SelectItem value="no" className="hover:bg-zubo-background-100">
+                  No
+                </SelectItem>
+                <SelectItem value="not_sure" className="hover:bg-zubo-background-100">
+                  Not Sure
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div className="space-y-2">
-            <Label className="text-sm font-medium text-slate-700">
+            <Label className="text-sm font-medium text-zubo-text-700">
               {pet.gender === "female" ? "Spayed" : "Neutered"}
             </Label>
             <Select
@@ -456,33 +501,45 @@ export function PetList({ pets: initialPets = [], onPetAdded, onPetUpdated, onPe
                 isEdit ? handleCurrentPetChange("spayedNeutered", value) : handleNewPetChange("spayedNeutered", value)
               }
             >
-              <SelectTrigger className="border-slate-300 focus:border-blue-500 focus:ring-blue-500">
+              <SelectTrigger className="border-zubo-background-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500 bg-zubo-background-100 text-zubo-text-800 placeholder:text-zubo-text-400">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="yes">Yes</SelectItem>
-                <SelectItem value="no">No</SelectItem>
-                <SelectItem value="not_sure">Not Sure</SelectItem>
+              <SelectContent className="bg-zubo-background-50 text-zubo-text-800 border-zubo-background-200">
+                <SelectItem value="yes" className="hover:bg-zubo-background-100">
+                  Yes
+                </SelectItem>
+                <SelectItem value="no" className="hover:bg-zubo-background-100">
+                  No
+                </SelectItem>
+                <SelectItem value="not_sure" className="hover:bg-zubo-background-100">
+                  Not Sure
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
         </div>
 
         <div className="space-y-2">
-          <Label className="text-sm font-medium text-slate-700">Potty Trained</Label>
+          <Label className="text-sm font-medium text-zubo-text-700">Potty Trained</Label>
           <Select
             value={pet.pottyTrained}
             onValueChange={(value) =>
               isEdit ? handleCurrentPetChange("pottyTrained", value) : handleNewPetChange("pottyTrained", value)
             }
           >
-            <SelectTrigger className="border-slate-300 focus:border-blue-500 focus:ring-blue-500">
+            <SelectTrigger className="border-zubo-background-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500 bg-zubo-background-100 text-zubo-text-800 placeholder:text-zubo-text-400">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="yes">Yes</SelectItem>
-              <SelectItem value="no">No</SelectItem>
-              <SelectItem value="not_sure">Not Sure</SelectItem>
+            <SelectContent className="bg-zubo-background-50 text-zubo-text-800 border-zubo-background-200">
+              <SelectItem value="yes" className="hover:bg-zubo-background-100">
+                Yes
+              </SelectItem>
+              <SelectItem value="no" className="hover:bg-zubo-background-100">
+                No
+              </SelectItem>
+              <SelectItem value="not_sure" className="hover:bg-zubo-background-100">
+                Not Sure
+              </SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -491,8 +548,8 @@ export function PetList({ pets: initialPets = [], onPetAdded, onPetUpdated, onPe
       <TabsContent value="social" className="space-y-4">
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label className="text-sm font-medium text-slate-700 flex items-center">
-              <Users className="h-4 w-4 mr-1 text-green-600" />
+            <Label className="text-sm font-medium text-zubo-text-700 flex items-center">
+              <Users className="h-4 w-4 mr-1 text-zubo-accent-600" />
               Friendly with children?
             </Label>
             <Select
@@ -503,20 +560,26 @@ export function PetList({ pets: initialPets = [], onPetAdded, onPetUpdated, onPe
                   : handleNewPetChange("friendlyWithChildren", value)
               }
             >
-              <SelectTrigger className="border-slate-300 focus:border-blue-500 focus:ring-blue-500">
+              <SelectTrigger className="border-zubo-background-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500 bg-zubo-background-100 text-zubo-text-800 placeholder:text-zubo-text-400">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="yes">Yes</SelectItem>
-                <SelectItem value="no">No</SelectItem>
-                <SelectItem value="not_sure">Not Sure</SelectItem>
+              <SelectContent className="bg-zubo-background-50 text-zubo-text-800 border-zubo-background-200">
+                <SelectItem value="yes" className="hover:bg-zubo-background-100">
+                  Yes
+                </SelectItem>
+                <SelectItem value="no" className="hover:bg-zubo-background-100">
+                  No
+                </SelectItem>
+                <SelectItem value="not_sure" className="hover:bg-zubo-background-100">
+                  Not Sure
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div className="space-y-2">
-            <Label className="text-sm font-medium text-slate-700 flex items-center">
-              <Dog className="h-4 w-4 mr-1 text-blue-600" />
+            <Label className="text-sm font-medium text-zubo-text-700 flex items-center">
+              <Dog className="h-4 w-4 mr-1 text-zubo-primary-600" />
               Friendly with other dogs?
             </Label>
             <Select
@@ -527,20 +590,26 @@ export function PetList({ pets: initialPets = [], onPetAdded, onPetUpdated, onPe
                   : handleNewPetChange("friendlyWithDogs", value)
               }
             >
-              <SelectTrigger className="border-slate-300 focus:border-blue-500 focus:ring-blue-500">
+              <SelectTrigger className="border-zubo-background-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500 bg-zubo-background-100 text-zubo-text-800 placeholder:text-zubo-text-400">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="yes">Yes</SelectItem>
-                <SelectItem value="no">No</SelectItem>
-                <SelectItem value="not_sure">Not Sure</SelectItem>
+              <SelectContent className="bg-zubo-background-50 text-zubo-text-800 border-zubo-background-200">
+                <SelectItem value="yes" className="hover:bg-zubo-background-100">
+                  Yes
+                </SelectItem>
+                <SelectItem value="no" className="hover:bg-zubo-background-100">
+                  No
+                </SelectItem>
+                <SelectItem value="not_sure" className="hover:bg-zubo-background-100">
+                  Not Sure
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div className="space-y-2">
-            <Label className="text-sm font-medium text-slate-700 flex items-center">
-              <Heart className="h-4 w-4 mr-1 text-purple-600" />
+            <Label className="text-sm font-medium text-zubo-text-700 flex items-center">
+              <Heart className="h-4 w-4 mr-1 text-zubo-highlight-2-600" />
               Friendly with other animals?
             </Label>
             <Select
@@ -551,13 +620,19 @@ export function PetList({ pets: initialPets = [], onPetAdded, onPetUpdated, onPe
                   : handleNewPetChange("friendlyWithAnimals", value)
               }
             >
-              <SelectTrigger className="border-slate-300 focus:border-blue-500 focus:ring-blue-500">
+              <SelectTrigger className="border-zubo-background-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500 bg-zubo-background-100 text-zubo-text-800 placeholder:text-zubo-text-400">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="yes">Yes</SelectItem>
-                <SelectItem value="no">No</SelectItem>
-                <SelectItem value="not_sure">Not Sure</SelectItem>
+              <SelectContent className="bg-zubo-background-50 text-zubo-text-800 border-zubo-background-200">
+                <SelectItem value="yes" className="hover:bg-zubo-background-100">
+                  Yes
+                </SelectItem>
+                <SelectItem value="no" className="hover:bg-zubo-background-100">
+                  No
+                </SelectItem>
+                <SelectItem value="not_sure" className="hover:bg-zubo-background-100">
+                  Not Sure
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -568,9 +643,9 @@ export function PetList({ pets: initialPets = [], onPetAdded, onPetUpdated, onPe
         <div className="space-y-2">
           <Label
             htmlFor={`pet-other-medical-${isEdit ? "edit" : "add"}`}
-            className="text-sm font-medium text-slate-700 flex items-center"
+            className="text-sm font-medium text-zubo-text-700 flex items-center"
           >
-            <HeartPulse className="h-4 w-4 mr-1 text-red-600" />
+            <HeartPulse className="h-4 w-4 mr-1 text-zubo-highlight-1-600" />
             Other Medical Info (e.g., Allergies)
           </Label>
           <Textarea
@@ -581,7 +656,7 @@ export function PetList({ pets: initialPets = [], onPetAdded, onPetUpdated, onPe
                 ? handleCurrentPetChange("otherMedicalInfo", e.target.value)
                 : handleNewPetChange("otherMedicalInfo", e.target.value)
             }
-            className="border-slate-300 focus:border-blue-500 focus:ring-blue-500 min-h-[120px]"
+            className="border-zubo-background-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500 bg-zubo-background-100 text-zubo-text-800 placeholder:text-zubo-text-400 min-h-[120px]"
             placeholder="Any medical conditions, allergies, health history, or special medical needs"
           />
         </div>
@@ -589,9 +664,9 @@ export function PetList({ pets: initialPets = [], onPetAdded, onPetUpdated, onPe
         <div className="space-y-2">
           <Label
             htmlFor={`pet-medications-${isEdit ? "edit" : "add"}`}
-            className="text-sm font-medium text-slate-700 flex items-center"
+            className="text-sm font-medium text-zubo-text-700 flex items-center"
           >
-            <AlertTriangle className="h-4 w-4 mr-1 text-amber-600" />
+            <AlertTriangle className="h-4 w-4 mr-1 text-zubo-highlight-2-600" />
             Current Medications
           </Label>
           <Textarea
@@ -602,7 +677,7 @@ export function PetList({ pets: initialPets = [], onPetAdded, onPetUpdated, onPe
                 ? handleCurrentPetChange("currentMedications", e.target.value)
                 : handleNewPetChange("currentMedications", e.target.value)
             }
-            className="border-slate-300 focus:border-blue-500 focus:ring-blue-500 min-h-[100px]"
+            className="border-zubo-background-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500 bg-zubo-background-100 text-zubo-text-800 placeholder:text-zubo-text-400 min-h-[100px]"
             placeholder="List any current medications, dosages, and frequency"
           />
         </div>
@@ -610,9 +685,9 @@ export function PetList({ pets: initialPets = [], onPetAdded, onPetUpdated, onPe
         <div className="space-y-2">
           <Label
             htmlFor={`pet-behavior-${isEdit ? "edit" : "add"}`}
-            className="text-sm font-medium text-slate-700 flex items-center"
+            className="text-sm font-medium text-zubo-text-700 flex items-center"
           >
-            <Brain className="h-4 w-4 mr-1 text-purple-600" />
+            <Brain className="h-4 w-4 mr-1 text-zubo-primary-600" />
             Behavioral Notes
           </Label>
           <Textarea
@@ -623,7 +698,7 @@ export function PetList({ pets: initialPets = [], onPetAdded, onPetUpdated, onPe
                 ? handleCurrentPetChange("behavioralNotes", e.target.value)
                 : handleNewPetChange("behavioralNotes", e.target.value)
             }
-            className="border-slate-300 focus:border-blue-500 focus:ring-blue-500 min-h-[100px]"
+            className="border-zubo-background-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500 bg-zubo-background-100 text-zubo-text-800 placeholder:text-zubo-text-400 min-h-[100px]"
             placeholder="Temperament, training level, special behaviors, likes/dislikes, etc."
           />
         </div>
@@ -633,9 +708,9 @@ export function PetList({ pets: initialPets = [], onPetAdded, onPetUpdated, onPe
         <div className="space-y-2">
           <Label
             htmlFor={`vet-name-${isEdit ? "edit" : "add"}`}
-            className="text-sm font-medium text-slate-700 flex items-center"
+            className="text-sm font-medium text-zubo-text-700 flex items-center"
           >
-            <Stethoscope className="h-4 w-4 mr-1 text-blue-600" />
+            <Stethoscope className="h-4 w-4 mr-1 text-zubo-primary-600" />
             Dr. Name
           </Label>
           <Input
@@ -644,13 +719,13 @@ export function PetList({ pets: initialPets = [], onPetAdded, onPetUpdated, onPe
             onChange={(e) =>
               isEdit ? handleCurrentPetChange("vetName", e.target.value) : handleNewPetChange("vetName", e.target.value)
             }
-            className="border-slate-300 focus:border-blue-500 focus:ring-blue-500"
+            className="border-zubo-background-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500 bg-zubo-background-100 text-zubo-text-800 placeholder:text-zubo-text-400"
             placeholder="Veterinarian's name"
           />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor={`vet-address-${isEdit ? "edit" : "add"}`} className="text-sm font-medium text-slate-700">
+          <Label htmlFor={`vet-address-${isEdit ? "edit" : "add"}`} className="text-sm font-medium text-zubo-text-700">
             Address
           </Label>
           <Textarea
@@ -661,13 +736,13 @@ export function PetList({ pets: initialPets = [], onPetAdded, onPetUpdated, onPe
                 ? handleCurrentPetChange("vetAddress", e.target.value)
                 : handleNewPetChange("vetAddress", e.target.value)
             }
-            className="border-slate-300 focus:border-blue-500 focus:ring-blue-500 min-h-[80px]"
+            className="border-zubo-background-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500 bg-zubo-background-100 text-zubo-text-800 placeholder:text-zubo-text-400 min-h-[80px]"
             placeholder="Veterinary clinic address"
           />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor={`vet-phone-${isEdit ? "edit" : "add"}`} className="text-sm font-medium text-slate-700">
+          <Label htmlFor={`vet-phone-${isEdit ? "edit" : "add"}`} className="text-sm font-medium text-zubo-text-700">
             Number
           </Label>
           <Input
@@ -678,7 +753,7 @@ export function PetList({ pets: initialPets = [], onPetAdded, onPetUpdated, onPe
                 ? handleCurrentPetChange("vetPhone", e.target.value)
                 : handleNewPetChange("vetPhone", e.target.value)
             }
-            className="border-slate-300 focus:border-blue-500 focus:ring-blue-500"
+            className="border-zubo-background-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500 bg-zubo-background-100 text-zubo-text-800 placeholder:text-zubo-text-400"
             placeholder="Veterinary clinic phone number"
             type="tel"
           />
@@ -688,36 +763,38 @@ export function PetList({ pets: initialPets = [], onPetAdded, onPetUpdated, onPe
   )
 
   return (
-    <Card className="border-slate-200 shadow-sm">
+    <Card className="border-zubo-background-200 shadow-sm bg-zubo-background-50">
       <CardHeader className="pb-4">
-        <CardTitle className="flex items-center text-slate-800 text-lg">
-          <PawPrint className="mr-2 h-5 w-5 text-blue-600" />
+        <CardTitle className="flex items-center text-zubo-text-800 text-lg">
+          <PawPrint className="mr-2 h-5 w-5 text-zubo-primary-600" />
           My Pets
           {safePets.length > 0 && (
-            <span className="ml-2 text-sm bg-blue-100 text-blue-700 px-2 py-1 rounded-full">{safePets.length}</span>
+            <span className="ml-2 text-sm bg-zubo-primary-100 text-zubo-primary-700 px-2 py-1 rounded-full">
+              {safePets.length}
+            </span>
           )}
         </CardTitle>
-        <CardDescription className="text-slate-600 text-sm">Manage your pets' information</CardDescription>
+        <CardDescription className="text-zubo-text-600 text-sm">Manage your pets' information</CardDescription>
       </CardHeader>
 
       <CardContent className="space-y-3">
         {safePets.length === 0 ? (
           <div className="text-center py-8">
-            <div className="text-4xl mb-3">🐾</div>
-            <p className="text-slate-600 font-medium">No pets added yet</p>
-            <p className="text-slate-500 text-sm mt-1">Add your first pet to get started</p>
+            <div className="text-4xl mb-3 text-zubo-text-400">🐾</div>
+            <p className="text-zubo-text-600 font-medium">No pets added yet</p>
+            <p className="text-zubo-text-500 text-sm mt-1">Add your first pet to get started</p>
           </div>
         ) : (
           <div className="space-y-3">
             {safePets.map((pet) => (
-              <Card key={pet.id} className="border-slate-200 bg-slate-50/50">
+              <Card key={pet.id} className="border-zubo-background-200 bg-zubo-background-100">
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between">
                     <div className="flex items-start space-x-3 flex-1">
                       {/* Pet Image or Emoji */}
                       <div className="relative">
                         {pet.image ? (
-                          <div className="w-12 h-12 rounded-lg overflow-hidden border-2 border-slate-200 bg-white relative">
+                          <div className="w-12 h-12 rounded-lg overflow-hidden border-2 border-zubo-primary-200 bg-zubo-background-50 relative">
                             <img
                               src={pet.image || "/placeholder.svg"}
                               alt={pet.name}
@@ -729,56 +806,56 @@ export function PetList({ pets: initialPets = [], onPetAdded, onPetUpdated, onPe
                                 target.style.display = "none"
                                 const parent = target.parentElement
                                 if (parent) {
-                                  parent.innerHTML = `<div class="w-full h-full flex items-center justify-center text-2xl">${getPetTypeEmoji(pet.type)}</div>`
+                                  parent.innerHTML = `<div class="w-full h-full flex items-center justify-center text-2xl text-zubo-primary-600">${getPetTypeEmoji(pet.type)}</div>`
                                 }
                               }}
                             />
                             {/* Small type icon overlay */}
-                            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-white rounded-full border border-slate-200 flex items-center justify-center text-xs shadow-sm">
+                            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-zubo-background-50 rounded-full border border-zubo-background-200 flex items-center justify-center text-xs shadow-sm text-zubo-primary-600">
                               {getPetTypeEmoji(pet.type)}
                             </div>
                           </div>
                         ) : (
-                          <div className="w-12 h-12 rounded-lg border-2 border-slate-200 bg-white flex items-center justify-center text-2xl">
+                          <div className="w-12 h-12 rounded-lg border-2 border-zubo-primary-200 bg-zubo-background-50 flex items-center justify-center text-2xl text-zubo-primary-600">
                             {getPetTypeEmoji(pet.type)}
                           </div>
                         )}
                       </div>
 
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-medium text-slate-800 truncate">{pet.name || "Unnamed Pet"}</h4>
-                        <p className="text-sm text-slate-600">
+                        <h4 className="font-medium text-zubo-text-800 truncate">{pet.name || "Unnamed Pet"}</h4>
+                        <p className="text-sm text-zubo-text-600">
                           {pet.type} • {pet.breed || "Mixed"} • {pet.gender || "Unknown"}
                         </p>
-                        <div className="flex items-center space-x-4 mt-2 text-xs text-slate-500">
+                        <div className="flex items-center space-x-4 mt-2 text-xs text-zubo-text-500">
                           <span>Age: {pet.age || "Unknown"}</span>
                           <span>Weight: {pet.weight || "Unknown"} kg</span>
                           {pet.adoptionOrBirthday && <span>Birthday: {formatDate(pet.adoptionOrBirthday)}</span>}
                         </div>
                         {pet.description && (
-                          <p className="text-xs text-slate-600 mt-2 line-clamp-2">{pet.description}</p>
+                          <p className="text-xs text-zubo-text-600 mt-2 line-clamp-2">{pet.description}</p>
                         )}
                         <div className="flex flex-wrap gap-1 mt-2">
                           {pet.otherMedicalInfo && pet.otherMedicalInfo.trim() && (
-                            <span className="text-xs bg-red-50 text-red-700 px-2 py-0.5 rounded-full flex items-center">
+                            <span className="text-xs bg-zubo-highlight-1-50 text-zubo-highlight-1-700 px-2 py-0.5 rounded-full flex items-center">
                               <HeartPulse className="h-3 w-3 mr-1" />
                               Medical
                             </span>
                           )}
                           {pet.currentMedications && pet.currentMedications.trim() && (
-                            <span className="text-xs bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full flex items-center">
+                            <span className="text-xs bg-zubo-highlight-2-50 text-zubo-highlight-2-700 px-2 py-0.5 rounded-full flex items-center">
                               <AlertTriangle className="h-3 w-3 mr-1" />
                               Medications
                             </span>
                           )}
                           {pet.behavioralNotes && pet.behavioralNotes.trim() && (
-                            <span className="text-xs bg-purple-50 text-purple-700 px-2 py-0.5 rounded-full flex items-center">
+                            <span className="text-xs bg-zubo-primary-50 text-zubo-primary-700 px-2 py-0.5 rounded-full flex items-center">
                               <Brain className="h-3 w-3 mr-1" />
                               Behavior
                             </span>
                           )}
                           {pet.vetName && pet.vetName.trim() && (
-                            <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full flex items-center">
+                            <span className="text-xs bg-zubo-accent-50 text-zubo-accent-700 px-2 py-0.5 rounded-full flex items-center">
                               <Stethoscope className="h-3 w-3 mr-1" />
                               Vet Info
                             </span>
@@ -786,7 +863,7 @@ export function PetList({ pets: initialPets = [], onPetAdded, onPetUpdated, onPe
                         </div>
 
                         {/* Enhanced Profile Info */}
-                        <div className="grid grid-cols-2 gap-2 mt-3 text-xs text-slate-600">
+                        <div className="grid grid-cols-2 gap-2 mt-3 text-xs text-zubo-text-600">
                           <div>Microchipped: {formatYesNoNotSure(pet.microchipped)}</div>
                           <div>
                             {pet.gender === "female" ? "Spayed" : "Neutered"}: {formatYesNoNotSure(pet.spayedNeutered)}
@@ -801,7 +878,7 @@ export function PetList({ pets: initialPets = [], onPetAdded, onPetUpdated, onPe
                         variant="ghost"
                         size="sm"
                         onClick={() => openEditDialog(pet)}
-                        className="h-8 w-8 p-0 hover:bg-blue-100 hover:text-blue-700"
+                        className="h-8 w-8 p-0 hover:bg-zubo-primary-50 hover:text-zubo-primary-700"
                         disabled={loading}
                       >
                         <Edit className="h-3.5 w-3.5" />
@@ -810,7 +887,7 @@ export function PetList({ pets: initialPets = [], onPetAdded, onPetUpdated, onPe
                         variant="ghost"
                         size="sm"
                         onClick={() => handleDeletePet(pet.id)}
-                        className="h-8 w-8 p-0 hover:bg-red-100 hover:text-red-700"
+                        className="h-8 w-8 p-0 hover:bg-zubo-highlight-1-50 hover:text-zubo-highlight-1-700"
                         disabled={loading}
                       >
                         <Trash2 className="h-3.5 w-3.5" />
@@ -828,7 +905,7 @@ export function PetList({ pets: initialPets = [], onPetAdded, onPetUpdated, onPe
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
           <DialogTrigger asChild>
             <Button
-              className="bg-blue-600 hover:bg-blue-700 text-white"
+              className="bg-zubo-primary-600 hover:bg-zubo-primary-700 text-zubo-background-50"
               onClick={() => {
                 console.log("🐾 Add Pet button clicked!")
                 setIsAddDialogOpen(true)
@@ -838,10 +915,10 @@ export function PetList({ pets: initialPets = [], onPetAdded, onPetUpdated, onPe
               Add Pet
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
+          <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto bg-zubo-background-50 text-zubo-text-800 border-zubo-background-200">
             <DialogHeader>
-              <DialogTitle className="text-slate-800">Add New Pet</DialogTitle>
-              <DialogDescription className="text-slate-600">Enter your pet's information below.</DialogDescription>
+              <DialogTitle className="text-zubo-text-900">Add New Pet</DialogTitle>
+              <DialogDescription className="text-zubo-text-600">Enter your pet's information below.</DialogDescription>
             </DialogHeader>
 
             {renderPetForm(newPet, false)}
@@ -854,6 +931,7 @@ export function PetList({ pets: initialPets = [], onPetAdded, onPetUpdated, onPe
                   setIsAddDialogOpen(false)
                 }}
                 disabled={loading}
+                className="border-zubo-background-300 text-zubo-text-700 hover:bg-zubo-background-100 bg-transparent"
               >
                 Cancel
               </Button>
@@ -863,6 +941,7 @@ export function PetList({ pets: initialPets = [], onPetAdded, onPetUpdated, onPe
                   handleAddPet()
                 }}
                 disabled={loading || !newPet.name.trim()}
+                className="bg-zubo-primary-600 hover:bg-zubo-primary-700 text-zubo-background-50"
               >
                 {loading ? "Adding..." : "Add Pet"}
               </Button>
@@ -872,17 +951,26 @@ export function PetList({ pets: initialPets = [], onPetAdded, onPetUpdated, onPe
 
         {/* Edit Dialog */}
         <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-          <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
+          <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto bg-zubo-background-50 text-zubo-text-800 border-zubo-background-200">
             <DialogHeader>
-              <DialogTitle className="text-slate-800">Edit Pet</DialogTitle>
-              <DialogDescription className="text-slate-600">Update your pet's information.</DialogDescription>
+              <DialogTitle className="text-zubo-text-900">Edit Pet</DialogTitle>
+              <DialogDescription className="text-zubo-text-600">Update your pet's information.</DialogDescription>
             </DialogHeader>
             {currentPet && renderPetForm(currentPet, true)}
             <DialogFooter>
-              <Button variant="outline" onClick={() => setIsEditDialogOpen(false)} disabled={loading}>
+              <Button
+                variant="outline"
+                onClick={() => setIsEditDialogOpen(false)}
+                disabled={loading}
+                className="border-zubo-background-300 text-zubo-text-700 hover:bg-zubo-background-100 bg-transparent"
+              >
                 Cancel
               </Button>
-              <Button onClick={handleUpdatePet} disabled={loading}>
+              <Button
+                onClick={handleUpdatePet}
+                disabled={loading}
+                className="bg-zubo-primary-600 hover:bg-zubo-primary-700 text-zubo-background-50"
+              >
                 {loading ? "Saving..." : "Save Changes"}
               </Button>
             </DialogFooter>
