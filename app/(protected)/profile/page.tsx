@@ -174,6 +174,7 @@ export default function ProfilePage() {
           <div>
             <h1 className="text-3xl font-bold text-zubo-text-800">My Profile</h1>
             <p className="text-zubo-text-600">Manage your personal information, pets, and address.</p>
+            {/* This message depends on `profile.firstName` being populated from the backend API response. */}
             {profile?.firstName && <p className="text-zubo-primary-600 mt-1">Welcome, {profile.firstName}!</p>}
           </div>
         </div>
