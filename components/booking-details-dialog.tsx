@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import {
   Dialog,
   DialogContent,
@@ -18,19 +19,17 @@ import {
   MapPin,
   User,
   MessageCircle,
-  HelpCircle,
-  Repeat,
   CreditCard,
   Loader2,
+  Repeat,
   Phone,
-  Mail,
-  ClipboardCopy,
+  Copy,
+  HelpCircle,
 } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
-import { useState } from "react"
-import type { Booking, UserProfile } from "@/types/api"
-import { format, parseISO } from "date-fns"
-import type { JSX } from "react/jsx-runtime" // Import JSX to fix the undeclared variable error
+import type { Booking, User as AuthUser } from "@/types/api"
+import { format } from "date-fns"
+import type { JSX } from "react/jsx-runtime"
 
 interface BookingDetailsDialogProps {
   booking: Booking | null
@@ -39,8 +38,8 @@ interface BookingDetailsDialogProps {
   getStatusBadge: (status: string, paymentStatus?: string, sitterId?: string, sitterName?: string) => JSX.Element
   getServiceIcon: (service: string) => string
   router: any // Next.js router instance
-  user: UserProfile | null // Current authenticated user
-  showChatButton?: boolean // Optional prop to control chat button visibility
+  user: AuthUser | null // Authenticated user object
+  showChatButton: boolean
 }
 
 export function BookingDetailsDialog({
@@ -51,7 +50,7 @@ export function BookingDetailsDialog({
   getServiceIcon,
   router,
   user,
-  showChatButton = true,
+  showChatButton,
 }: BookingDetailsDialogProps) {
   const { toast } = useToast()
   const [isLoadingChat, setIsLoadingChat] = useState(false)
@@ -59,12 +58,14 @@ export function BookingDetailsDialog({
   if (!booking) return null
 
   const sitterName = booking.sitter_name || booking.sitterName || booking.caretakerName
+  const sitterPhone = booking.sitter_phone || booking.sitterPhone
   const hasSitterAssigned =
     booking.sitterId &&
     sitterName &&
     sitterName.trim() !== "" &&
     sitterName.toLowerCase() !== "to be assigned" &&
-    sitterName.toLowerCase() !== "sitter not assigned"
+    sitterName.toLowerCase() !== "sitter not assigned" &&
+    sitterPhone
 
   const handleChatWithSitter = async () => {
     if (!user?.phone) {
@@ -75,8 +76,6 @@ export function BookingDetailsDialog({
       })
       return
     }
-
-    const sitterPhone = booking.sitter_phone || booking.sitterPhone
 
     if (!sitterPhone) {
       toast({
@@ -137,71 +136,64 @@ export function BookingDetailsDialog({
 
   const handlePayNow = () => {
     router.push(`/book-service/payment?bookingId=${booking.id}&payExisting=true`)
-    onOpenChange(false) // Close dialog after navigating
+    onOpenChange(false) // Close dialog after redirect
   }
 
   const handleGetHelp = () => {
     router.push(`/support?bookingId=${booking.id}`)
-    onOpenChange(false) // Close dialog after navigating
+    onOpenChange(false) // Close dialog after redirect
   }
 
-  const copyToClipboard = (text: string, message: string) => {
+  const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text)
     toast({
       title: "Copied!",
-      description: message,
+      description: `${label} copied to clipboard`,
     })
   }
 
-  const showChatButtonInDialog =
-    showChatButton &&
-    hasSitterAssigned &&
-    ["upcoming", "confirmed", "pending", "assigned", "ongoing", "in-progress"].includes(
-      booking.status?.toLowerCase() || "",
-    )
+  const showRebookButton = ["completed", "cancelled", "usercancelled"].includes(booking.status?.toLowerCase() || "")
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px] p-0">
-        <DialogHeader className="p-4 border-b border-zubo-background-porcelain-white-200 bg-zubo-background-porcelain-white-50">
-          <DialogTitle className="text-xl font-semibold text-zubo-text-graphite-gray-900 flex items-center gap-2">
+        <DialogHeader className="p-4 border-b border-zubo-background-200 bg-zubo-background-50">
+          <DialogTitle className="text-xl font-semibold text-zubo-text-900 flex items-center gap-2">
             <span className="text-2xl">{getServiceIcon(booking.serviceName || "pet care")}</span>
             {booking.serviceName || "Pet Care Service"}
           </DialogTitle>
-          <DialogDescription className="text-sm text-zubo-text-graphite-gray-600">
-            Booking ID: #{booking.id}
-          </DialogDescription>
+          <DialogDescription className="text-sm text-zubo-text-600">Booking ID: #{booking.id}</DialogDescription>
         </DialogHeader>
         <div className="p-4 space-y-4">
           <div className="flex items-center justify-between">
-            <p className="text-sm font-medium text-zubo-text-graphite-gray-800">Status:</p>
+            <p className="text-sm font-medium text-zubo-text-800">Status:</p>
             {getStatusBadge(booking.status || "pending", booking.paymentStatus, booking.sitterId, sitterName)}
           </div>
 
           <Separator />
 
           <div className="grid grid-cols-1 gap-3">
-            <div className="flex items-center gap-3 text-sm text-zubo-text-graphite-gray-700">
-              <Calendar className="h-4 w-4 text-zubo-primary-royal-midnight-blue-600" />
-              <span>Date: {format(parseISO(booking.date), "PPP")}</span>
+            <div className="flex items-center gap-3 text-sm text-zubo-text-700">
+              <Calendar className="h-4 w-4 text-zubo-primary-600" />
+              <span>Date: {format(new Date(booking.date), "PPP")}</span>
             </div>
-            <div className="flex items-center gap-3 text-sm text-zubo-text-graphite-gray-700">
-              <Clock className="h-4 w-4 text-zubo-accent-soft-moss-green-600" />
+            <div className="flex items-center gap-3 text-sm text-zubo-text-700">
+              <Clock className="h-4 w-4 text-zubo-accent-600" />
               <span>Time: {booking.time || "Not specified"}</span>
             </div>
-            <div className="flex items-center gap-3 text-sm text-zubo-text-graphite-gray-700">
-              <DollarSign className="h-4 w-4 text-zubo-highlight-2-bronze-clay-600" />
+            <div className="flex items-center gap-3 text-sm text-zubo-text-700">
+              <DollarSign className="h-4 w-4 text-zubo-highlight-2-600" />
               <span>Total Price: ₹{booking.totalPrice?.toFixed(2) || "0.00"}</span>
             </div>
-            <div className="flex items-center gap-3 text-sm text-zubo-text-graphite-gray-700">
-              <CreditCard className="h-4 w-4 text-zubo-highlight-1-blush-coral-600" />
+            <div className="flex items-center gap-3 text-sm text-zubo-text-700">
+              <CreditCard className="h-4 w-4 text-zubo-highlight-1-600" />
               <span>
                 Payment Status:{" "}
                 <Badge
                   className={`font-medium px-2 py-0.5 text-xs ${
                     booking.paymentStatus === "PENDING"
-                      ? "bg-zubo-highlight-2-bronze-clay-50 text-zubo-highlight-2-bronze-clay-700 border-zubo-highlight-2-bronze-clay-200"
-                      : "bg-zubo-accent-soft-moss-green-50 text-zubo-accent-soft-moss-green-700 border-zubo-accent-soft-moss-green-200"
+                      ? "bg-zubo-highlight-2-50 text-zubo-highlight-2-700 border-zubo-highlight-2-200"
+                      : "bg-zubo-accent-50 text-zubo-accent-700 border-zubo-accent-200"
                   }`}
                 >
                   {booking.paymentStatus || "N/A"}
@@ -213,22 +205,22 @@ export function BookingDetailsDialog({
           <Separator />
 
           <div className="space-y-3">
-            <h3 className="font-semibold text-zubo-text-graphite-gray-800 flex items-center gap-2">
-              <User className="h-4 w-4 text-zubo-primary-royal-midnight-blue-600" /> Sitter Information
+            <h3 className="font-semibold text-zubo-text-800 flex items-center gap-2">
+              <User className="h-4 w-4 text-zubo-primary-600" /> Sitter Information
             </h3>
-            <p className="text-sm text-zubo-text-graphite-gray-700">
+            <p className="text-sm text-zubo-text-700">
               Name:{" "}
               <span className="font-medium">
                 {sitterName || "To be assigned"}
                 {booking.sitterId && !sitterName && (
-                  <span className="text-zubo-highlight-2-bronze-clay-600 text-sm ml-1">(Loading...)</span>
+                  <span className="text-zubo-highlight-2-600 text-sm ml-1">(Loading...)</span>
                 )}
               </span>
             </p>
             {hasSitterAssigned && (
               <>
-                <div className="flex items-center gap-2 text-sm text-zubo-text-graphite-gray-700">
-                  <Phone className="h-4 w-4 text-zubo-accent-soft-moss-green-600" />
+                <div className="flex items-center gap-2 text-sm text-zubo-text-700">
+                  <Phone className="h-4 w-4 text-zubo-accent-600" />
                   <span>Phone: {booking.sitter_phone || booking.sitterPhone || "N/A"}</span>
                   {(booking.sitter_phone || booking.sitterPhone) && (
                     <Button
@@ -242,12 +234,12 @@ export function BookingDetailsDialog({
                         )
                       }
                     >
-                      <ClipboardCopy className="h-3 w-3" />
+                      <Copy className="h-3 w-3" />
                     </Button>
                   )}
                 </div>
-                <div className="flex items-center gap-2 text-sm text-zubo-text-graphite-gray-700">
-                  <Mail className="h-4 w-4 text-zubo-accent-soft-moss-green-600" />
+                <div className="flex items-center gap-2 text-sm text-zubo-text-700">
+                  <Phone className="h-4 w-4 text-zubo-accent-600" /> {/* Reusing Phone icon for email */}
                   <span>Email: {booking.sitter_email || booking.sitterEmail || "N/A"}</span>
                   {(booking.sitter_email || booking.sitterEmail) && (
                     <Button
@@ -258,7 +250,7 @@ export function BookingDetailsDialog({
                         copyToClipboard(booking.sitter_email || booking.sitterEmail || "", "Sitter email copied!")
                       }
                     >
-                      <ClipboardCopy className="h-3 w-3" />
+                      <Copy className="h-3 w-3" />
                     </Button>
                   )}
                 </div>
@@ -269,41 +261,39 @@ export function BookingDetailsDialog({
           <Separator />
 
           <div className="space-y-3">
-            <h3 className="font-semibold text-zubo-text-graphite-gray-800 flex items-center gap-2">
-              <MapPin className="h-4 w-4 text-zubo-highlight-1-blush-coral-600" /> Location Details
+            <h3 className="font-semibold text-zubo-text-800 flex items-center gap-2">
+              <MapPin className="h-4 w-4 text-zubo-highlight-1-600" /> Location Details
             </h3>
-            <p className="text-sm text-zubo-text-graphite-gray-700">Address: {booking.addressId || "N/A"}</p>
-            <p className="text-sm text-zubo-text-graphite-gray-700">
-              Instructions: {booking.additionalInstructions || "None"}
-            </p>
+            <p className="text-sm text-zubo-text-700">Address: {booking.addressId || "N/A"}</p>
+            <p className="text-sm text-zubo-text-700">Instructions: {booking.additionalInstructions || "None"}</p>
           </div>
 
           {booking.recurring && (
             <>
               <Separator />
-              <div className="flex items-center gap-3 text-sm text-zubo-text-graphite-gray-700">
-                <Repeat className="h-4 w-4 text-zubo-highlight-1-blush-coral-600" />
+              <div className="flex items-center gap-3 text-sm text-zubo-text-700">
+                <Repeat className="h-4 w-4 text-zubo-highlight-1-600" />
                 <span>Recurring Service</span>
               </div>
             </>
           )}
         </div>
-        <DialogFooter className="p-4 border-t border-zubo-background-porcelain-white-200 bg-zubo-background-porcelain-white-50 flex flex-col sm:flex-row sm:justify-end gap-2">
+        <DialogFooter className="p-4 border-t border-zubo-background-200 bg-zubo-background-50 flex flex-col sm:flex-row sm:justify-end gap-2">
           {booking.paymentStatus === "PENDING" && (
             <Button
               onClick={handlePayNow}
-              className="bg-zubo-primary-royal-midnight-blue-600 hover:bg-zubo-primary-royal-midnight-blue-700 text-zubo-background-porcelain-white-50 w-full sm:w-auto"
+              className="bg-zubo-primary-600 hover:bg-zubo-primary-700 text-zubo-background-50 w-full sm:w-auto"
             >
               <CreditCard className="mr-2 h-4 w-4" />
               Pay Now
             </Button>
           )}
-          {showChatButtonInDialog && (
+          {showChatButton && hasSitterAssigned && (
             <Button
               variant="outline"
               onClick={handleChatWithSitter}
               disabled={isLoadingChat}
-              className="border-zubo-accent-soft-moss-green-300 text-zubo-accent-soft-moss-green-600 hover:bg-zubo-accent-soft-moss-green-50 bg-transparent w-full sm:w-auto"
+              className="border-zubo-accent-300 text-zubo-accent-600 hover:bg-zubo-accent-50 bg-transparent w-full sm:w-auto"
             >
               {isLoadingChat ? (
                 <>
@@ -321,7 +311,7 @@ export function BookingDetailsDialog({
           <Button
             variant="outline"
             onClick={handleGetHelp}
-            className="border-zubo-primary-royal-midnight-blue-300 text-zubo-primary-royal-midnight-blue-600 hover:bg-zubo-primary-royal-midnight-blue-50 bg-transparent w-full sm:w-auto"
+            className="border-zubo-primary-300 text-zubo-primary-600 hover:bg-zubo-primary-50 bg-transparent w-full sm:w-auto"
           >
             <HelpCircle className="mr-2 h-4 w-4" />
             Get Help

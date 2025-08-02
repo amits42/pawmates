@@ -202,38 +202,32 @@ export default function MyBookingsPage() {
       upcoming: {
         variant: "default" as const,
         icon: "⏳",
-        color:
-          "bg-zubo-primary-royal-midnight-blue-50 text-zubo-primary-royal-midnight-blue-700 border-zubo-primary-royal-midnight-blue-200",
+        color: "bg-zubo-primary-50 text-zubo-primary-700 border-zubo-primary-200",
       },
       confirmed: {
         variant: "default" as const,
         icon: "✅",
-        color:
-          "bg-zubo-accent-soft-moss-green-50 text-zubo-accent-soft-moss-green-700 border-zubo-accent-soft-moss-green-200",
+        color: "bg-zubo-accent-50 text-zubo-accent-700 border-zubo-accent-200",
       },
       pending: {
         variant: "outline" as const,
         icon: "⏳",
-        color:
-          "bg-zubo-highlight-2-bronze-clay-50 text-zubo-highlight-2-bronze-clay-700 border-zubo-highlight-2-bronze-clay-200",
+        color: "bg-zubo-highlight-2-50 text-zubo-highlight-2-700 border-zubo-highlight-2-200",
       },
       ongoing: {
         variant: "secondary" as const,
         icon: "🔄",
-        color:
-          "bg-zubo-highlight-1-blush-coral-50 text-zubo-highlight-1-blush-coral-700 border-zubo-highlight-1-blush-coral-200",
+        color: "bg-zubo-highlight-1-50 text-zubo-highlight-1-700 border-zubo-highlight-1-200",
       },
       "in-progress": {
         variant: "secondary" as const,
         icon: "🔄",
-        color:
-          "bg-zubo-highlight-1-blush-coral-50 text-zubo-highlight-1-blush-coral-700 border-zubo-highlight-1-blush-coral-200",
+        color: "bg-zubo-highlight-1-50 text-zubo-highlight-1-700 border-zubo-highlight-1-200",
       },
       completed: {
         variant: "outline" as const,
         icon: "✅",
-        color:
-          "bg-zubo-accent-soft-moss-green-50 text-zubo-accent-soft-moss-green-700 border-zubo-accent-soft-moss-green-200",
+        color: "bg-zubo-accent-50 text-zubo-accent-700 border-zubo-accent-200",
       },
       cancelled: {
         variant: "destructive" as const,
@@ -248,8 +242,7 @@ export default function MyBookingsPage() {
       assigned: {
         variant: "default" as const,
         icon: "👤",
-        color:
-          "bg-zubo-primary-royal-midnight-blue-50 text-zubo-primary-royal-midnight-blue-700 border-zubo-primary-royal-midnight-blue-200",
+        color: "bg-zubo-primary-50 text-zubo-primary-700 border-zubo-primary-200",
       },
     }
 
@@ -330,13 +323,13 @@ export default function MyBookingsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-zubo-background-porcelain-white-300">
+      <div className="min-h-screen bg-zubo-background-300">
         <div className="container mx-auto p-4 pb-20">
           <div className="flex items-center justify-center min-h-[50vh]">
             <div className="text-center">
-              <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-zubo-primary-royal-midnight-blue-600" />
-              <h3 className="text-lg font-semibold text-zubo-text-graphite-gray-800 mb-2">Loading your bookings</h3>
-              <p className="text-sm text-zubo-text-graphite-gray-600">Please wait...</p>
+              <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-zubo-primary-600" />
+              <h3 className="text-lg font-semibold text-zubo-text-800 mb-2">Loading your bookings</h3>
+              <p className="text-sm text-zubo-text-600">Please wait...</p>
             </div>
           </div>
         </div>
@@ -346,7 +339,7 @@ export default function MyBookingsPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-zubo-background-porcelain-white-300">
+      <div className="min-h-screen bg-zubo-background-300">
         <div className="container mx-auto p-4 pb-20">
           <Alert className="mb-4 border-red-200 bg-red-50">
             <AlertCircle className="h-4 w-4 text-red-600" />
@@ -354,7 +347,6 @@ export default function MyBookingsPage() {
               <div className="flex items-center justify-between">
                 <span>{error}</span>
                 <Button
-                  variant="outline"
                   size="sm"
                   onClick={fetchBookings}
                   className="text-red-600 border-red-300 text-xs h-7 bg-transparent"
@@ -370,14 +362,14 @@ export default function MyBookingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-zubo-background-porcelain-white-300">
+    <div className="min-h-screen bg-zubo-background-300">
       <div className="container mx-auto p-4 pb-20 max-w-6xl">
         {/* ✅ Success Popup */}
         {showSuccessModal && (
           <Dialog open={showSuccessModal} onOpenChange={setShowSuccessModal}>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle className="flex items-center gap-2 text-zubo-accent-soft-moss-green-700">
+                <DialogTitle className="flex items-center gap-2 text-zubo-accent-700">
                   <CheckCircle className="h-5 w-5" />
                   Booking Confirmed 🎉
                 </DialogTitle>
@@ -388,19 +380,22 @@ export default function MyBookingsPage() {
                   <br />
                   <span className="font-medium">Booking ID: {bookingId}</span>
                   {payLater !== "true" && (
-                    <p className="flex items-center gap-1 text-sm mt-2 text-zubo-text-graphite-gray-700">
+                    <p className="flex items-center gap-1 text-sm mt-2 text-zubo-text-700">
                       <Phone className="h-4 w-4" /> Confirmation sent to WhatsApp.
                     </p>
                   )}
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter className="flex justify-between gap-2">
-                <Button onClick={handleCloseSuccessModal} variant="outline" className="w-full bg-transparent">
+                <Button
+                  onClick={handleCloseSuccessModal}
+                  className="w-full bg-transparent border border-zubo-primary-200 text-zubo-primary-700 hover:bg-zubo-primary-50"
+                >
                   Close
                 </Button>
                 <Button
                   onClick={handleViewBooking}
-                  className="bg-zubo-accent-soft-moss-green-600 hover:bg-zubo-accent-soft-moss-green-700 text-white w-full"
+                  className="bg-zubo-accent-600 hover:bg-zubo-accent-700 text-white w-full"
                 >
                   View Booking
                 </Button>
@@ -409,12 +404,12 @@ export default function MyBookingsPage() {
           </Dialog>
         )}
 
-        <h1 className="text-3xl font-bold text-zubo-text-graphite-gray-900 mb-6">My Bookings</h1>
+        <h1 className="text-3xl font-bold text-zubo-text-900 mb-6">My Bookings</h1>
 
         {/* Search and Filter */}
         <div className="mb-6 space-y-3">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-zubo-text-graphite-gray-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-zubo-text-400" />
             <Input
               placeholder="Search bookings..."
               value={searchQuery}
@@ -449,13 +444,13 @@ export default function MyBookingsPage() {
             ].map((filter) => (
               <Button
                 key={filter.key}
-                variant={statusFilter === filter.key ? "default" : "outline"}
-                size="sm"
+                // Removed variant prop to ensure direct className control
                 onClick={() => setStatusFilter(filter.key)}
+                size="sm"
                 className={`whitespace-nowrap text-xs h-8 px-3 ${
                   statusFilter === filter.key
-                    ? "bg-zubo-primary-royal-midnight-blue-600 text-white hover:bg-zubo-primary-royal-midnight-blue-700" // Updated color for prominence
-                    : "border-zubo-primary-royal-midnight-blue-200 text-zubo-primary-royal-midnight-blue hover:bg-zubo-primary-royal-midnight-blue-50"
+                    ? "bg-zubo-primary-600 text-white border-zubo-primary-600 hover:bg-zubo-primary-700" // Prominent selected style
+                    : "bg-transparent text-zubo-primary-700 border-zubo-primary-200 hover:bg-zubo-primary-50" // Unselected style
                 }`}
               >
                 <Filter className="mr-1 h-3 w-3" />
@@ -466,12 +461,12 @@ export default function MyBookingsPage() {
         </div>
 
         {filteredBookings.length === 0 && !loading && !error ? (
-          <div className="flex flex-col items-center justify-center py-12 bg-zubo-background-porcelain-white-50 rounded-lg shadow-sm border border-zubo-background-porcelain-white-200">
-            <Calendar className="h-12 w-12 text-zubo-text-graphite-gray-400 mb-4" />
-            <p className="text-lg font-semibold text-zubo-text-graphite-gray-700 mb-2">
+          <div className="flex flex-col items-center justify-center py-12 bg-zubo-background-50 rounded-lg shadow-sm border border-zubo-background-200">
+            <Calendar className="h-12 w-12 text-zubo-text-400 mb-4" />
+            <p className="text-lg font-semibold text-zubo-text-700 mb-2">
               {searchQuery || statusFilter !== "all" ? "No matching bookings" : "No Bookings Yet"}
             </p>
-            <p className="text-sm text-zubo-text-graphite-gray-500 mb-6 text-center">
+            <p className="text-sm text-zubo-text-500 mb-6 text-center">
               {searchQuery || statusFilter !== "all"
                 ? "Try adjusting your search or filter criteria."
                 : "It looks like you haven't made any bookings. Let's get your first service scheduled!"}
@@ -479,7 +474,7 @@ export default function MyBookingsPage() {
             {!searchQuery && statusFilter === "all" && (
               <Button
                 onClick={() => router.push("/book-service")}
-                className="bg-zubo-primary-royal-midnight-blue-600 hover:bg-zubo-primary-royal-midnight-blue-700 text-zubo-background-porcelain-white-50"
+                className="bg-zubo-primary-600 hover:bg-zubo-primary-700 text-zubo-background-50"
               >
                 Book a Service
               </Button>
@@ -514,58 +509,58 @@ export default function MyBookingsPage() {
                   className="overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer"
                   onClick={() => handleCardClick(booking)}
                 >
-                  <CardHeader className="p-4 border-b border-zubo-background-porcelain-white-200 bg-zubo-background-porcelain-white-50">
+                  <CardHeader className="p-4 border-b border-zubo-background-200 bg-zubo-background-50">
                     <div className="flex items-center justify-between">
-                      <CardTitle className="text-lg font-semibold text-zubo-text-graphite-gray-900 flex items-center gap-2">
+                      <CardTitle className="text-lg font-semibold text-zubo-text-900 flex items-center gap-2">
                         <span className="text-xl">{getServiceIcon(booking.serviceName || "pet care")}</span>
                         {booking.serviceName || "Pet Care"}
                       </CardTitle>
                       {getStatusBadge(booking.status || "pending", booking.paymentStatus, booking.sitterId, sitterName)}
                     </div>
-                    <p className="text-sm text-zubo-text-graphite-gray-600 mt-1">Booking ID: #{booking.id.slice(-8)}</p>
+                    <p className="text-sm text-zubo-text-600 mt-1">Booking ID: #{booking.id.slice(-8)}</p>
                   </CardHeader>
                   <CardContent className="p-4 space-y-3">
-                    <div className="flex items-center gap-3 text-sm text-zubo-text-graphite-gray-700">
-                      <Calendar className="h-4 w-4 text-zubo-primary-royal-midnight-blue-600" />
+                    <div className="flex items-center gap-3 text-sm text-zubo-text-700">
+                      <Calendar className="h-4 w-4 text-zubo-primary-600" />
                       <span>{format(new Date(booking.date), "PPP")}</span>
                     </div>
-                    <div className="flex items-center gap-3 text-sm text-zubo-text-graphite-gray-700">
-                      <Clock className="h-4 w-4 text-zubo-accent-soft-moss-green-600" />
+                    <div className="flex items-center gap-3 text-sm text-zubo-text-700">
+                      <Clock className="h-4 w-4 text-zubo-accent-600" />
                       <span>{booking.time || "Not scheduled"}</span>
                     </div>
-                    <div className="flex items-center gap-3 text-sm text-zubo-text-graphite-gray-700">
-                      <DollarSign className="h-4 w-4 text-zubo-highlight-2-bronze-clay-600" />
+                    <div className="flex items-center gap-3 text-sm text-zubo-text-700">
+                      <DollarSign className="h-4 w-4 text-zubo-highlight-2-600" />
                       <span>₹{booking.totalPrice?.toFixed(2) || "0.00"}</span>
                       {booking.paymentStatus === "PENDING" ? (
-                        <Badge className="bg-zubo-highlight-2-bronze-clay-50 text-zubo-highlight-2-bronze-clay-700 border-zubo-highlight-2-bronze-clay-200 font-medium px-2 py-0.5 text-xs">
+                        <Badge className="bg-zubo-highlight-2-50 text-zubo-highlight-2-700 border-zubo-highlight-2-200 font-medium px-2 py-0.5 text-xs">
                           Unpaid
                         </Badge>
                       ) : (
-                        <Badge className="bg-zubo-accent-soft-moss-green-50 text-zubo-accent-soft-moss-green-700 border-zubo-accent-soft-moss-green-200 font-medium px-2 py-0.5 text-xs">
+                        <Badge className="bg-zubo-accent-50 text-zubo-accent-700 border-zubo-accent-200 font-medium px-2 py-0.5 text-xs">
                           Paid
                         </Badge>
                       )}
                     </div>
                     {booking.recurring && (
-                      <div className="flex items-center gap-3 text-sm text-zubo-text-graphite-gray-700">
-                        <Repeat className="h-4 w-4 text-zubo-highlight-1-blush-coral-600" />
+                      <div className="flex items-center gap-3 text-sm text-zubo-text-700">
+                        <Repeat className="h-4 w-4 text-zubo-highlight-1-600" />
                         <span>Recurring Service</span>
                       </div>
                     )}
-                    <div className="flex items-center gap-3 text-sm text-zubo-text-graphite-gray-700">
-                      <User className="h-4 w-4 text-zubo-primary-royal-midnight-blue-600" />
+                    <div className="flex items-center gap-3 text-sm text-zubo-text-700">
+                      <User className="h-4 w-4 text-zubo-primary-600" />
                       <span>
                         Sitter:{" "}
                         <span className="font-medium">
                           {sitterName || "To be assigned"}
                           {booking.sitterId && !sitterName && (
-                            <span className="text-zubo-highlight-2-bronze-clay-600 text-sm ml-1">(Loading...)</span>
+                            <span className="text-zubo-highlight-2-600 text-sm ml-1">(Loading...)</span>
                           )}
                         </span>
                       </span>
                     </div>
-                    <div className="flex items-center gap-3 text-sm text-zubo-text-graphite-gray-700">
-                      <MapPin className="h-4 w-4 text-zubo-highlight-1-blush-coral-600" />
+                    <div className="flex items-center gap-3 text-sm text-zubo-text-700">
+                      <MapPin className="h-4 w-4 text-zubo-highlight-1-600" />
                       <span>{booking.addressId || "Address not specified"}</span>
                     </div>
 
@@ -577,7 +572,7 @@ export default function MyBookingsPage() {
                             e.stopPropagation()
                             handlePayNow(booking.id)
                           }}
-                          className="bg-zubo-primary-royal-midnight-blue-600 hover:bg-zubo-primary-royal-midnight-blue-700 text-zubo-background-porcelain-white-50 text-xs"
+                          className="bg-zubo-primary-600 hover:bg-zubo-primary-700 text-zubo-background-50 text-xs"
                         >
                           <CreditCard className="mr-1 h-3 w-3" />
                           Pay Now
@@ -585,14 +580,14 @@ export default function MyBookingsPage() {
                       )}
                       {showChatButton && hasSitterAssigned && (
                         <Button
-                          variant="outline"
+                          // Removed variant prop to ensure direct className control
                           size="sm"
                           onClick={(e) => {
                             e.stopPropagation()
                             handleChatWithSitter(booking)
                           }}
                           disabled={isLoadingChat}
-                          className="border-zubo-accent-soft-moss-green-300 text-zubo-accent-soft-moss-green-600 hover:bg-zubo-accent-soft-moss-green-50 bg-transparent text-xs"
+                          className="border-zubo-accent-300 text-zubo-accent-600 hover:bg-zubo-accent-50 bg-transparent text-xs"
                         >
                           {isLoadingChat ? (
                             <>
@@ -608,13 +603,13 @@ export default function MyBookingsPage() {
                         </Button>
                       )}
                       <Button
-                        variant="outline"
+                        // Removed variant prop to ensure direct className control
                         size="sm"
                         onClick={(e) => {
                           e.stopPropagation()
                           handleGetHelp(booking.id)
                         }}
-                        className="border-zubo-primary-royal-midnight-blue-300 text-zubo-primary-royal-midnight-blue-600 hover:bg-zubo-primary-royal-midnight-blue-50 bg-transparent text-xs"
+                        className="border-zubo-primary-300 text-zubo-primary-600 hover:bg-zubo-primary-50 bg-transparent text-xs"
                       >
                         <HelpCircle className="mr-1 h-3 w-3" />
                         Help
