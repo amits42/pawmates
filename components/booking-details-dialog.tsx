@@ -1,29 +1,36 @@
 "use client"
 
-import { useState } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import {
   Calendar,
   Clock,
   DollarSign,
-  Repeat,
+  MapPin,
   User,
-  Shield,
   MessageCircle,
   HelpCircle,
+  Repeat,
+  CreditCard,
   Loader2,
-  Copy,
-  Play,
-  Square,
-  XCircle,
+  Phone,
+  Mail,
+  ClipboardCopy,
 } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
-import { RebookButton } from "@/components/rebook-button"
-import type { Booking } from "@/types/api"
-import type { JSX } from "react/jsx-runtime"
-import { BookingCancellationDialog } from "@/components/booking-cancellation-dialog"
+import { useState } from "react"
+import type { Booking, UserProfile } from "@/types/api"
+import { format, parseISO } from "date-fns"
+import type { JSX } from "react/jsx-runtime" // Import JSX to fix the undeclared variable error
 
 interface BookingDetailsDialogProps {
   booking: Booking | null
@@ -31,52 +38,9 @@ interface BookingDetailsDialogProps {
   onOpenChange: (open: boolean) => void
   getStatusBadge: (status: string, paymentStatus?: string, sitterId?: string, sitterName?: string) => JSX.Element
   getServiceIcon: (service: string) => string
-  router: any
-  user: any
-  showChatButton: boolean
-  showRebookButton?: boolean
-}
-
-const formatDate = (dateString: string) => {
-  if (!dateString) return "Not scheduled"
-  try {
-    const date = new Date(dateString)
-    return date.toLocaleDateString("en-US", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    })
-  } catch (error) {
-    return dateString
-  }
-}
-
-const formatRecurringPattern = (pattern: string) => {
-  if (!pattern) return "One-time service"
-
-  if (pattern.startsWith("weekly_")) {
-    const parts = pattern.split("_")
-    const interval = parts[1]
-    const days = parts.slice(2).join("_").split(",")
-
-    if (days.length === 7) return `Every day`
-    if (days.length === 5 && !days.includes("saturday") && !days.includes("sunday")) {
-      return `Weekdays only`
-    }
-    if (days.length === 2 && days.includes("saturday") && days.includes("sunday")) {
-      return `Weekends only`
-    }
-
-    const dayNames = days.map((day) => day.charAt(0).toUpperCase() + day.slice(1)).join(", ")
-    return interval === "1" ? `Weekly on ${dayNames}` : `Every ${interval} weeks on ${dayNames}`
-  }
-
-  if (pattern.startsWith("monthly_")) {
-    return `Monthly service`
-  }
-
-  return pattern
+  router: any // Next.js router instance
+  user: UserProfile | null // Current authenticated user
+  showChatButton?: boolean // Optional prop to control chat button visibility
 }
 
 export function BookingDetailsDialog({
@@ -87,30 +51,20 @@ export function BookingDetailsDialog({
   getServiceIcon,
   router,
   user,
-  showChatButton,
-  showRebookButton = false,
+  showChatButton = true,
 }: BookingDetailsDialogProps) {
-  const [isLoading, setIsLoading] = useState(false)
   const { toast } = useToast()
-  const [showCancellationDialog, setShowCancellationDialog] = useState(false)
+  const [isLoadingChat, setIsLoadingChat] = useState(false)
 
   if (!booking) return null
 
   const sitterName = booking.sitter_name || booking.sitterName || booking.caretakerName
-  const sitterPhone = booking.sitter_phone || booking.sitterPhone
-
   const hasSitterAssigned =
     booking.sitterId &&
     sitterName &&
     sitterName.trim() !== "" &&
     sitterName.toLowerCase() !== "to be assigned" &&
-    sitterName.toLowerCase() !== "sitter not assigned" &&
-    sitterPhone
-
-  const handleGetHelp = () => {
-    router.push(`/support?bookingId=${booking.id}`)
-    onOpenChange(false)
-  }
+    sitterName.toLowerCase() !== "sitter not assigned"
 
   const handleChatWithSitter = async () => {
     if (!user?.phone) {
@@ -122,6 +76,8 @@ export function BookingDetailsDialog({
       return
     }
 
+    const sitterPhone = booking.sitter_phone || booking.sitterPhone
+
     if (!sitterPhone) {
       toast({
         title: "Sitter contact not available",
@@ -131,7 +87,7 @@ export function BookingDetailsDialog({
       return
     }
 
-    setIsLoading(true)
+    setIsLoadingChat(true)
 
     try {
       const chatData = {
@@ -175,316 +131,203 @@ export function BookingDetailsDialog({
         variant: "destructive",
       })
     } finally {
-      setIsLoading(false)
+      setIsLoadingChat(false)
     }
-  }
-
-  const copyToClipboard = (text: string, label: string) => {
-    navigator.clipboard.writeText(text)
-    toast({
-      title: "Copied!",
-      description: `${label} copied to clipboard`,
-    })
   }
 
   const handlePayNow = () => {
-    // Redirect to payment page with booking details
     router.push(`/book-service/payment?bookingId=${booking.id}&payExisting=true`)
-    onOpenChange(false)
+    onOpenChange(false) // Close dialog after navigating
   }
 
-  const handleCancelBooking = async (reason: string) => {
-    setIsLoading(true)
-    try {
-      const response = await fetch("/api/bookings/cancel", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          bookingId: booking.id,
-          reason: reason,
-          userId: user?.id,
-        }),
-      })
-
-      const result = await response.json()
-
-      if (response.ok) {
-        toast({
-          title: "Booking Cancelled",
-          description: result.message,
-        })
-        // Refresh the page or update the booking status
-        window.location.reload()
-      } else {
-        throw new Error(result.error || "Failed to cancel booking")
-      }
-    } catch (error) {
-      console.error("Error cancelling booking:", error)
-      toast({
-        title: "Cancellation Failed",
-        description: error instanceof Error ? error.message : "Please try again later",
-        variant: "destructive",
-      })
-    } finally {
-      setIsLoading(false)
-    }
+  const handleGetHelp = () => {
+    router.push(`/support?bookingId=${booking.id}`)
+    onOpenChange(false) // Close dialog after navigating
   }
+
+  const copyToClipboard = (text: string, message: string) => {
+    navigator.clipboard.writeText(text)
+    toast({
+      title: "Copied!",
+      description: message,
+    })
+  }
+
+  const showChatButtonInDialog =
+    showChatButton &&
+    hasSitterAssigned &&
+    ["upcoming", "confirmed", "pending", "assigned", "ongoing", "in-progress"].includes(
+      booking.status?.toLowerCase() || "",
+    )
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md mx-auto max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
+      <DialogContent className="sm:max-w-[425px] p-0">
+        <DialogHeader className="p-4 border-b border-zubo-background-porcelain-white-200 bg-zubo-background-porcelain-white-50">
+          <DialogTitle className="text-xl font-semibold text-zubo-text-graphite-gray-900 flex items-center gap-2">
+            <span className="text-2xl">{getServiceIcon(booking.serviceName || "pet care")}</span>
+            {booking.serviceName || "Pet Care Service"}
+          </DialogTitle>
+          <DialogDescription className="text-sm text-zubo-text-graphite-gray-600">
+            Booking ID: #{booking.id}
+          </DialogDescription>
+        </DialogHeader>
+        <div className="p-4 space-y-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="text-lg">{getServiceIcon(booking.serviceName || "pet care")}</span>
-              <DialogTitle className="text-base font-semibold">{booking.serviceName || "Pet Care Service"}</DialogTitle>
-            </div>
+            <p className="text-sm font-medium text-zubo-text-graphite-gray-800">Status:</p>
             {getStatusBadge(booking.status || "pending", booking.paymentStatus, booking.sitterId, sitterName)}
           </div>
-          <div className="flex items-center justify-between gap-2">
-            <p className="text-xs text-gray-500">Booking ID:</p>
-            <div className="flex items-center gap-1">
-              <span className="text-xs font-mono text-gray-700">#{booking.id}</span>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-6 w-6 p-0 hover:bg-gray-100"
-                onClick={() => copyToClipboard(booking.id.toString(), "Booking ID")}
-              >
-                <Copy className="h-3 w-3" />
-              </Button>
-            </div>
-          </div>
-        </DialogHeader>
-
-        <div className="space-y-4">
-          {/* Basic Info */}
-          <div className="grid grid-cols-2 gap-3">
-            <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
-              <Calendar className="h-3 w-3 text-blue-600" />
-              <div>
-                <p className="text-xs text-gray-500">Date</p>
-                <p className="text-sm font-medium">{formatDate(booking.date)}</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
-              <Clock className="h-3 w-3 text-green-600" />
-              <div>
-                <p className="text-xs text-gray-500">Time</p>
-                <p className="text-sm font-medium">{booking.time || "Not scheduled"}</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Amount */}
-          <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
-            <DollarSign className="h-3 w-3 text-purple-600" />
-            <div>
-              <p className="text-xs text-gray-500">Total Amount</p>
-              <p className="text-sm font-medium">${booking.totalPrice?.toFixed(2) || "0.00"}</p>
-            </div>
-          </div>
-
-          {/* Payment Status */}
-          <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
-            <DollarSign className="h-3 w-3 text-purple-600" />
-            <div>
-              <p className="text-xs text-gray-500">Payment Status</p>
-              <p className="text-sm font-medium">
-                {booking.paymentStatus === "PENDING" ? "Unpaid" : booking.paymentStatus || "Pending"}
-              </p>
-            </div>
-          </div>
-
-          {/* Recurring Pattern */}
-          {booking.recurring && (
-            <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
-              <Repeat className="h-3 w-3 text-orange-600" />
-              <div>
-                <p className="text-xs text-gray-500">Recurring Pattern</p>
-                <p className="text-sm font-medium">{formatRecurringPattern(booking.recurringPattern)}</p>
-              </div>
-            </div>
-          )}
 
           <Separator />
 
-          {/* Pet & Sitter Info */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2 p-2 bg-green-50 rounded-lg">
-              <span className="text-base">🐾</span>
-              <div>
-                <p className="text-xs text-gray-500">Pet</p>
-                <p className="text-sm font-medium">{booking.petName || "Not specified"}</p>
-              </div>
+          <div className="grid grid-cols-1 gap-3">
+            <div className="flex items-center gap-3 text-sm text-zubo-text-graphite-gray-700">
+              <Calendar className="h-4 w-4 text-zubo-primary-royal-midnight-blue-600" />
+              <span>Date: {format(parseISO(booking.date), "PPP")}</span>
             </div>
-
-            <div className="flex items-center gap-2 p-2 bg-purple-50 rounded-lg">
-              <User className="h-3 w-3 text-purple-600" />
-              <div>
-                <p className="text-xs text-gray-500">Pet Sitter</p>
-                <p className="text-sm font-medium">
-                  {sitterName || "To be assigned"}
-                  {booking.sitterId && !sitterName && <span className="text-amber-600 text-xs ml-1">(Loading...)</span>}
-                </p>
-              </div>
+            <div className="flex items-center gap-3 text-sm text-zubo-text-graphite-gray-700">
+              <Clock className="h-4 w-4 text-zubo-accent-soft-moss-green-600" />
+              <span>Time: {booking.time || "Not specified"}</span>
+            </div>
+            <div className="flex items-center gap-3 text-sm text-zubo-text-graphite-gray-700">
+              <DollarSign className="h-4 w-4 text-zubo-highlight-2-bronze-clay-600" />
+              <span>Total Price: ₹{booking.totalPrice?.toFixed(2) || "0.00"}</span>
+            </div>
+            <div className="flex items-center gap-3 text-sm text-zubo-text-graphite-gray-700">
+              <CreditCard className="h-4 w-4 text-zubo-highlight-1-blush-coral-600" />
+              <span>
+                Payment Status:{" "}
+                <Badge
+                  className={`font-medium px-2 py-0.5 text-xs ${
+                    booking.paymentStatus === "PENDING"
+                      ? "bg-zubo-highlight-2-bronze-clay-50 text-zubo-highlight-2-bronze-clay-700 border-zubo-highlight-2-bronze-clay-200"
+                      : "bg-zubo-accent-soft-moss-green-50 text-zubo-accent-soft-moss-green-700 border-zubo-accent-soft-moss-green-200"
+                  }`}
+                >
+                  {booking.paymentStatus || "N/A"}
+                </Badge>
+              </span>
             </div>
           </div>
 
-          {/* Service OTPs - START and END */}
-          {(booking.startOtp || booking.endOtp || booking.serviceOtp) &&
-            ["upcoming", "confirmed", "pending", "assigned"].includes(booking.status?.toLowerCase() || "") && (
+          <Separator />
+
+          <div className="space-y-3">
+            <h3 className="font-semibold text-zubo-text-graphite-gray-800 flex items-center gap-2">
+              <User className="h-4 w-4 text-zubo-primary-royal-midnight-blue-600" /> Sitter Information
+            </h3>
+            <p className="text-sm text-zubo-text-graphite-gray-700">
+              Name:{" "}
+              <span className="font-medium">
+                {sitterName || "To be assigned"}
+                {booking.sitterId && !sitterName && (
+                  <span className="text-zubo-highlight-2-bronze-clay-600 text-sm ml-1">(Loading...)</span>
+                )}
+              </span>
+            </p>
+            {hasSitterAssigned && (
               <>
-                <Separator />
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Shield className="h-4 w-4 text-amber-600" />
-                    <span className="font-medium text-amber-800 text-sm">Service OTPs</span>
-                  </div>
-
-                  {/* START OTP */}
-                  {booking.startOtp && (
-                    <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-3 rounded-lg border border-green-200">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <Play className="h-3 w-3 text-green-600" />
-                          <span className="font-medium text-green-800 text-xs">START Service</span>
-                        </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-6 w-6 p-0 hover:bg-green-100"
-                          onClick={() => copyToClipboard(booking.startOtp!, "START OTP")}
-                        >
-                          <Copy className="h-3 w-3" />
-                        </Button>
-                      </div>
-                      <div className="text-lg font-mono font-bold text-green-900 mb-1">{booking.startOtp}</div>
-                      <p className="text-xs text-green-700">Share this OTP with your sitter to START the service</p>
-                    </div>
+                <div className="flex items-center gap-2 text-sm text-zubo-text-graphite-gray-700">
+                  <Phone className="h-4 w-4 text-zubo-accent-soft-moss-green-600" />
+                  <span>Phone: {booking.sitter_phone || booking.sitterPhone || "N/A"}</span>
+                  {(booking.sitter_phone || booking.sitterPhone) && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6"
+                      onClick={() =>
+                        copyToClipboard(
+                          booking.sitter_phone || booking.sitterPhone || "",
+                          "Sitter phone number copied!",
+                        )
+                      }
+                    >
+                      <ClipboardCopy className="h-3 w-3" />
+                    </Button>
                   )}
-
-                  {/* END OTP */}
-                  {booking.endOtp && (
-                    <div className="bg-gradient-to-r from-red-50 to-rose-50 p-3 rounded-lg border border-red-200">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <Square className="h-3 w-3 text-red-600" />
-                          <span className="font-medium text-red-800 text-xs">END Service</span>
-                        </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-6 w-6 p-0 hover:bg-red-100"
-                          onClick={() => copyToClipboard(booking.endOtp!, "END OTP")}
-                        >
-                          <Copy className="h-3 w-3" />
-                        </Button>
-                      </div>
-                      <div className="text-lg font-mono font-bold text-red-900 mb-1">{booking.endOtp}</div>
-                      <p className="text-xs text-red-700">Share this OTP with your sitter to END the service</p>
-                    </div>
-                  )}
-
-                  {/* Legacy Service OTP (if no START/END OTPs) */}
-                  {!booking.startOtp && !booking.endOtp && booking.serviceOtp && (
-                    <div className="bg-gradient-to-r from-amber-50 to-yellow-50 p-3 rounded-lg border border-amber-200">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <Shield className="h-3 w-3 text-amber-600" />
-                          <span className="font-medium text-amber-800 text-xs">Service OTP</span>
-                        </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-6 w-6 p-0 hover:bg-amber-100"
-                          onClick={() => copyToClipboard(booking.serviceOtp!, "Service OTP")}
-                        >
-                          <Copy className="h-3 w-3" />
-                        </Button>
-                      </div>
-                      <div className="text-lg font-mono font-bold text-amber-900 mb-1">{booking.serviceOtp}</div>
-                      <p className="text-xs text-amber-700">Share this OTP with your sitter to start the service</p>
-                    </div>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-zubo-text-graphite-gray-700">
+                  <Mail className="h-4 w-4 text-zubo-accent-soft-moss-green-600" />
+                  <span>Email: {booking.sitter_email || booking.sitterEmail || "N/A"}</span>
+                  {(booking.sitter_email || booking.sitterEmail) && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6"
+                      onClick={() =>
+                        copyToClipboard(booking.sitter_email || booking.sitterEmail || "", "Sitter email copied!")
+                      }
+                    >
+                      <ClipboardCopy className="h-3 w-3" />
+                    </Button>
                   )}
                 </div>
               </>
             )}
+          </div>
 
-          {/* Action Buttons */}
-          <div className="flex flex-col gap-2 pt-2">
-            {booking.paymentStatus === "PENDING" && (
-              <Button
-                variant="outline"
-                size="sm"
-                className="w-full text-green-600 border-green-300 hover:bg-green-50 text-xs bg-transparent"
-                onClick={handlePayNow}
-              >
-                <DollarSign className="mr-2 h-3 w-3" />
-                Pay Now
-              </Button>
-            )}
-            {!booking.recurring &&
-              ["pending", "confirmed", "assigned", "upcoming"].includes(booking.status?.toLowerCase() || "") && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full text-red-600 border-red-300 hover:bg-red-50 text-xs bg-transparent"
-                  onClick={() => setShowCancellationDialog(true)}
-                >
-                  <XCircle className="mr-2 h-3 w-3" />
-                  Cancel Booking
-                </Button>
-              )}
+          <Separator />
+
+          <div className="space-y-3">
+            <h3 className="font-semibold text-zubo-text-graphite-gray-800 flex items-center gap-2">
+              <MapPin className="h-4 w-4 text-zubo-highlight-1-blush-coral-600" /> Location Details
+            </h3>
+            <p className="text-sm text-zubo-text-graphite-gray-700">Address: {booking.addressId || "N/A"}</p>
+            <p className="text-sm text-zubo-text-graphite-gray-700">
+              Instructions: {booking.additionalInstructions || "None"}
+            </p>
+          </div>
+
+          {booking.recurring && (
+            <>
+              <Separator />
+              <div className="flex items-center gap-3 text-sm text-zubo-text-graphite-gray-700">
+                <Repeat className="h-4 w-4 text-zubo-highlight-1-blush-coral-600" />
+                <span>Recurring Service</span>
+              </div>
+            </>
+          )}
+        </div>
+        <DialogFooter className="p-4 border-t border-zubo-background-porcelain-white-200 bg-zubo-background-porcelain-white-50 flex flex-col sm:flex-row sm:justify-end gap-2">
+          {booking.paymentStatus === "PENDING" && (
+            <Button
+              onClick={handlePayNow}
+              className="bg-zubo-primary-royal-midnight-blue-600 hover:bg-zubo-primary-royal-midnight-blue-700 text-zubo-background-porcelain-white-50 w-full sm:w-auto"
+            >
+              <CreditCard className="mr-2 h-4 w-4" />
+              Pay Now
+            </Button>
+          )}
+          {showChatButtonInDialog && (
             <Button
               variant="outline"
-              size="sm"
-              className="w-full text-blue-600 border-blue-300 hover:bg-blue-50 text-xs bg-transparent"
-              onClick={handleGetHelp}
+              onClick={handleChatWithSitter}
+              disabled={isLoadingChat}
+              className="border-zubo-accent-soft-moss-green-300 text-zubo-accent-soft-moss-green-600 hover:bg-zubo-accent-soft-moss-green-50 bg-transparent w-full sm:w-auto"
             >
-              <HelpCircle className="mr-2 h-3 w-3" />
-              Get Help & Support
+              {isLoadingChat ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Starting Chat...
+                </>
+              ) : (
+                <>
+                  <MessageCircle className="mr-2 h-4 w-4" />
+                  Chat with Sitter
+                </>
+              )}
             </Button>
-
-            {showChatButton && hasSitterAssigned && (
-              <Button
-                variant="outline"
-                size="sm"
-                className="w-full text-green-600 border-green-300 hover:bg-green-50 text-xs bg-transparent"
-                onClick={handleChatWithSitter}
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="mr-2 h-3 w-3 animate-spin" />
-                    Starting Chat...
-                  </>
-                ) : (
-                  <>
-                    <MessageCircle className="mr-2 h-3 w-3" />
-                    Chat with {sitterName?.split(" ")[0]}
-                  </>
-                )}
-              </Button>
-            )}
-
-            {showRebookButton && (
-              <div className="pt-1">
-                <RebookButton booking={booking} />
-              </div>
-            )}
-          </div>
-        </div>
+          )}
+          <Button
+            variant="outline"
+            onClick={handleGetHelp}
+            className="border-zubo-primary-royal-midnight-blue-300 text-zubo-primary-royal-midnight-blue-600 hover:bg-zubo-primary-royal-midnight-blue-50 bg-transparent w-full sm:w-auto"
+          >
+            <HelpCircle className="mr-2 h-4 w-4" />
+            Get Help
+          </Button>
+        </DialogFooter>
       </DialogContent>
-      <BookingCancellationDialog
-        booking={booking}
-        open={showCancellationDialog}
-        onOpenChange={setShowCancellationDialog}
-        onCancel={handleCancelBooking}
-        isLoading={isLoading}
-      />
     </Dialog>
   )
 }

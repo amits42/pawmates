@@ -1,416 +1,213 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { useRouter, useParams } from "next/navigation"
+import { useState, useEffect, useMemo } from "react"
+import { useParams, useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Separator } from "@/components/ui/separator"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import {
-  ArrowLeft,
   Calendar,
   Clock,
   DollarSign,
-  Repeat,
+  MapPin,
   User,
-  Shield,
-  MessageCircle,
-  HelpCircle,
   Loader2,
-  Copy,
-  Play,
-  Square,
-  CheckCircle,
-  AlertCircle,
-  Heart,
+  MessageCircle,
   CreditCard,
-  ChevronDown,
-  ChevronUp,
-  RefreshCw,
-  Info,
+  AlertCircle,
+  ChevronLeft,
+  CheckCircle,
   XCircle,
+  Info,
+  Wallet,
+  Phone,
+  Mail,
+  ClipboardCopy,
 } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
 import { useToast } from "@/hooks/use-toast"
-import { RebookButton } from "@/components/rebook-button"
-import { SessionCancellationDialog } from "@/components/session-cancellation-dialog"
 import { BookingCancellationDialog } from "@/components/booking-cancellation-dialog"
+import { RecurringBookingDetails } from "@/components/recurring-booking-details"
+import { RebookButton } from "@/components/rebook-button"
+import { OwnerEndService } from "@/components/owner-end-service"
+import { ServiceOtpDialog } from "@/components/service-otp-dialog"
+import { BookingSupportActions } from "@/components/booking-support-actions"
 import type { Booking } from "@/types/api"
-import { format } from "date-fns"
+import { format, parseISO } from "date-fns"
 import { Toaster } from "@/components/ui/toaster"
 
-interface RecurringSession {
-  id: string
-  sequenceNumber: number
-  sessionDate: string
-  sessionTime: string
-  sessionPrice: number
-  status: string
-  paymentStatus: string
-  duration: number
-  notes?: string
-  startOtp?: string
-  endOtp?: string
-}
-
-interface CancellationPolicy {
-  percentageDeduction: number
-  description: string
-  refundAmount: number
-  deductionAmount: number
-  processingTime: string
-  canRefund: boolean
-}
-
-interface RefundStatus {
-  id: string
-  refundId: string
-  amount: number
-  status: string
-  bookingId?: string
-  sessionId?: string
-  sequenceNumber?: number
-  sessionDate?: string
-  initiatedAt: string
-  processedAt?: string
-  failedAt?: string
-  failureReason?: string
-  estimatedProcessingTime: string
-}
-
-const formatDate = (dateString: string) => {
-  if (!dateString) return "Not scheduled"
-  try {
-    const date = new Date(dateString)
-    return date.toLocaleDateString("en-US", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    })
-  } catch (error) {
-    return dateString
-  }
-}
-
-const formatDateShort = (dateString: string) => {
-  if (!dateString) return "Not scheduled"
-  try {
-    const date = new Date(dateString)
-    return date.toLocaleDateString("en-US", {
-      weekday: "short",
-      month: "short",
-      day: "numeric",
-    })
-  } catch (error) {
-    return dateString
-  }
-}
-
-const formatRecurringPattern = (pattern: string) => {
-  if (!pattern) return "One-time service"
-
-  if (pattern.startsWith("weekly_")) {
-    const parts = pattern.split("_")
-    const interval = parts[1]
-    const days = parts.slice(2).join("_").split(",")
-
-    if (days.length === 7) return `Every day`
-    if (days.length === 5 && !days.includes("saturday") && !days.includes("sunday")) {
-      return `Weekdays only`
-    }
-    if (days.length === 2 && days.includes("saturday") && days.includes("sunday")) {
-      return `Weekends only`
-    }
-
-    const dayNames = days.map((day) => day.charAt(0).toUpperCase() + day.slice(1)).join(", ")
-    return interval === "1" ? `Weekly on ${dayNames}` : `Every ${interval} weeks on ${dayNames}`
-  }
-
-  if (pattern.startsWith("monthly_")) {
-    return `Monthly service`
-  }
-
-  return pattern
-}
-
-const getServiceIcon = (service: string) => {
-  const serviceIcons: { [key: string]: string } = {
-    "dog walking": "🚶‍♂️",
-    "dog walking1": "🚶‍♂️",
-    "pet sitting": "🏠",
-    grooming: "✂️",
-    "pet grooming": "✂️",
-    veterinary: "🏥",
-    training: "🎓",
-    boarding: "🏨",
-  }
-  return serviceIcons[service?.toLowerCase()] || "🐾"
-}
-
 export default function BookingDetailsPage() {
-  const router = useRouter()
   const params = useParams()
+  const router = useRouter()
   const { user } = useAuth()
   const { toast } = useToast()
 
+  const bookingId = params.id as string
   const [booking, setBooking] = useState<Booking | null>(null)
-  const [sessions, setSessions] = useState<RecurringSession[]>([])
   const [loading, setLoading] = useState(true)
-  const [sessionsLoading, setSessionsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
-  const [showAllSessions, setShowAllSessions] = useState(false)
-  const [cancellationPolicy, setCancellationPolicy] = useState<CancellationPolicy | null>(null)
-  const [sessionCancellationPolicies, setSessionCancellationPolicies] = useState<{ [key: string]: CancellationPolicy }>(
-    {},
-  )
-  const [isCancelling, setIsCancelling] = useState(false)
-  const [cancellingSessionId, setCancellingSessionId] = useState<string | null>(null)
-  const [refunds, setRefunds] = useState<RefundStatus[]>([])
-  const [showRefunds, setShowRefunds] = useState(false)
-  const [showBookingCancellationDialog, setShowBookingCancellationDialog] = useState(false)
-
-  const bookingId = params?.id as string
+  const [isCancellationDialogOpen, setIsCancellationDialogOpen] = useState(false)
+  const [isOtpDialogOpen, setIsOtpDialogOpen] = useState(false)
+  const [otpType, setOtpType] = useState<"start" | "end" | null>(null)
+  const [isLoadingChat, setIsLoadingChat] = useState(false)
+  const [cancellationPolicy, setCancellationPolicy] = useState<any>(null)
+  const [isPolicyLoading, setIsPolicyLoading] = useState(true)
+  const [policyError, setPolicyError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (bookingId && user?.id) {
+    if (user?.id && bookingId) {
       fetchBookingDetails()
-      fetchRefundStatus()
+      fetchCancellationPolicy()
     }
-  }, [bookingId, user])
+  }, [user, bookingId])
 
   const fetchBookingDetails = async () => {
     try {
       setLoading(true)
       setError(null)
 
-      const response = await fetch(`/api/bookings?userId=${encodeURIComponent(user.id)}`, {
+      if (!user?.id) throw new Error("User not authenticated")
+
+      const response = await fetch(`/api/bookings/${bookingId}?userId=${encodeURIComponent(user.id)}`, {
         headers: {
           "Content-Type": "application/json",
           "X-User-ID": user.id,
+          ...(user?.token ? { Authorization: `Bearer ${user.token}` } : {}),
         },
       })
 
       if (!response.ok) {
-        throw new Error("Failed to fetch booking details")
+        const errorData = await response.json()
+        throw new Error(errorData.message || "Failed to fetch booking details")
       }
 
-      const bookings = await response.json()
-      const foundBooking = bookings.find((b: Booking) => b.id.toString() === bookingId)
-
-      if (!foundBooking) {
-        throw new Error("Booking not found")
-      }
-
-      setBooking(foundBooking)
-
-      // If it's a recurring booking, fetch sessions
-      if (foundBooking.recurring) {
-        fetchRecurringSessions(foundBooking.id)
-      } else {
-        // For non-recurring bookings, fetch cancellation policy
-        fetchCancellationPolicy(foundBooking)
-      }
+      const data = await response.json()
+      setBooking(data)
     } catch (error) {
       console.error("Error fetching booking details:", error)
-      setError("Failed to load booking details. Please try again.")
+      setError(error instanceof Error ? error.message : "Failed to load booking details. Please try again.")
+      setBooking(null)
     } finally {
       setLoading(false)
     }
   }
 
-  const fetchRecurringSessions = async (bookingId: number) => {
+  const fetchCancellationPolicy = async () => {
     try {
-      setSessionsLoading(true)
-
-      const response = await fetch(`/api/bookings/recurring/${bookingId}`, {
-        headers: {
-          "Content-Type": "application/json",
-          "X-User-ID": user?.id || "",
-          ...(user?.token ? { Authorization: `Bearer ${user.token}` } : {}),
-        },
-      })
-
-      if (!response.ok) throw new Error("Failed to fetch recurring sessions")
-
+      setIsPolicyLoading(true)
+      setPolicyError(null)
+      const response = await fetch("/api/bookings/cancellation-policy")
+      if (!response.ok) {
+        throw new Error("Failed to fetch cancellation policy")
+      }
       const data = await response.json()
-      setSessions(data)
+      setCancellationPolicy(data)
+    } catch (err) {
+      console.error("Error fetching cancellation policy:", err)
+      setPolicyError("Failed to load cancellation policy.")
+    } finally {
+      setIsPolicyLoading(false)
+    }
+  }
 
-      // Fetch cancellation policy for each paid session
-      const policies: { [key: string]: CancellationPolicy } = {}
-      for (const session of data) {
-        if (session.paymentStatus === "PAID") {
-          try {
-            const policyResponse = await fetch("/api/bookings/cancellation-policy", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                "X-User-ID": user?.id || "",
-              },
-              body: JSON.stringify({
-                sessionId: session.id,
-                amount: session.sessionPrice,
-                paymentStatus: session.paymentStatus,
-              }),
-            })
+  const handleCancellationSuccess = () => {
+    toast({
+      title: "Booking Cancelled",
+      description: "Your booking has been successfully cancelled.",
+      variant: "default",
+    })
+    setIsCancellationDialogOpen(false)
+    fetchBookingDetails() // Re-fetch booking details to update status
+  }
 
-            if (policyResponse.ok) {
-              const policy = await policyResponse.json()
-              policies[session.id] = policy
-            }
-          } catch (error) {
-            console.error(`Error fetching policy for session ${session.id}:`, error)
-          }
-        }
-      }
-      setSessionCancellationPolicies(policies)
-    } catch (error) {
-      console.error("Error fetching recurring sessions:", error)
+  const handleOtpGenerated = (otp: string) => {
+    toast({
+      title: `${otpType === "start" ? "Start" : "End"} OTP Generated`,
+      description: `OTP: ${otp}. Please provide this to the sitter.`,
+      variant: "default",
+    })
+    setIsOtpDialogOpen(false)
+    fetchBookingDetails() // Re-fetch booking details to update status
+  }
+
+  const handleServiceEndSuccess = () => {
+    toast({
+      title: "Service Ended",
+      description: "The service has been successfully marked as completed.",
+      variant: "default",
+    })
+    fetchBookingDetails() // Re-fetch booking details to update status
+  }
+
+  const handleChatWithSitter = async () => {
+    if (!user?.phone) {
       toast({
-        title: "Failed to load sessions",
-        description: "Could not load recurring sessions. Please try again.",
+        title: "Phone number required",
+        description: "Please ensure your phone number is set in your profile",
         variant: "destructive",
       })
-      setSessions([])
-    } finally {
-      setSessionsLoading(false)
+      return
     }
-  }
 
-  const fetchCancellationPolicy = async (booking: Booking) => {
+    const sitterPhone = booking?.sitter_phone || booking?.sitterPhone
+    const sitterName = booking?.sitter_name || booking?.sitterName || booking?.caretakerName
+
+    if (!sitterPhone) {
+      toast({
+        title: "Sitter contact not available",
+        description: "Sitter phone number is not available for this booking",
+        variant: "destructive",
+      })
+      return
+    }
+
+    setIsLoadingChat(true)
+
     try {
-      const response = await fetch("/api/bookings/cancellation-policy", {
+      const chatData = {
+        bookingId: bookingId,
+        userPhone: user.phone,
+        sitterPhone: sitterPhone,
+        userAlias: user.name || "Pet Owner",
+        sitterAlias: sitterName,
+      }
+
+      const response = await fetch("/api/whatsapp/setup-chat", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "X-User-ID": user?.id || "",
         },
-        body: JSON.stringify({
-          bookingId: booking.id,
-          amount: booking.totalPrice,
-          paymentStatus: booking.paymentStatus,
-        }),
-      })
-
-      if (response.ok) {
-        const policy = await response.json()
-        setCancellationPolicy(policy)
-      }
-    } catch (error) {
-      console.error("Error fetching cancellation policy:", error)
-    }
-  }
-
-  const fetchRefundStatus = async () => {
-    try {
-      const response = await fetch(`/api/bookings/refund-status?bookingId=${bookingId}&userId=${user?.id}`, {
-        headers: {
-          "Content-Type": "application/json",
-          "X-User-ID": user?.id || "",
-        },
-      })
-
-      if (response.ok) {
-        const data = await response.json()
-        setRefunds(data.refunds || [])
-      }
-    } catch (error) {
-      console.error("Error fetching refund status:", error)
-    }
-  }
-
-  const handleCancelBooking = async (reason: string) => {
-    if (!booking) return
-
-    setIsCancelling(true)
-
-    try {
-      const response = await fetch("/api/bookings/cancel", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-User-ID": user?.id || "",
-        },
-        body: JSON.stringify({
-          bookingId: booking.id,
-          reason: reason,
-          userId: user?.id,
-        }),
+        body: JSON.stringify(chatData),
       })
 
       const result = await response.json()
 
       if (response.ok) {
-        toast({
-          title: "Booking Cancelled Successfully! ✅",
-          description: result.refundInfo
-            ? `Your refund of ₹${result.refundInfo.refundAmount} will be processed within ${result.refundInfo.processingTime}.`
-            : "Your booking has been cancelled.",
-        })
-
-        // Refresh booking details and refund status
-        await fetchBookingDetails()
-        await fetchRefundStatus()
-      } else {
-        throw new Error(result.error || "Failed to cancel booking")
-      }
-    } catch (error) {
-      console.error("Error cancelling booking:", error)
-      toast({
-        title: "Cancellation Failed",
-        description: error instanceof Error ? error.message : "Please try again later",
-        variant: "destructive",
-      })
-    } finally {
-      setIsCancelling(false)
-    }
-  }
-
-  const handleCancelSession = async (session: RecurringSession, reason: string) => {
-    setCancellingSessionId(session.id)
-
-    try {
-      const response = await fetch("/api/bookings/recurring/cancel-session", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-User-ID": user?.id || "",
-        },
-        body: JSON.stringify({
-          sessionId: session.id,
-          reason: reason,
-          userId: user?.id,
-        }),
-      })
-
-      const result = await response.json()
-
-      if (response.ok) {
-        toast({
-          title: "Session Cancelled Successfully! ✅",
-          description: result.refundInfo
-            ? `Your refund of ₹${result.refundInfo.refundAmount} will be processed within ${result.refundInfo.processingTime}.`
-            : "Your session has been cancelled.",
-        })
-
-        // Refresh sessions and refund status
-        if (booking) {
-          await fetchRecurringSessions(booking.id)
-          await fetchRefundStatus()
+        if (result.message?.includes("already exists") || result.message?.includes("message sent")) {
+          toast({
+            title: "Message Sent! 📨",
+            description: `Your message to ${sitterName} has been sent. Check your WhatsApp for updates!`,
+          })
+        } else {
+          toast({
+            title: "Chat Started! 🎉",
+            description: `WhatsApp chat with ${sitterName} has been set up. Check your WhatsApp!`,
+          })
         }
       } else {
-        throw new Error(result.error || "Failed to cancel session")
+        throw new Error(result.error || result.details || "Failed to start chat")
       }
     } catch (error) {
-      console.error("Error cancelling session:", error)
+      console.error("❌ Error starting sitter chat:", error)
       toast({
-        title: "Session Cancellation Failed",
+        title: "Failed to start chat",
         description: error instanceof Error ? error.message : "Please try again later",
         variant: "destructive",
       })
     } finally {
-      setCancellingSessionId(null)
+      setIsLoadingChat(false)
     }
   }
 
@@ -455,12 +252,12 @@ export default function BookingDetailsPage() {
       cancelled: {
         variant: "destructive" as const,
         icon: "❌",
-        color: "bg-destructive text-destructive-foreground border-destructive",
+        color: "bg-red-50 text-red-700 border-red-200",
       },
       usercancelled: {
         variant: "destructive" as const,
         icon: "❌",
-        color: "bg-destructive text-destructive-foreground border-destructive",
+        color: "bg-red-50 text-red-700 border-red-200",
       },
       assigned: {
         variant: "default" as const,
@@ -491,169 +288,71 @@ export default function BookingDetailsPage() {
     )
   }
 
-  const getPaymentStatusBadge = (paymentStatus: string) => {
-    const config = {
-      PAID: {
-        color:
-          "bg-zubo-accent-soft-moss-green-50 text-zubo-accent-soft-moss-green-700 border-zubo-accent-soft-moss-green-200",
-        icon: "💳",
-      },
-      PENDING: {
-        color:
-          "bg-zubo-highlight-2-bronze-clay-50 text-zubo-highlight-2-bronze-clay-700 border-zubo-highlight-2-bronze-clay-200",
-        icon: "⏳",
-      },
-      FAILED: { color: "bg-destructive text-destructive-foreground border-destructive", icon: "❌" },
+  const getServiceIcon = (service: string) => {
+    const serviceIcons: { [key: string]: string } = {
+      "dog walking": "🚶‍♂️",
+      "dog walking1": "🚶‍♂️",
+      "pet sitting": "🏠",
+      grooming: "✂️",
+      "pet grooming": "✂️",
+      veterinary: "🏥",
+      training: "🎓",
+      boarding: "🏨",
     }
+    return serviceIcons[service?.toLowerCase()] || "🐾"
+  }
 
-    const normalizedStatus = paymentStatus?.toUpperCase() || "PENDING"
-    const statusConfig = config[normalizedStatus as keyof typeof config] || config.PENDING
+  const isCancellable = useMemo(() => {
+    if (!booking) return false
+    const status = booking.status?.toLowerCase()
+    return ["pending", "confirmed", "assigned", "upcoming"].includes(status || "") && !booking.recurring
+  }, [booking])
 
+  const showCancellationPolicy = useMemo(() => {
+    if (!booking) return false
+    const status = booking.status?.toLowerCase()
+    // Show policy if cancellable or if it was cancelled (for refund details)
+    return isCancellable || ["cancelled", "usercancelled"].includes(status || "")
+  }, [booking, isCancellable])
+
+  const showPayNowButton = useMemo(() => {
+    return booking?.paymentStatus === "PENDING" && !booking.recurring
+  }, [booking])
+
+  const showChatButton = useMemo(() => {
+    if (!booking) return false
+    const status = booking.status?.toLowerCase()
+    const sitterAssigned = booking.sitterId && booking.sitter_name && booking.sitter_name.trim() !== ""
     return (
-      <Badge className={`${statusConfig.color} font-medium px-2 py-0.5 text-xs`}>
-        <span className="mr-1">{statusConfig.icon}</span>
-        {paymentStatus === "PENDING" ? "Unpaid" : paymentStatus}
-      </Badge>
+      sitterAssigned &&
+      ["upcoming", "confirmed", "pending", "assigned", "ongoing", "in-progress"].includes(status || "")
     )
-  }
+  }, [booking])
 
-  const getRefundStatusBadge = (status: string) => {
-    const config = {
-      INITIATED: {
-        color:
-          "bg-zubo-primary-royal-midnight-blue-50 text-zubo-primary-royal-midnight-blue-700 border-zubo-primary-royal-midnight-blue-200",
-        icon: "⏳",
-      },
-      PROCESSED: {
-        color:
-          "bg-zubo-accent-soft-moss-green-50 text-zubo-accent-soft-moss-green-700 border-zubo-accent-soft-moss-green-200",
-        icon: "✅",
-      },
-      FAILED: { color: "bg-destructive text-destructive-foreground border-destructive", icon: "❌" },
-    }
+  const showRebookButton = useMemo(() => {
+    if (!booking) return false
+    const status = booking.status?.toLowerCase()
+    return ["completed", "cancelled", "usercancelled"].includes(status || "")
+  }, [booking])
 
-    const normalizedStatus = status?.toUpperCase() || "INITIATED"
-    const statusConfig = config[normalizedStatus as keyof typeof config] || config.INITIATED
+  const showStartServiceButton = useMemo(() => {
+    if (!booking) return false
+    const status = booking.status?.toLowerCase()
+    return ["confirmed", "assigned", "upcoming"].includes(status || "") && !booking.recurring
+  }, [booking])
 
-    return (
-      <Badge className={`${statusConfig.color} font-medium px-2 py-0.5 text-xs`}>
-        <span className="mr-1">{statusConfig.icon}</span>
-        {status === "INITIATED" ? "Processing" : status}
-      </Badge>
-    )
-  }
+  const showEndServiceButton = useMemo(() => {
+    if (!booking) return false
+    const status = booking.status?.toLowerCase()
+    return ["ongoing", "in-progress"].includes(status || "") && !booking.recurring
+  }, [booking])
 
-  const handleChatWithSitter = async () => {
-    if (!user?.phone) {
-      toast({
-        title: "Phone number required",
-        description: "Please ensure your phone number is set in your profile",
-        variant: "destructive",
-      })
-      return
-    }
-
-    const sitterPhone = booking?.sitter_phone || booking?.sitterPhone
-    if (!sitterPhone) {
-      toast({
-        title: "Sitter contact not available",
-        description: "Sitter phone number is not available for this booking",
-        variant: "destructive",
-      })
-      return
-    }
-
-    setIsLoading(true)
-
-    try {
-      const sitterName = booking?.sitter_name || booking?.sitterName || booking?.caretakerName
-      const chatData = {
-        bookingId: booking.id.toString(),
-        userPhone: user.phone,
-        sitterPhone: sitterPhone,
-        userAlias: user.name || "Pet Owner",
-        sitterAlias: sitterName,
-      }
-
-      const response = await fetch("/api/whatsapp/setup-chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(chatData),
-      })
-
-      const result = await response.json()
-
-      if (response.ok) {
-        if (result.message?.includes("already exists") || result.message?.includes("message sent")) {
-          toast({
-            title: "Message Sent! 📨",
-            description: `Your message to ${sitterName} has been sent. Check your WhatsApp for updates!`,
-          })
-        } else {
-          toast({
-            title: "Chat Started! 🎉",
-            description: `WhatsApp chat with ${sitterName} has been set up. Check your WhatsApp!`,
-          })
-        }
-      } else {
-        throw new Error(result.error || result.details || "Failed to start chat")
-      }
-    } catch (error) {
-      console.error("❌ Error starting sitter chat:", error)
-      toast({
-        title: "Failed to start chat",
-        description: error instanceof Error ? error.message : "Please try again later",
-        variant: "destructive",
-      })
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  const copyToClipboard = (text: string, label: string) => {
+  const copyToClipboard = (text: string, message: string) => {
     navigator.clipboard.writeText(text)
     toast({
       title: "Copied!",
-      description: `${label} copied to clipboard`,
+      description: message,
     })
-  }
-
-  const handlePayNow = () => {
-    router.push(`/book-service/payment?bookingId=${booking?.id}&payExisting=true`)
-  }
-
-  const handlePayForSession = (session: RecurringSession) => {
-    const paymentUrl =
-      `/book-service/payment?` +
-      `recurringBookingId=${session.id}&` +
-      `bookingId=${booking?.id}&` +
-      `amount=${session.sessionPrice}&` +
-      `serviceName=${encodeURIComponent(booking?.serviceName || "")}&` +
-      `sessionDate=${session.sessionDate}&` +
-      `sessionTime=${session.sessionTime}&` +
-      `sequenceNumber=${session.sequenceNumber}&` +
-      `payRecurring=true`
-
-    router.push(paymentUrl)
-  }
-
-  const handleGetHelp = () => {
-    router.push(`/support?bookingId=${booking?.id}`)
-  }
-
-  const canCancelBooking = (booking: Booking) => {
-    // Only allow cancellation for non-recurring bookings
-    if (booking.recurring) return false
-
-    const cancellableStatuses = ["pending", "confirmed", "assigned", "upcoming"]
-    return cancellableStatuses.includes(booking.status?.toLowerCase() || "")
-  }
-
-  const canCancelSession = (session: RecurringSession) => {
-    const cancellableStatuses = ["pending", "confirmed", "assigned", "upcoming"]
-    return cancellableStatuses.includes(session.status?.toLowerCase() || "")
   }
 
   if (loading) {
@@ -672,789 +371,323 @@ export default function BookingDetailsPage() {
     )
   }
 
-  if (error || !booking) {
+  if (error) {
     return (
       <div className="min-h-screen bg-zubo-background-porcelain-white-300">
         <div className="container mx-auto p-4 pb-20">
-          <div className="mb-6">
-            <Button
-              variant="ghost"
-              onClick={() => router.back()}
-              className="flex items-center gap-2 text-zubo-text-graphite-gray-600 hover:text-zubo-text-graphite-gray-800"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Back
-            </Button>
-          </div>
-
           <Alert className="border-destructive bg-destructive/10 max-w-md mx-auto">
             <AlertCircle className="h-4 w-4 text-destructive" />
-            <AlertDescription className="text-destructive">{error || "Booking not found"}</AlertDescription>
+            <AlertDescription className="text-destructive">{error}</AlertDescription>
           </Alert>
+          <div className="text-center mt-6">
+            <Button onClick={() => router.back()} variant="outline">
+              <ChevronLeft className="h-4 w-4 mr-2" /> Back to Bookings
+            </Button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (!booking) {
+    return (
+      <div className="min-h-screen bg-zubo-background-porcelain-white-300">
+        <div className="container mx-auto p-4 pb-20">
+          <Alert className="border-yellow-200 bg-yellow-50">
+            <Info className="h-4 w-4 text-yellow-600" />
+            <AlertDescription className="text-yellow-800 text-sm">Booking not found.</AlertDescription>
+          </Alert>
+          <div className="text-center mt-6">
+            <Button onClick={() => router.back()} variant="outline">
+              <ChevronLeft className="h-4 w-4 mr-2" /> Back to Bookings
+            </Button>
+          </div>
         </div>
       </div>
     )
   }
 
   const sitterName = booking.sitter_name || booking.sitterName || booking.caretakerName
-  const sitterPhone = booking.sitter_phone || booking.sitterPhone
   const hasSitterAssigned =
     booking.sitterId &&
     sitterName &&
     sitterName.trim() !== "" &&
     sitterName.toLowerCase() !== "to be assigned" &&
-    sitterName.toLowerCase() !== "sitter not assigned" &&
-    sitterPhone
-
-  const showChatButton = ["upcoming", "confirmed", "pending", "assigned", "ongoing", "in-progress"].includes(
-    booking.status?.toLowerCase() || "",
-  )
-  const showRebookButton = ["completed", "cancelled", "usercancelled"].includes(booking.status?.toLowerCase() || "")
-  const showCancelButton = canCancelBooking(booking)
-
-  // Logic to display cancellation policy info for non-recurring bookings, even if cancelled
-  const showCancellationPolicyInfo =
-    cancellationPolicy &&
-    !booking.recurring &&
-    (canCancelBooking(booking) || ["cancelled", "usercancelled"].includes(booking.status?.toLowerCase() || ""))
-
-  // Recurring sessions calculations
-  const totalSessions = sessions.length
-  const paidSessions = sessions.filter((s) => s.paymentStatus === "PAID").length
-  const totalAmount = sessions.reduce((sum, s) => sum + s.sessionPrice, 0)
-  const paidAmount = sessions.filter((s) => s.paymentStatus === "PAID").reduce((sum, s) => sum + s.sessionPrice, 0)
-
-  // Show first 3 sessions by default, with option to show all
-  const displayedSessions = showAllSessions ? sessions : sessions.slice(0, 3)
+    sitterName.toLowerCase() !== "sitter not assigned"
 
   return (
     <div className="min-h-screen bg-zubo-background-porcelain-white-300">
-      <div className="container mx-auto p-4 pb-20 max-w-6xl">
-        {/* Header */}
-        <div className="mb-6">
-          <Button
-            variant="ghost"
-            onClick={() => router.back()}
-            className="flex items-center gap-2 text-zubo-text-graphite-gray-600 hover:text-zubo-text-graphite-gray-800 mb-4"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back to My Bookings
+      <div className="container mx-auto p-4 pb-20 max-w-3xl">
+        <div className="flex items-center mb-6">
+          <Button variant="ghost" size="icon" onClick={() => router.back()} className="mr-2">
+            <ChevronLeft className="h-5 w-5" />
           </Button>
+          <h1 className="text-2xl font-bold text-zubo-text-graphite-gray-900">Booking Details</h1>
+        </div>
 
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-              <h1 className="text-2xl font-bold text-zubo-text-graphite-gray-900 mb-2">
-                {booking.recurring ? "Recurring Booking Details" : "Booking Details"}
-              </h1>
-              <div className="flex items-center gap-2 text-sm text-zubo-text-graphite-gray-600">
-                <span>Booking ID: #{booking.id}</span>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-6 w-6 p-0 hover:bg-zubo-background-porcelain-white-100"
-                  onClick={() => copyToClipboard(booking.id.toString(), "Booking ID")}
-                >
-                  <Copy className="h-3 w-3" />
-                </Button>
+        <Card className="shadow-sm mb-6">
+          <CardHeader className="p-4 border-b border-zubo-background-porcelain-white-200 bg-zubo-background-porcelain-white-50">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-xl font-semibold text-zubo-text-graphite-gray-900 flex items-center gap-2">
+                <span className="text-2xl">{getServiceIcon(booking.serviceName || "pet care")}</span>
+                {booking.serviceName || "Pet Care Service"}
+              </CardTitle>
+              {getStatusBadge(booking.status || "pending", booking.paymentStatus, booking.sitterId, sitterName)}
+            </div>
+            <p className="text-sm text-zubo-text-graphite-gray-600 mt-1">Booking ID: #{booking.id}</p>
+          </CardHeader>
+          <CardContent className="p-4 space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="flex items-center gap-3 text-sm text-zubo-text-graphite-gray-700">
+                <Calendar className="h-4 w-4 text-zubo-primary-royal-midnight-blue-600" />
+                <span>Date: {format(parseISO(booking.date), "PPP")}</span>
+              </div>
+              <div className="flex items-center gap-3 text-sm text-zubo-text-graphite-gray-700">
+                <Clock className="h-4 w-4 text-zubo-accent-soft-moss-green-600" />
+                <span>Time: {booking.time || "Not specified"}</span>
+              </div>
+              <div className="flex items-center gap-3 text-sm text-zubo-text-graphite-gray-700">
+                <DollarSign className="h-4 w-4 text-zubo-highlight-2-bronze-clay-600" />
+                <span>Total Price: ₹{booking.totalPrice?.toFixed(2) || "0.00"}</span>
+              </div>
+              <div className="flex items-center gap-3 text-sm text-zubo-text-graphite-gray-700">
+                <CreditCard className="h-4 w-4 text-zubo-highlight-1-blush-coral-600" />
+                <span>
+                  Payment Status:{" "}
+                  <Badge
+                    className={`font-medium px-2 py-0.5 text-xs ${
+                      booking.paymentStatus === "PENDING"
+                        ? "bg-zubo-highlight-2-bronze-clay-50 text-zubo-highlight-2-bronze-clay-700 border-zubo-highlight-2-bronze-clay-200"
+                        : "bg-zubo-accent-soft-moss-green-50 text-zubo-accent-soft-moss-green-700 border-zubo-accent-soft-moss-green-200"
+                    }`}
+                  >
+                    {booking.paymentStatus || "N/A"}
+                  </Badge>
+                </span>
               </div>
             </div>
-            {getStatusBadge(booking.status || "pending", booking.paymentStatus, booking.sitterId, sitterName)}
-          </div>
-        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Service Overview */}
-            <Card className="overflow-hidden">
-              <CardHeader className="bg-gradient-to-r from-zubo-primary-royal-midnight-blue-50 to-zubo-highlight-1-blush-coral-50 border-b border-zubo-primary-royal-midnight-blue-200">
-                <CardTitle className="flex items-center gap-3">
-                  <div className="p-2 bg-zubo-background-porcelain-white-50 rounded-lg shadow-sm">
-                    <span className="text-2xl">{getServiceIcon(booking.serviceName || "pet care")}</span>
-                  </div>
-                  <div>
-                    <h2 className="text-xl font-semibold text-zubo-text-graphite-gray-900">
-                      {booking.serviceName || "Pet Care Service"}
-                    </h2>
-                    <p className="text-sm text-zubo-text-graphite-gray-600 mt-1">
-                      Booked on {format(new Date(booking.createdAt || booking.date), "PPP")}
-                    </p>
-                  </div>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-3 p-3 bg-zubo-background-porcelain-white-50 rounded-lg">
-                      <Calendar className="h-5 w-5 text-zubo-primary-royal-midnight-blue-600" />
-                      <div>
-                        <p className="text-sm text-zubo-text-graphite-gray-500">Service Date</p>
-                        <p className="font-medium text-zubo-text-graphite-gray-900">{formatDate(booking.date)}</p>
-                      </div>
-                    </div>
+            <Separator />
 
-                    <div className="flex items-center gap-3 p-3 bg-zubo-background-porcelain-white-50 rounded-lg">
-                      <Clock className="h-5 w-5 text-zubo-accent-soft-moss-green-600" />
-                      <div>
-                        <p className="text-sm text-zubo-text-graphite-gray-500">Time</p>
-                        <p className="font-medium text-zubo-text-graphite-gray-900">
-                          {booking.time || "Not scheduled"}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-3 p-3 bg-zubo-background-porcelain-white-50 rounded-lg">
-                      <DollarSign className="h-5 w-5 text-zubo-highlight-2-bronze-clay-600" />
-                      <div>
-                        <p className="text-sm text-zubo-text-graphite-gray-500">
-                          {booking.recurring ? "Total Amount" : "Amount"}
-                        </p>
-                        <p className="font-medium text-lg text-zubo-text-graphite-gray-900">
-                          ₹{booking.recurring ? totalAmount.toFixed(2) : booking.totalPrice?.toFixed(2) || "0.00"}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-3 p-3 bg-zubo-background-porcelain-white-50 rounded-lg">
-                      <CreditCard className="h-5 w-5 text-zubo-highlight-1-blush-coral-600" />
-                      <div>
-                        <p className="text-sm text-zubo-text-graphite-gray-500">Payment Status</p>
-                        <p className="font-medium text-zubo-text-graphite-gray-900">
-                          {booking.recurring
-                            ? `${paidSessions}/${totalSessions} sessions paid`
-                            : booking.paymentStatus === "PENDING"
-                              ? "Unpaid"
-                              : booking.paymentStatus || "Pending"}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Recurring Pattern */}
-                {booking.recurring && (
-                  <div className="mt-6 p-4 bg-gradient-to-r from-zubo-highlight-2-bronze-clay-50 to-zubo-highlight-1-blush-coral-50 rounded-lg border border-zubo-highlight-2-bronze-clay-200">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Repeat className="h-5 w-5 text-zubo-highlight-2-bronze-clay-600" />
-                      <span className="font-medium text-zubo-highlight-2-bronze-clay-900">Recurring Service</span>
-                    </div>
-                    <p className="text-zubo-highlight-2-bronze-clay-800">
-                      {formatRecurringPattern(booking.recurringPattern)}
-                    </p>
-                    {booking.recurringEndDate && (
-                      <p className="text-sm text-zubo-highlight-2-bronze-clay-700 mt-1">
-                        Until {format(new Date(booking.recurringEndDate), "PPP")}
-                      </p>
-                    )}
-                    {booking.recurring && (
-                      <div className="grid grid-cols-2 gap-4 mt-3 text-sm">
-                        <div>
-                          <p className="text-zubo-highlight-2-bronze-clay-600">Total Sessions</p>
-                          <p className="font-semibold text-zubo-highlight-2-bronze-clay-900">{totalSessions}</p>
-                        </div>
-                        <div>
-                          <p className="text-zubo-highlight-2-bronze-clay-600">Amount Paid</p>
-                          <p className="font-semibold text-zubo-accent-soft-moss-green-600">₹{paidAmount.toFixed(2)}</p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Refund Status */}
-            {refunds.length > 0 && (
-              <Card className="border-zubo-accent-soft-moss-green-200 bg-gradient-to-r from-zubo-accent-soft-moss-green-50 to-zubo-accent-soft-moss-green-100">
-                <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-lg text-zubo-accent-soft-moss-green-800">
-                      <RefreshCw className="h-5 w-5" />
-                      Refund Status ({refunds.length})
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setShowRefunds(!showRefunds)}
-                      className="text-zubo-accent-soft-moss-green-700 hover:text-zubo-accent-soft-moss-green-800"
-                    >
-                      {showRefunds ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                    </Button>
-                  </CardTitle>
-                </CardHeader>
-                {showRefunds && (
-                  <CardContent className="space-y-3">
-                    {refunds.map((refund) => (
-                      <div
-                        key={refund.id}
-                        className="bg-zubo-background-porcelain-white-50 p-4 rounded-lg border border-zubo-accent-soft-moss-green-200"
+            <div className="space-y-3">
+              <h3 className="font-semibold text-zubo-text-graphite-gray-800 flex items-center gap-2">
+                <User className="h-4 w-4 text-zubo-primary-royal-midnight-blue-600" /> Sitter Information
+              </h3>
+              <p className="text-sm text-zubo-text-graphite-gray-700">
+                Name:{" "}
+                <span className="font-medium">
+                  {sitterName || "To be assigned"}
+                  {booking.sitterId && !sitterName && (
+                    <span className="text-zubo-highlight-2-bronze-clay-600 text-sm ml-1">(Loading...)</span>
+                  )}
+                </span>
+              </p>
+              {hasSitterAssigned && (
+                <>
+                  <div className="flex items-center gap-2 text-sm text-zubo-text-graphite-gray-700">
+                    <Phone className="h-4 w-4 text-zubo-accent-soft-moss-green-600" />
+                    <span>Phone: {booking.sitter_phone || booking.sitterPhone || "N/A"}</span>
+                    {(booking.sitter_phone || booking.sitterPhone) && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6"
+                        onClick={() =>
+                          copyToClipboard(
+                            booking.sitter_phone || booking.sitterPhone || "",
+                            "Sitter phone number copied!",
+                          )
+                        }
                       >
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center gap-2">
-                            <span className="font-medium text-sm text-zubo-text-graphite-gray-900">
-                              Refund #{refund.refundId.slice(-8)}
-                            </span>
-                            {getRefundStatusBadge(refund.status)}
-                          </div>
-                          <span className="font-semibold text-zubo-accent-soft-moss-green-600">
-                            ₹{refund.amount.toFixed(2)}
-                          </span>
-                        </div>
-
-                        {refund.sequenceNumber && (
-                          <p className="text-xs text-zubo-text-graphite-gray-600 mb-1">
-                            Session {refund.sequenceNumber} - {formatDateShort(refund.sessionDate || "")}
-                          </p>
-                        )}
-
-                        <div className="flex items-center gap-2 text-xs text-zubo-text-graphite-gray-600">
-                          <Clock className="h-3 w-3" />
-                          <span>{refund.estimatedProcessingTime}</span>
-                        </div>
-
-                        {refund.failureReason && (
-                          <Alert className="mt-2 border-destructive bg-destructive/10">
-                            <AlertCircle className="h-4 w-4 text-destructive" />
-                            <AlertDescription className="text-destructive text-xs">
-                              {refund.failureReason}
-                            </AlertDescription>
-                          </Alert>
-                        )}
-                      </div>
-                    ))}
-                  </CardContent>
-                )}
-              </Card>
-            )}
-
-            {/* Cancellation Policy Info for Non-Recurring Bookings */}
-            {showCancellationPolicyInfo && (
-              <Card className="border-zubo-highlight-2-bronze-clay-200 bg-gradient-to-r from-zubo-highlight-2-bronze-clay-50 to-zubo-highlight-1-blush-coral-50">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-lg text-zubo-highlight-2-bronze-clay-800">
-                    <Info className="h-5 w-5" />
-                    Cancellation & Refund Policy
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                    <div className="space-y-2">
-                      <div className="flex justify-between">
-                        <span className="text-zubo-highlight-2-bronze-clay-700">Original Amount:</span>
-                        <span className="font-semibold text-zubo-text-graphite-gray-900">
-                          ₹{booking.totalPrice?.toFixed(2)}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-zubo-highlight-2-bronze-clay-700">
-                          Cancellation Fee ({cancellationPolicy!.percentageDeduction}%):
-                        </span>
-                        <span className="font-semibold text-destructive">
-                          -₹{cancellationPolicy!.deductionAmount.toFixed(2)}
-                        </span>
-                      </div>
-                      <div className="flex justify-between border-t border-zubo-highlight-2-bronze-clay-200 pt-2">
-                        <span className="text-zubo-highlight-2-bronze-clay-800 font-medium">Refund Amount:</span>
-                        <span className="font-bold text-zubo-accent-soft-moss-green-600">
-                          ₹{cancellationPolicy!.refundAmount.toFixed(2)}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2 text-zubo-highlight-2-bronze-clay-700">
-                        <Clock className="h-4 w-4" />
-                        <span>Processing Time: {cancellationPolicy!.processingTime}</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-zubo-highlight-2-bronze-clay-700">
-                        <RefreshCw className="h-4 w-4" />
-                        <span>Refund via original payment method</span>
-                      </div>
-                    </div>
+                        <ClipboardCopy className="h-3 w-3" />
+                      </Button>
+                    )}
                   </div>
-                  <Alert className="border-zubo-primary-royal-midnight-blue-200 bg-zubo-primary-royal-midnight-blue-50">
-                    <Info className="h-4 w-4 text-zubo-primary-royal-midnight-blue-600" />
-                    <AlertDescription className="text-zubo-primary-royal-midnight-blue-800 text-sm">
-                      {cancellationPolicy!.description}
-                    </AlertDescription>
-                  </Alert>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Recurring Sessions */}
-            {booking.recurring && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-lg text-zubo-text-graphite-gray-900">
-                    <Repeat className="h-5 w-5 text-zubo-primary-royal-midnight-blue-600" />
-                    Recurring Sessions ({totalSessions})
-                  </CardTitle>
-                  {booking.recurring && (
-                    <p className="text-sm text-zubo-text-graphite-gray-600">
-                      You can cancel individual sessions. Each session has its own cancellation policy.
-                    </p>
-                  )}
-                </CardHeader>
-                <CardContent>
-                  {sessionsLoading ? (
-                    <div className="flex items-center justify-center py-8">
-                      <div className="text-center">
-                        <Loader2 className="h-6 w-6 animate-spin mx-auto mb-2 text-zubo-primary-royal-midnight-blue-600" />
-                        <p className="text-sm text-zubo-text-graphite-gray-600">Loading sessions...</p>
-                      </div>
-                    </div>
-                  ) : sessions.length === 0 ? (
-                    <div className="flex items-center justify-center py-8">
-                      <div className="text-center">
-                        <Calendar className="h-6 w-6 mx-auto mb-2 text-zubo-text-graphite-gray-400" />
-                        <p className="text-sm text-zubo-text-graphite-gray-600">No sessions found</p>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      {displayedSessions.map((session) => (
-                        <Card key={session.id} className="border-l-4 border-l-zubo-primary-royal-midnight-blue-500">
-                          <CardContent className="p-4">
-                            <div className="flex items-center justify-between mb-3">
-                              <div className="flex items-center gap-2">
-                                <span className="font-semibold text-sm text-zubo-text-graphite-gray-900">
-                                  Session {session.sequenceNumber}
-                                </span>
-                                {getStatusBadge(session.status, undefined, booking.sitterId, sitterName)}
-                                {getPaymentStatusBadge(session.paymentStatus)}
-                              </div>
-                              <div className="text-sm font-semibold text-zubo-text-graphite-gray-800">
-                                ₹{session.sessionPrice.toFixed(2)}
-                              </div>
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-4 text-sm mb-3">
-                              <div className="flex items-center gap-2">
-                                <Calendar className="h-3 w-3 text-zubo-primary-royal-midnight-blue-600" />
-                                <span>{formatDateShort(session.sessionDate)}</span>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <Clock className="h-3 w-3 text-zubo-accent-soft-moss-green-600" />
-                                <span>{session.sessionTime}</span>
-                              </div>
-                            </div>
-
-                            {session.notes && (
-                              <p className="text-xs text-zubo-text-graphite-gray-600 mb-3">{session.notes}</p>
-                            )}
-
-                            {/* Session OTPs */}
-                            {(session.startOtp || session.endOtp) && (
-                              <div className="bg-zubo-accent-soft-moss-green-50 border border-zubo-accent-soft-moss-green-200 rounded-lg p-3 mb-3">
-                                <h4 className="text-xs font-semibold text-zubo-accent-soft-moss-green-800 mb-2">
-                                  🔐 Service OTPs
-                                </h4>
-                                <div className="grid grid-cols-2 gap-2 text-xs">
-                                  {session.startOtp && (
-                                    <div className="bg-zubo-background-porcelain-white-50 p-2 rounded border border-zubo-accent-soft-moss-green-100">
-                                      <div className="text-zubo-accent-soft-moss-green-600 font-medium">START OTP</div>
-                                      <div className="font-mono font-bold text-zubo-accent-soft-moss-green-800">
-                                        {session.startOtp}
-                                      </div>
-                                    </div>
-                                  )}
-                                  {session.endOtp && (
-                                    <div className="bg-zubo-background-porcelain-white-50 p-2 rounded border border-zubo-accent-soft-moss-green-100">
-                                      <div className="text-zubo-accent-soft-moss-green-600 font-medium">END OTP</div>
-                                      <div className="font-mono font-bold text-zubo-accent-soft-moss-green-800">
-                                        {session.endOtp}
-                                      </div>
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                            )}
-
-                            {/* Session Actions */}
-                            <div className="flex justify-between items-center">
-                              <div className="flex items-center gap-2">
-                                {session.paymentStatus === "PAID" ? (
-                                  <div className="flex items-center gap-1 text-zubo-accent-soft-moss-green-600 text-xs">
-                                    <CheckCircle className="h-3 w-3" />
-                                    <span>Paid</span>
-                                  </div>
-                                ) : (
-                                  <div className="flex items-center gap-1 text-zubo-highlight-2-bronze-clay-600 text-xs">
-                                    <AlertCircle className="h-3 w-3" />
-                                    <span>Payment Pending</span>
-                                  </div>
-                                )}
-
-                                {canCancelSession(session) && (
-                                  <SessionCancellationDialog
-                                    session={session}
-                                    onCancel={handleCancelSession}
-                                    isLoading={cancellingSessionId === session.id}
-                                    cancellationPolicy={sessionCancellationPolicies[session.id]}
-                                  />
-                                )}
-                              </div>
-
-                              {session.paymentStatus === "PENDING" && (
-                                <Button
-                                  size="sm"
-                                  onClick={() => handlePayForSession(session)}
-                                  className="bg-zubo-primary-royal-midnight-blue-600 hover:bg-zubo-primary-royal-midnight-blue-700 text-zubo-background-porcelain-white-50 text-xs"
-                                >
-                                  <CreditCard className="h-3 w-3 mr-1" />
-                                  Pay ₹{session.sessionPrice.toFixed(2)}
-                                </Button>
-                              )}
-                            </div>
-                          </CardContent>
-                        </Card>
-                      ))}
-
-                      {/* Show More/Less Button */}
-                      {sessions.length > 3 && (
-                        <div className="text-center pt-4">
-                          <Button
-                            variant="outline"
-                            onClick={() => setShowAllSessions(!showAllSessions)}
-                            className="flex items-center gap-2 border-zubo-primary-royal-midnight-blue-300 text-zubo-primary-royal-midnight-blue-600 hover:bg-zubo-primary-royal-midnight-blue-50 bg-transparent"
-                          >
-                            {showAllSessions ? (
-                              <>
-                                <ChevronUp className="h-4 w-4" />
-                                Show Less Sessions
-                              </>
-                            ) : (
-                              <>
-                                <ChevronDown className="h-4 w-4" />
-                                Show All {sessions.length} Sessions
-                              </>
-                            )}
-                          </Button>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Pet & Sitter Information */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Pet Info */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-lg text-zubo-text-graphite-gray-900">
-                    <Heart className="h-5 w-5 text-zubo-highlight-1-blush-coral-600" />
-                    Pet Information
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center gap-3 p-3 bg-zubo-accent-soft-moss-green-50 rounded-lg">
-                    <div className="w-12 h-12 bg-zubo-accent-soft-moss-green-100 rounded-full flex items-center justify-center">
-                      <span className="text-xl">🐾</span>
-                    </div>
-                    <div>
-                      <p className="font-medium text-zubo-text-graphite-gray-900">
-                        {booking.petName || "Not specified"}
-                      </p>
-                      <p className="text-sm text-zubo-text-graphite-gray-600">Your beloved pet</p>
-                    </div>
+                  <div className="flex items-center gap-2 text-sm text-zubo-text-graphite-gray-700">
+                    <Mail className="h-4 w-4 text-zubo-accent-soft-moss-green-600" />
+                    <span>Email: {booking.sitter_email || booking.sitterEmail || "N/A"}</span>
+                    {(booking.sitter_email || booking.sitterEmail) && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6"
+                        onClick={() =>
+                          copyToClipboard(booking.sitter_email || booking.sitterEmail || "", "Sitter email copied!")
+                        }
+                      >
+                        <ClipboardCopy className="h-3 w-3" />
+                      </Button>
+                    )}
                   </div>
-                </CardContent>
-              </Card>
-
-              {/* Sitter Info */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-lg text-zubo-text-graphite-gray-900">
-                    <User className="h-5 w-5 text-zubo-primary-royal-midnight-blue-600" />
-                    Pet Sitter
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center gap-3 p-3 bg-zubo-primary-royal-midnight-blue-50 rounded-lg">
-                    <div className="w-12 h-12 bg-zubo-primary-royal-midnight-blue-100 rounded-full flex items-center justify-center">
-                      <User className="h-6 w-6 text-zubo-primary-royal-midnight-blue-600" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-zubo-text-graphite-gray-900">
-                        {sitterName || "To be assigned"}
-                        {booking.sitterId && !sitterName && (
-                          <span className="text-zubo-highlight-2-bronze-clay-600 text-sm ml-2">(Loading...)</span>
-                        )}
-                      </p>
-                      <p className="text-sm text-zubo-text-graphite-gray-600">
-                        {hasSitterAssigned ? "Professional pet sitter" : "Will be assigned soon"}
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                </>
+              )}
             </div>
 
-            {/* Service OTPs for Non-Recurring Bookings */}
-            {!booking.recurring &&
-              (booking.startOtp || booking.endOtp || booking.serviceOtp) &&
-              ["upcoming", "confirmed", "pending", "assigned"].includes(booking.status?.toLowerCase() || "") && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-lg text-zubo-text-graphite-gray-900">
-                      <Shield className="h-5 w-5 text-zubo-highlight-2-bronze-clay-600" />
-                      Service OTPs
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    {/* START OTP */}
-                    {booking.startOtp && (
-                      <div className="bg-gradient-to-r from-zubo-accent-soft-moss-green-50 to-zubo-accent-soft-moss-green-100 p-4 rounded-lg border border-zubo-accent-soft-moss-green-200">
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center gap-2">
-                            <Play className="h-4 w-4 text-zubo-accent-soft-moss-green-600" />
-                            <span className="font-medium text-zubo-accent-soft-moss-green-800">START Service OTP</span>
-                          </div>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 p-0 hover:bg-zubo-accent-soft-moss-green-100"
-                            onClick={() => copyToClipboard(booking.startOtp!, "START OTP")}
-                          >
-                            <Copy className="h-4 w-4" />
-                          </Button>
-                        </div>
-                        <div className="text-2xl font-mono font-bold text-zubo-accent-soft-moss-green-900 mb-2">
-                          {booking.startOtp}
-                        </div>
-                        <p className="text-sm text-zubo-accent-soft-moss-green-700">
-                          Share this OTP with your sitter to START the service
-                        </p>
-                      </div>
-                    )}
+            <Separator />
 
-                    {/* END OTP */}
-                    {booking.endOtp && (
-                      <div className="bg-gradient-to-r from-zubo-highlight-1-blush-coral-50 to-zubo-highlight-1-blush-coral-100 p-4 rounded-lg border border-zubo-highlight-1-blush-coral-200">
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center gap-2">
-                            <Square className="h-4 w-4 text-zubo-highlight-1-blush-coral-600" />
-                            <span className="font-medium text-zubo-highlight-1-blush-coral-800">END Service OTP</span>
-                          </div>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 p-0 hover:bg-zubo-highlight-1-blush-coral-100"
-                            onClick={() => copyToClipboard(booking.endOtp!, "END OTP")}
-                          >
-                            <Copy className="h-4 w-4" />
-                          </Button>
-                        </div>
-                        <div className="text-2xl font-mono font-bold text-zubo-highlight-1-blush-coral-900 mb-2">
-                          {booking.endOtp}
-                        </div>
-                        <p className="text-sm text-zubo-highlight-1-blush-coral-700">
-                          Share this OTP with your sitter to END the service
-                        </p>
-                      </div>
-                    )}
+            <div className="space-y-3">
+              <h3 className="font-semibold text-zubo-text-graphite-gray-800 flex items-center gap-2">
+                <MapPin className="h-4 w-4 text-zubo-highlight-1-blush-coral-600" /> Location Details
+              </h3>
+              <p className="text-sm text-zubo-text-graphite-gray-700">Address: {booking.addressId || "N/A"}</p>
+              <p className="text-sm text-zubo-text-graphite-gray-700">
+                Instructions: {booking.additionalInstructions || "None"}
+              </p>
+            </div>
 
-                    {/* Legacy Service OTP */}
-                    {!booking.startOtp && !booking.endOtp && booking.serviceOtp && (
-                      <div className="bg-gradient-to-r from-zubo-highlight-2-bronze-clay-50 to-zubo-highlight-2-bronze-clay-100 p-4 rounded-lg border border-zubo-highlight-2-bronze-clay-200">
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center gap-2">
-                            <Shield className="h-4 w-4 text-zubo-highlight-2-bronze-clay-600" />
-                            <span className="font-medium text-zubo-highlight-2-bronze-clay-800">Service OTP</span>
-                          </div>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 p-0 hover:bg-zubo-highlight-2-bronze-clay-100"
-                            onClick={() => copyToClipboard(booking.serviceOtp!, "Service OTP")}
-                          >
-                            <Copy className="h-4 w-4" />
-                          </Button>
-                        </div>
-                        <div className="text-2xl font-mono font-bold text-zubo-highlight-2-bronze-clay-900 mb-2">
-                          {booking.serviceOtp}
-                        </div>
-                        <p className="text-sm text-zubo-highlight-2-bronze-clay-700">
-                          Share this OTP with your sitter to start the service
-                        </p>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
+            {booking.recurring && (
+              <>
+                <Separator />
+                <RecurringBookingDetails bookingId={booking.id} />
+              </>
+            )}
+
+            <Separator />
+
+            <div className="flex flex-wrap gap-3 pt-3">
+              {showPayNowButton && (
+                <Button
+                  onClick={() => router.push(`/book-service/payment?bookingId=${booking.id}&payExisting=true`)}
+                  className="bg-zubo-primary-royal-midnight-blue-600 hover:bg-zubo-primary-royal-midnight-blue-700 text-zubo-background-porcelain-white-50"
+                >
+                  <CreditCard className="mr-2 h-4 w-4" />
+                  Pay Now
+                </Button>
               )}
-          </div>
 
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Quick Actions */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg text-zubo-text-graphite-gray-900">Quick Actions</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {!booking.recurring && booking.paymentStatus === "PENDING" && (
-                  <Button
-                    onClick={handlePayNow}
-                    className="w-full bg-gradient-to-r from-zubo-accent-soft-moss-green-600 to-zubo-primary-royal-midnight-blue-600 hover:from-zubo-accent-soft-moss-green-700 hover:to-zubo-primary-royal-midnight-blue-700 text-zubo-background-porcelain-white-50"
-                  >
-                    <CreditCard className="mr-2 h-4 w-4" />
-                    Pay Now
-                  </Button>
-                )}
-
-                {showCancelButton && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="w-full text-destructive border-destructive/30 hover:bg-destructive/10 text-xs bg-transparent"
-                    onClick={() => setShowBookingCancellationDialog(true)}
-                  >
-                    <XCircle className="mr-2 h-3 w-3" />
-                    Cancel Booking
-                  </Button>
-                )}
-
+              {showChatButton && (
                 <Button
                   variant="outline"
-                  onClick={handleGetHelp}
-                  className="w-full border-zubo-primary-royal-midnight-blue-300 text-zubo-primary-royal-midnight-blue-600 hover:bg-zubo-primary-royal-midnight-blue-50 bg-transparent"
+                  onClick={handleChatWithSitter}
+                  disabled={isLoadingChat}
+                  className="border-zubo-accent-soft-moss-green-300 text-zubo-accent-soft-moss-green-600 hover:bg-zubo-accent-soft-moss-green-50 bg-transparent"
                 >
-                  <HelpCircle className="mr-2 h-4 w-4" />
-                  Get Help & Support
+                  {isLoadingChat ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Starting Chat...
+                    </>
+                  ) : (
+                    <>
+                      <MessageCircle className="mr-2 h-4 w-4" />
+                      Chat with Sitter
+                    </>
+                  )}
                 </Button>
+              )}
 
-                {showChatButton && hasSitterAssigned && (
+              {showStartServiceButton && (
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setOtpType("start")
+                    setIsOtpDialogOpen(true)
+                  }}
+                  className="border-zubo-primary-royal-midnight-blue-300 text-zubo-primary-royal-midnight-blue-600 hover:bg-zubo-primary-royal-midnight-blue-50 bg-transparent"
+                >
+                  <CheckCircle className="mr-2 h-4 w-4" />
+                  Generate Start OTP
+                </Button>
+              )}
+
+              {showEndServiceButton && (
+                <OwnerEndService bookingId={booking.id} onServiceEnd={handleServiceEndSuccess}>
                   <Button
                     variant="outline"
-                    onClick={handleChatWithSitter}
-                    disabled={isLoading}
-                    className="w-full border-zubo-accent-soft-moss-green-300 text-zubo-accent-soft-moss-green-600 hover:bg-zubo-accent-soft-moss-green-50 bg-transparent"
+                    className="border-zubo-accent-soft-moss-green-300 text-zubo-accent-soft-moss-green-600 hover:bg-zubo-accent-soft-moss-green-50 bg-transparent"
                   >
-                    {isLoading ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Starting Chat...
-                      </>
-                    ) : (
-                      <>
-                        <MessageCircle className="mr-2 h-4 w-4" />
-                        Chat with {sitterName?.split(" ")[0]}
-                      </>
-                    )}
+                    <XCircle className="mr-2 h-4 w-4" />
+                    End Service
                   </Button>
-                )}
+                </OwnerEndService>
+              )}
 
-                {showRebookButton && (
-                  <div className="pt-2">
-                    <RebookButton booking={booking} />
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+              {isCancellable && (
+                <Button
+                  variant="destructive"
+                  onClick={() => setIsCancellationDialogOpen(true)}
+                  className="bg-red-600 hover:bg-red-700 text-white"
+                >
+                  <XCircle className="mr-2 h-4 w-4" />
+                  Cancel Booking
+                </Button>
+              )}
 
-            {/* Booking Timeline */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg text-zubo-text-graphite-gray-900">Booking Timeline</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-zubo-accent-soft-moss-green-100 rounded-full flex items-center justify-center">
-                      <CheckCircle className="h-4 w-4 text-zubo-accent-soft-moss-green-600" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-sm text-zubo-text-graphite-gray-900">Booking Created</p>
-                      <p className="text-xs text-zubo-text-graphite-gray-600">
-                        {format(new Date(booking.createdAt || booking.date), "PPp")}
-                      </p>
-                    </div>
-                  </div>
+              {showRebookButton && <RebookButton booking={booking} />}
 
-                  {(booking.paymentStatus === "paid" || (booking.recurring && paidSessions > 0)) && (
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-zubo-primary-royal-midnight-blue-100 rounded-full flex items-center justify-center">
-                        <CreditCard className="h-4 w-4 text-zubo-primary-royal-midnight-blue-600" />
-                      </div>
+              <BookingSupportActions bookingId={booking.id} />
+            </div>
+          </CardContent>
+        </Card>
+
+        {showCancellationPolicy && (
+          <Card className="shadow-sm mb-6">
+            <CardHeader className="p-4 border-b border-zubo-background-porcelain-white-200 bg-zubo-background-porcelain-white-50">
+              <CardTitle className="text-lg font-semibold text-zubo-text-graphite-gray-900 flex items-center gap-2">
+                <Info className="h-5 w-5 text-zubo-highlight-2-bronze-clay-600" /> Cancellation Policy & Refund
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-4 text-sm text-zubo-text-graphite-gray-700">
+              {isPolicyLoading ? (
+                <div className="flex items-center gap-2">
+                  <Loader2 className="h-4 w-4 animate-spin text-zubo-text-graphite-gray-500" />
+                  <span>Loading policy...</span>
+                </div>
+              ) : policyError ? (
+                <Alert className="border-yellow-200 bg-yellow-50">
+                  <AlertCircle className="h-4 w-4 text-yellow-600" />
+                  <AlertDescription className="text-yellow-800 text-sm">{policyError}</AlertDescription>
+                </Alert>
+              ) : (
+                <>
+                  <p className="mb-2">{cancellationPolicy?.description || "No policy description available."}</p>
+                  {cancellationPolicy?.rules && (
+                    <ul className="list-disc list-inside space-y-1">
+                      {cancellationPolicy.rules.map((rule: string, index: number) => (
+                        <li key={index}>{rule}</li>
+                      ))}
+                    </ul>
+                  )}
+                  {booking.status?.toLowerCase().includes("cancelled") && (
+                    <div className="mt-4 p-3 bg-zubo-background-porcelain-white-100 rounded-md border border-zubo-background-porcelain-white-200 flex items-center gap-2">
+                      <Wallet className="h-5 w-5 text-zubo-accent-soft-moss-green-600" />
                       <div>
-                        <p className="font-medium text-sm text-zubo-text-graphite-gray-900">
-                          {booking.recurring ? `${paidSessions} Sessions Paid` : "Payment Completed"}
-                        </p>
-                        <p className="text-xs text-zubo-text-graphite-gray-600">
-                          {booking.recurring
-                            ? `₹${paidAmount.toFixed(2)} of ₹${totalAmount.toFixed(2)} paid`
-                            : "Payment processed successfully"}
+                        <p className="font-semibold text-zubo-text-graphite-gray-800">Refund Status:</p>
+                        <p>
+                          {booking.refundStatus === "REFUNDED"
+                            ? `Refunded ₹${booking.refundAmount?.toFixed(2) || "0.00"}`
+                            : booking.refundStatus === "PENDING"
+                              ? "Refund pending"
+                              : "No refund applicable or processed yet."}
                         </p>
                       </div>
                     </div>
                   )}
+                </>
+              )}
+            </CardContent>
+          </Card>
+        )}
+      </div>
 
-                  {hasSitterAssigned && (
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-zubo-highlight-2-bronze-clay-100 rounded-full flex items-center justify-center">
-                        <User className="h-4 w-4 text-zubo-highlight-2-bronze-clay-600" />
-                      </div>
-                      <div>
-                        <p className="font-medium text-sm text-zubo-text-graphite-gray-900">Sitter Assigned</p>
-                        <p className="text-xs text-zubo-text-graphite-gray-600">{sitterName}</p>
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-zubo-background-porcelain-white-100 rounded-full flex items-center justify-center">
-                      <Calendar className="h-4 w-4 text-zubo-text-graphite-gray-600" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-sm text-zubo-text-graphite-gray-900">
-                        {booking.recurring ? "Recurring Schedule" : "Scheduled Service"}
-                      </p>
-                      <p className="text-xs text-zubo-text-graphite-gray-600">
-                        {booking.recurring
-                          ? formatRecurringPattern(booking.recurringPattern)
-                          : `${formatDate(booking.date)} at ${booking.time}`}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Need Help */}
-            <Card className="bg-gradient-to-r from-zubo-primary-royal-midnight-blue-50 to-zubo-highlight-1-blush-coral-50 border-zubo-primary-royal-midnight-blue-200">
-              <CardContent className="p-4 text-center">
-                <div className="w-12 h-12 bg-zubo-primary-royal-midnight-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <HelpCircle className="h-6 w-6 text-zubo-primary-royal-midnight-blue-600" />
-                </div>
-                <h3 className="font-medium text-zubo-primary-royal-midnight-blue-900 mb-2">Need Help?</h3>
-                <p className="text-sm text-zubo-primary-royal-midnight-blue-700 mb-3">
-                  Our support team is here to help you with any questions or concerns.
-                </p>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleGetHelp}
-                  className="border-zubo-primary-royal-midnight-blue-300 text-zubo-primary-royal-midnight-blue-600 hover:bg-zubo-primary-royal-midnight-blue-100 bg-transparent"
-                >
-                  Contact Support
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
+      {booking && (
         <BookingCancellationDialog
           booking={booking}
-          open={showBookingCancellationDialog}
-          onOpenChange={setShowBookingCancellationDialog}
-          onCancel={handleCancelBooking}
-          isLoading={isCancelling}
-          cancellationPolicy={cancellationPolicy}
+          open={isCancellationDialogOpen}
+          onOpenChange={setIsCancellationDialogOpen}
+          onSuccess={handleCancellationSuccess}
         />
-      </div>
+      )}
+
+      {booking && otpType && (
+        <ServiceOtpDialog
+          bookingId={booking.id}
+          otpType={otpType}
+          open={isOtpDialogOpen}
+          onOpenChange={setIsOtpDialogOpen}
+          onOtpGenerated={handleOtpGenerated}
+        />
+      )}
       <Toaster />
     </div>
   )
