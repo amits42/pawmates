@@ -1,7 +1,7 @@
 // User Profile Types
 export interface UserProfile {
   id: string
-  name: string
+  name: string // Changed from firstName and lastName
   email: string
   phone: string
   profilePicture?: string

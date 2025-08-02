@@ -24,7 +24,7 @@ export async function GET(request: Request) {
         SELECT 
           id,
           phone,
-          name,
+          name, -- Select 'name' instead of 'firstName' and 'lastName'
           email,
           user_type as "userType",
           profile_picture as "profilePicture",
@@ -40,7 +40,7 @@ export async function GET(request: Request) {
         SELECT 
           id,
           phone,
-          name,
+          name, -- Select 'name' instead of 'firstName' and 'lastName'
           email,
           user_type as "userType",
           profile_picture as "profilePicture",
@@ -99,6 +99,7 @@ export async function PUT(request: Request) {
 
     // Validate required fields
     if (!body.name || !body.name.trim()) {
+      // Validate 'name'
       console.log("❌ Name is required")
       return NextResponse.json({ error: "Name is required" }, { status: 400 })
     }
@@ -109,14 +110,14 @@ export async function PUT(request: Request) {
     const updatedUsers = await sql`
       UPDATE users
       SET 
-        name = ${body.name.trim()},
+        name = ${body.name.trim()}, -- Update 'name'
         email = ${body.email || null},
         updated_at = NOW()
       WHERE id = ${userId}
       RETURNING 
         id,
         phone,
-        name,
+        name, -- Return 'name'
         email,
         user_type as "userType",
         profile_picture as "profilePicture",

@@ -16,13 +16,12 @@ import type { UserProfile, Pet } from "@/types/api"
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState<UserProfile | null>(null)
-  const [pets, setPets] = useState<Pet[]>([]) // Re-added pets state
+  const [pets, setPets] = useState<Pet[]>([])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
 
-  // Function to load pets separately
   const loadPets = async () => {
     try {
       console.log("🐾 Loading pets...")
@@ -31,7 +30,6 @@ export default function ProfilePage() {
       setPets(petsData)
     } catch (error) {
       console.error("❌ Error loading pets:", error)
-      // Optionally set an error specific to pet loading if needed
     }
   }
 
@@ -44,7 +42,6 @@ export default function ProfilePage() {
         console.log("✅ Profile loaded:", data)
         setProfile(data)
 
-        // Load pets separately after profile is loaded
         await loadPets()
       } catch (error) {
         console.error("❌ Error loading profile:", error)
@@ -67,15 +64,13 @@ export default function ProfilePage() {
 
     try {
       console.log("📝 Updating profile with:", {
-        firstName: profile.firstName,
-        lastName: profile.lastName,
+        name: profile.name, // Use 'name'
         email: profile.email,
         phone: profile.phone,
       })
 
       const updatedProfile = await updateUserProfile({
-        firstName: profile.firstName,
-        lastName: profile.lastName,
+        name: profile.name, // Use 'name'
         email: profile.email,
         phone: profile.phone,
       })
@@ -100,7 +95,6 @@ export default function ProfilePage() {
 
   const handlePetAdded = async (newPet: Pet) => {
     console.log("🐾 Pet added, refreshing pets list:", newPet)
-    // Reload pets from database to ensure we have the latest data
     await loadPets()
     setSuccessMessage("Pet added successfully!")
     setTimeout(() => setSuccessMessage(null), 3000)
@@ -108,7 +102,6 @@ export default function ProfilePage() {
 
   const handlePetUpdated = async (updatedPet: Pet) => {
     console.log("🐾 Pet updated, refreshing pets list:", updatedPet)
-    // Reload pets from database to ensure we have the latest data
     await loadPets()
     setSuccessMessage("Pet updated successfully!")
     setTimeout(() => setSuccessMessage(null), 3000)
@@ -116,7 +109,6 @@ export default function ProfilePage() {
 
   const handlePetDeleted = async (petId: string) => {
     console.log("🐾 Pet deleted, refreshing pets list:", petId)
-    // Reload pets from database to ensure we have the latest data
     await loadPets()
     setSuccessMessage("Pet deleted successfully!")
     setTimeout(() => setSuccessMessage(null), 3000)
@@ -159,8 +151,7 @@ export default function ProfilePage() {
 
   console.log("🔍 Profile state:", {
     hasProfile: !!profile,
-    firstName: profile?.firstName,
-    lastName: profile?.lastName,
+    name: profile?.name, // Use 'name'
     email: profile?.email,
     phone: profile?.phone,
     petsCount: petCount,
@@ -174,7 +165,7 @@ export default function ProfilePage() {
           <div>
             <h1 className="text-3xl font-bold text-zubo-text-800">My Profile</h1>
             <p className="text-zubo-text-600">Manage your personal information, pets, and address.</p>
-            {profile?.firstName && <p className="text-zubo-primary-600 mt-1">Welcome, {profile.firstName}!</p>}
+            {profile?.name && <p className="text-zubo-primary-600 mt-1">Welcome, {profile.name}!</p>}
           </div>
         </div>
 
@@ -218,36 +209,23 @@ export default function ProfilePage() {
               </CardHeader>
               <form onSubmit={handleProfileUpdate}>
                 <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="firstName" className="text-sm font-medium text-zubo-text-700">
-                        First Name *
-                      </Label>
-                      <Input
-                        id="firstName"
-                        name="firstName"
-                        value={profile?.firstName || ""}
-                        onChange={handleInputChange}
-                        required
-                        className="border-zubo-background-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500 bg-zubo-background-100 text-zubo-text-800 placeholder:text-zubo-text-400"
-                        placeholder="John"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="lastName" className="text-sm font-medium text-zubo-text-700">
-                        Last Name *
-                      </Label>
-                      <Input
-                        id="lastName"
-                        name="lastName"
-                        value={profile?.lastName || ""}
-                        onChange={handleInputChange}
-                        required
-                        className="border-zubo-background-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500 bg-zubo-background-100 text-zubo-text-800 placeholder:text-zubo-text-400"
-                        placeholder="Doe"
-                      />
-                    </div>
+                  <div className="space-y-2">
+                    {" "}
+                    {/* Changed to single column layout */}
+                    <Label htmlFor="name" className="text-sm font-medium text-zubo-text-700">
+                      Full Name *
+                    </Label>
+                    <Input
+                      id="name"
+                      name="name"
+                      value={profile?.name || ""} // Use 'name'
+                      onChange={handleInputChange}
+                      required
+                      className="border-zubo-background-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500 bg-zubo-background-100 text-zubo-text-800 placeholder:text-zubo-text-400"
+                      placeholder="John Doe"
+                    />
                   </div>
+                  {/* Removed lastName input field */}
                   <div className="space-y-2">
                     <Label htmlFor="email" className="text-sm font-medium text-zubo-text-700">
                       Email
@@ -293,7 +271,7 @@ export default function ProfilePage() {
 
           <TabsContent value="pets" className="mt-6">
             <PetList
-              pets={pets} // Pass the separate pets state
+              pets={pets}
               onPetAdded={handlePetAdded}
               onPetUpdated={handlePetUpdated}
               onPetDeleted={handlePetDeleted}
