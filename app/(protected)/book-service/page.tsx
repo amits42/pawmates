@@ -83,8 +83,22 @@ export default function BookServicePage() {
     setPets(updatedPets)
   }
 
+  function getNthWeekdayOfMonth(year: number, month: number, weekday: number, nth: number): Date | null {
+    const firstDay = new Date(year, month, 1)
+    const firstDayOfWeek = firstDay.getDay()
+    const offset = (7 + weekday - firstDayOfWeek) % 7
+    const date = 1 + offset + (nth - 1) * 7
+    const result = new Date(year, month, date)
+    return result.getMonth() === month ? result : null
+  }
+
   const calculateRecurringSessions = () => {
-    if (bookingType !== "recurring" || !recurringPattern || !selectedDate || !recurringEndDate) {
+    if (
+      bookingType !== "recurring" ||
+      !recurringPattern ||
+      !selectedDate ||
+      !recurringEndDate
+    ) {
       return 0
     }
 
@@ -107,29 +121,27 @@ export default function BookServicePage() {
 
     if (recurringPattern.startsWith("weekly_")) {
       const [, intervalStr, daysStr] = recurringPattern.split("_")
-      const weekInterval = Number.parseInt(intervalStr, 10)
+      const weekInterval = parseInt(intervalStr, 10)
       const days = daysStr.split(",").map((d) => daysOfWeekMap[d.toLowerCase()])
 
-      const current = new Date(startDate)
+      const currentWeekStart = new Date(startDate)
 
-      while (current <= endDate) {
-        if (days.includes(current.getDay())) {
-          sessionCount++
+      while (currentWeekStart <= endDate) {
+        for (const day of days) {
+          const sessionDate = new Date(currentWeekStart)
+          sessionDate.setDate(currentWeekStart.getDate() + (day - currentWeekStart.getDay() + 7) % 7)
+
+          if (sessionDate >= startDate && sessionDate <= endDate) {
+            sessionCount++
+          }
         }
 
-        // Move to next day
-        current.setDate(current.getDate() + 1)
-
-        // If we pass a week, skip forward by (interval - 1) weeks
-        const daysSinceStart = Math.floor((current.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))
-        if (daysSinceStart % (weekInterval * 7) === 0) {
-          // already aligned by day increment
-        }
+        currentWeekStart.setDate(currentWeekStart.getDate() + weekInterval * 7)
       }
     } else if (recurringPattern.startsWith("monthly_")) {
       const [, intervalStr, nthStr, daysStr] = recurringPattern.split("_")
-      const monthInterval = Number.parseInt(intervalStr, 10)
-      const nth = Number.parseInt(nthStr, 10)
+      const monthInterval = parseInt(intervalStr, 10)
+      const nth = parseInt(nthStr, 10)
       const weekdays = daysStr.split(",").map((d) => daysOfWeekMap[d.toLowerCase()])
 
       const current = new Date(startDate)
@@ -145,24 +157,14 @@ export default function BookServicePage() {
           }
         }
 
-        // Move to next interval month
         current.setMonth(current.getMonth() + monthInterval)
-        current.setDate(1) // reset to start of month
+        current.setDate(1)
       }
     }
 
     return sessionCount
   }
 
-  // Utility: Get Nth weekday in a month (e.g., 3rd Tuesday of June 2025)
-  function getNthWeekdayOfMonth(year: number, month: number, weekday: number, nth: number): Date | null {
-    const firstDay = new Date(year, month, 1)
-    const firstDayOfWeek = firstDay.getDay()
-    const offset = (7 + weekday - firstDayOfWeek) % 7
-    const date = 1 + offset + (nth - 1) * 7
-    const result = new Date(year, month, date)
-    return result.getMonth() === month ? result : null
-  }
 
   const getRecurringSessionsInfo = () => {
     const sessions = calculateRecurringSessions()
