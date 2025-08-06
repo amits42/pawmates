@@ -2,7 +2,7 @@ import { sql } from "@vercel/postgres";
 import nodemailer from "nodemailer";
 
 // ✅ Nodemailer transporter (update SMTP settings)
-const transporter = nodemailer.createTransport({
+const transporter = nodemailer.createTransporter({
   host: "smtp.zeptomail.in",
   port: 587,
   auth: {
@@ -50,44 +50,110 @@ export async function sendBookingEmail({ bookingId, recurringBookingId }) {
     const bookingTime = time || session_time;
     const price = total_price || bookingDetails.session_price;
 
-    // 🌟 Beautiful HTML email template with pet icons
-    const logoUrl = "https://yourdomain.com/logo.png"; // replace with your logo URL
+    // 🌟 ZuboPets branded HTML email template
+    const logoUrl = "https://www.zubopets.com/logo/zubo-logo.svg"; // ZuboPets logo
     const heroImage = "https://cdn-icons-png.flaticon.com/512/616/616408.png"; // cute paw print
     const appUrl = `https://www.zubopets.com/booking-details/${id}`; // ✅ dynamic booking details page
 
     const userHtml = `
-      <div style="font-family: Arial, sans-serif; background: #fdf6f0; padding: 20px; color: #333;">
-        <table style="max-width: 600px; margin: auto; background: #fff; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+      <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f8faf9; padding: 20px; color: #253347; line-height: 1.6;">
+        <table style="max-width: 600px; margin: auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 32px rgba(37, 51, 71, 0.1); border: 1px solid #e8ebf0;">
+          
+          <!-- Header with ZuboPets branding -->
           <tr>
-            <td style="text-align: center; background: #ffbb73; padding: 20px;">
-              <img src="${logoUrl}" alt="Logo" style="height: 50px;" />
+            <td style="text-align: center; background: linear-gradient(135deg, #253347 0%, #3d4a5c 100%); padding: 30px 20px;">
+              <img src="${logoUrl}" alt="ZuboPets Logo" style="height: 60px; margin-bottom: 10px;" />
+              <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 600;">ZuboPets</h1>
+              <p style="color: #aab89b; margin: 5px 0 0 0; font-size: 14px;">Premium Pet Care Services</p>
             </td>
           </tr>
+          
+          <!-- Hero Section -->
           <tr>
-            <td style="text-align: center;">
-              <img src="${heroImage}" alt="Booking Confirmed" style="width: 120px; margin: 20px auto;" />
-            </td>
-          </tr>
-          <tr>
-            <td style="padding: 20px;">
-              <h2 style="color: #e07a5f;">Hi ${user_name} 🐾</h2>
-              <p style="font-size: 18px;">🎉 <strong>Your booking has been confirmed!</strong></p>
-              <p style="margin: 15px 0; font-size: 16px; line-height: 1.5;">
-                <strong>🐶 Booking ID:</strong> ${id}<br/>
-                <strong>📅 Date:</strong> ${bookingDate}<br/>
-                <strong>⏰ Time:</strong> ${bookingTime}<br/>
-                <strong>💳 Total Price:</strong> ₹${price}
-              </p>
-              <div style="text-align: center; margin: 30px 0;">
-                <a href="${appUrl}" style="background: #81b29a; color: #fff; padding: 12px 25px; border-radius: 30px; text-decoration: none; font-size: 16px;">🐾 View Booking</a>
+            <td style="text-align: center; padding: 40px 20px 20px 20px; background: #f5f7f3;">
+              <div style="background: #ffffff; border-radius: 50%; width: 100px; height: 100px; margin: 0 auto 20px auto; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(170, 184, 155, 0.2);">
+                <img src="${heroImage}" alt="Booking Confirmed" style="width: 60px; height: 60px;" />
               </div>
-              <p style="margin-top: 20px; color: #555; font-size: 14px;">Thank you for choosing us to care for your furry friend! ❤️</p>
+              <h2 style="color: #253347; margin: 0; font-size: 28px; font-weight: 700;">Booking Confirmed! 🎉</h2>
+              <p style="color: #aab89b; margin: 10px 0 0 0; font-size: 16px;">Your pet's care is in safe hands</p>
             </td>
           </tr>
+          
+          <!-- Main Content -->
           <tr>
-            <td style="background: #f1f1f1; text-align: center; font-size: 12px; color: #777; padding: 10px;">
-              🐾 Your Pet Service Team<br/>
-              <span style="font-size: 11px;">© ${new Date().getFullYear()} Zubopets</span>
+            <td style="padding: 30px;">
+              <div style="background: #f5f7f3; border-radius: 12px; padding: 20px; margin-bottom: 25px; border-left: 4px solid #aab89b;">
+                <h3 style="color: #253347; margin: 0 0 15px 0; font-size: 18px; font-weight: 600;">Hi ${user_name}! 👋</h3>
+                <p style="color: #4a5568; margin: 0; font-size: 16px;">Great news! Your pet care booking has been successfully confirmed. We're excited to take care of your furry friend!</p>
+              </div>
+              
+              <!-- Booking Details Card -->
+              <div style="background: #ffffff; border: 2px solid #e8ebf0; border-radius: 12px; padding: 25px; margin-bottom: 25px;">
+                <h4 style="color: #253347; margin: 0 0 20px 0; font-size: 18px; font-weight: 600; border-bottom: 2px solid #f5f7f3; padding-bottom: 10px;">📋 Booking Details</h4>
+                
+                <div style="display: grid; gap: 15px;">
+                  <div style="display: flex; align-items: center; padding: 12px; background: #f8faf9; border-radius: 8px;">
+                    <span style="color: #aab89b; font-size: 18px; margin-right: 12px;">🆔</span>
+                    <div>
+                      <strong style="color: #253347; font-size: 14px;">Booking ID:</strong>
+                      <span style="color: #4a5568; margin-left: 8px; font-family: monospace; background: #e8ebf0; padding: 2px 6px; border-radius: 4px;">${id}</span>
+                    </div>
+                  </div>
+                  
+                  <div style="display: flex; align-items: center; padding: 12px; background: #f8faf9; border-radius: 8px;">
+                    <span style="color: #aab89b; font-size: 18px; margin-right: 12px;">📅</span>
+                    <div>
+                      <strong style="color: #253347; font-size: 14px;">Date:</strong>
+                      <span style="color: #4a5568; margin-left: 8px;">${bookingDate}</span>
+                    </div>
+                  </div>
+                  
+                  <div style="display: flex; align-items: center; padding: 12px; background: #f8faf9; border-radius: 8px;">
+                    <span style="color: #aab89b; font-size: 18px; margin-right: 12px;">⏰</span>
+                    <div>
+                      <strong style="color: #253347; font-size: 14px;">Time:</strong>
+                      <span style="color: #4a5568; margin-left: 8px;">${bookingTime}</span>
+                    </div>
+                  </div>
+                  
+                  <div style="display: flex; align-items: center; padding: 12px; background: #f0f9f4; border-radius: 8px; border: 1px solid #d4edda;">
+                    <span style="color: #28a745; font-size: 18px; margin-right: 12px;">💰</span>
+                    <div>
+                      <strong style="color: #253347; font-size: 14px;">Total Amount:</strong>
+                      <span style="color: #28a745; margin-left: 8px; font-size: 16px; font-weight: 600;">₹${price}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Call to Action -->
+              <div style="text-align: center; margin: 30px 0;">
+                <a href="${appUrl}" style="display: inline-block; background: linear-gradient(135deg, #253347 0%, #3d4a5c 100%); color: #ffffff; padding: 16px 32px; border-radius: 50px; text-decoration: none; font-size: 16px; font-weight: 600; box-shadow: 0 4px 16px rgba(37, 51, 71, 0.3); transition: all 0.3s ease;">
+                  🐾 View Booking Details
+                </a>
+              </div>
+              
+              <!-- Additional Info -->
+              <div style="background: #fff8e1; border: 1px solid #ffecb3; border-radius: 8px; padding: 20px; margin-top: 25px;">
+                <h4 style="color: #f57c00; margin: 0 0 10px 0; font-size: 16px; font-weight: 600;">📞 Need Help?</h4>
+                <p style="color: #5d4037; margin: 0; font-size: 14px;">If you have any questions or need to make changes to your booking, please don't hesitate to contact our support team. We're here to help!</p>
+              </div>
+              
+              <p style="margin-top: 30px; color: #4a5568; font-size: 16px; text-align: center;">Thank you for choosing ZuboPets for your pet's care! ❤️🐾</p>
+            </td>
+          </tr>
+          
+          <!-- Footer -->
+          <tr>
+            <td style="background: #253347; text-align: center; font-size: 12px; color: #aab89b; padding: 25px 20px;">
+              <div style="margin-bottom: 15px;">
+                <img src="${logoUrl}" alt="ZuboPets" style="height: 30px; opacity: 0.8;" />
+              </div>
+              <p style="margin: 0 0 10px 0; font-size: 14px; color: #ffffff;">🐾 Your Trusted Pet Care Partner</p>
+              <p style="margin: 0; font-size: 11px; opacity: 0.8;">© ${new Date().getFullYear()} ZuboPets. All rights reserved.</p>
+              <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #3d4a5c;">
+                <p style="margin: 0; font-size: 10px; opacity: 0.7;">This email was sent to ${user_email}</p>
+              </div>
             </td>
           </tr>
         </table>
@@ -95,14 +161,73 @@ export async function sendBookingEmail({ bookingId, recurringBookingId }) {
     `;
 
     const adminHtml = `
-      <div style="font-family: Arial, sans-serif; background: #fff; padding: 20px; color: #333;">
-        <h2 style="color: #e91e63;">📢 New Booking Alert! 🐾</h2>
-        <p><strong>User:</strong> ${user_name} (${user_email})</p>
-        <p><strong>Booking ID:</strong> ${id}</p>
-        <p><strong>Date:</strong> ${bookingDate}</p>
-        <p><strong>Time:</strong> ${bookingTime}</p>
-        <p><strong>Total Price:</strong> ₹${price}</p>
-        <p>✅ Please verify and take necessary action.</p>
+      <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f8faf9; padding: 20px; color: #253347;">
+        <table style="max-width: 600px; margin: auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 16px rgba(37, 51, 71, 0.1); border: 1px solid #e8ebf0;">
+          
+          <!-- Admin Header -->
+          <tr>
+            <td style="text-align: center; background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); padding: 20px;">
+              <h1 style="color: #ffffff; margin: 0; font-size: 22px; font-weight: 600;">🚨 New Booking Alert</h1>
+              <p style="color: #ffcccb; margin: 5px 0 0 0; font-size: 14px;">ZuboPets Admin Dashboard</p>
+            </td>
+          </tr>
+          
+          <!-- Admin Content -->
+          <tr>
+            <td style="padding: 25px;">
+              <div style="background: #f8f9fa; border-radius: 8px; padding: 20px; margin-bottom: 20px; border-left: 4px solid #dc3545;">
+                <h3 style="color: #253347; margin: 0 0 15px 0; font-size: 18px;">📢 New Booking Received!</h3>
+                <p style="color: #4a5568; margin: 0;">A new pet care booking has been confirmed and requires your attention.</p>
+              </div>
+              
+              <!-- Booking Summary -->
+              <div style="background: #ffffff; border: 2px solid #e8ebf0; border-radius: 8px; padding: 20px;">
+                <h4 style="color: #253347; margin: 0 0 15px 0; font-size: 16px; font-weight: 600;">Customer & Booking Information:</h4>
+                
+                <table style="width: 100%; border-collapse: collapse;">
+                  <tr>
+                    <td style="padding: 8px 0; border-bottom: 1px solid #f5f7f3; font-weight: 600; color: #253347; width: 30%;">Customer:</td>
+                    <td style="padding: 8px 0; border-bottom: 1px solid #f5f7f3; color: #4a5568;">${user_name}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 8px 0; border-bottom: 1px solid #f5f7f3; font-weight: 600; color: #253347;">Email:</td>
+                    <td style="padding: 8px 0; border-bottom: 1px solid #f5f7f3; color: #4a5568;">${user_email}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 8px 0; border-bottom: 1px solid #f5f7f3; font-weight: 600; color: #253347;">Booking ID:</td>
+                    <td style="padding: 8px 0; border-bottom: 1px solid #f5f7f3; color: #4a5568; font-family: monospace; background: #f8f9fa; padding: 4px 8px; border-radius: 4px;">${id}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 8px 0; border-bottom: 1px solid #f5f7f3; font-weight: 600; color: #253347;">Date:</td>
+                    <td style="padding: 8px 0; border-bottom: 1px solid #f5f7f3; color: #4a5568;">${bookingDate}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 8px 0; border-bottom: 1px solid #f5f7f3; font-weight: 600; color: #253347;">Time:</td>
+                    <td style="padding: 8px 0; border-bottom: 1px solid #f5f7f3; color: #4a5568;">${bookingTime}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 8px 0; font-weight: 600; color: #253347;">Total Price:</td>
+                    <td style="padding: 8px 0; color: #28a745; font-weight: 600; font-size: 16px;">₹${price}</td>
+                  </tr>
+                </table>
+              </div>
+              
+              <!-- Action Required -->
+              <div style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px; padding: 15px; margin-top: 20px;">
+                <h4 style="color: #856404; margin: 0 0 8px 0; font-size: 14px; font-weight: 600;">⚡ Action Required:</h4>
+                <p style="color: #856404; margin: 0; font-size: 13px;">Please verify the booking details and assign an appropriate sitter. Ensure all necessary preparations are made for the scheduled service.</p>
+              </div>
+            </td>
+          </tr>
+          
+          <!-- Admin Footer -->
+          <tr>
+            <td style="background: #253347; text-align: center; font-size: 11px; color: #aab89b; padding: 15px;">
+              <p style="margin: 0;">ZuboPets Admin System - Automated Notification</p>
+              <p style="margin: 5px 0 0 0; opacity: 0.8;">© ${new Date().getFullYear()} ZuboPets</p>
+            </td>
+          </tr>
+        </table>
       </div>
     `;
 
@@ -110,7 +235,7 @@ export async function sendBookingEmail({ bookingId, recurringBookingId }) {
     await transporter.sendMail({
       from: 'notifications@zubopets.com',
       to: user_email,
-      subject: "🎉 Your Pet’s Booking is Confirmed! 🐾",
+      subject: "🎉 Your ZuboPets Booking is Confirmed! 🐾",
       html: userHtml,
     });
     console.log(`✅ Email sent to user: ${user_email}`);
@@ -119,7 +244,7 @@ export async function sendBookingEmail({ bookingId, recurringBookingId }) {
     await transporter.sendMail({
       from: 'notifications@zubopets.com',
       to: "care@zohomail.com",
-      subject: `📢 New Booking: ID ${id}`,
+      subject: `🚨 New ZuboPets Booking: ID ${id}`,
       html: adminHtml,
     });
     console.log("✅ Email sent to admin: care@zohomail.com");

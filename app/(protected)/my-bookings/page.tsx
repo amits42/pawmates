@@ -120,7 +120,7 @@ export default function MyBookingsPage() {
 
   const handleViewBooking = () => {
     router.push(`/booking-details/${bookingId}`)
-    //handleCloseSuccessModal()
+    handleCloseSuccessModal()
   }
 
   const handleCardClick = (booking: Booking) => {
@@ -447,10 +447,11 @@ export default function MyBookingsPage() {
                 // Removed variant prop to ensure direct className control
                 onClick={() => setStatusFilter(filter.key)}
                 size="sm"
-                className={`whitespace-nowrap text-xs h-8 px-3 ${statusFilter === filter.key
+                className={`whitespace-nowrap text-xs h-8 px-3 ${
+                  statusFilter === filter.key
                     ? "bg-zubo-primary-600 text-white border-zubo-primary-600 hover:bg-zubo-primary-700" // Prominent selected style
                     : "bg-transparent text-zubo-primary-700 border-zubo-primary-200 hover:bg-zubo-primary-50" // Unselected style
-                  }`}
+                }`}
               >
                 <Filter className="mr-1 h-3 w-3" />
                 {filter.label} ({filter.count})

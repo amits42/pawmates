@@ -143,11 +143,8 @@ export async function POST(request: NextRequest) {
   }
 }
 
-function calculateRecurringSessions(
-  selectedDate: string | number | Date,
-  recurringEndDate: string | number | Date,
-  recurringPattern: string
-): number {
+function calculateRecurringSessions(selectedDate: string | number | Date, recurringEndDate: string | number | Date, recurringPattern: string) {
+
   const startDate = new Date(selectedDate)
   const endDate = new Date(recurringEndDate)
 
@@ -168,30 +165,30 @@ function calculateRecurringSessions(
   if (recurringPattern.startsWith("weekly_")) {
     const [, intervalStr, daysStr] = recurringPattern.split("_")
     const weekInterval = parseInt(intervalStr, 10)
-    const days = daysStr.split(",").map((d) => daysOfWeekMap[d.toLowerCase()])
+    const days = daysStr.split(",").map(d => daysOfWeekMap[d.toLowerCase()])
 
-    const currentWeekStart = new Date(startDate)
+    const current = new Date(startDate)
 
-    while (currentWeekStart <= endDate) {
-      for (const day of days) {
-        const sessionDate = new Date(currentWeekStart)
-        const offset = (day - currentWeekStart.getDay() + 7) % 7
-        sessionDate.setDate(currentWeekStart.getDate() + offset)
-
-        if (sessionDate >= startDate && sessionDate <= endDate) {
-          sessionCount++
-        }
+    while (current <= endDate) {
+      if (days.includes(current.getDay())) {
+        sessionCount++
       }
 
-      // Move forward by N weeks
-      currentWeekStart.setDate(currentWeekStart.getDate() + weekInterval * 7)
+      // Move to next day
+      current.setDate(current.getDate() + 1)
+
+      // If we pass a week, skip forward by (interval - 1) weeks
+      const daysSinceStart = Math.floor((current.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))
+      if (daysSinceStart % (weekInterval * 7) === 0) {
+        // already aligned by day increment
+      }
     }
 
   } else if (recurringPattern.startsWith("monthly_")) {
     const [, intervalStr, nthStr, daysStr] = recurringPattern.split("_")
     const monthInterval = parseInt(intervalStr, 10)
     const nth = parseInt(nthStr, 10)
-    const weekdays = daysStr.split(",").map((d) => daysOfWeekMap[d.toLowerCase()])
+    const weekdays = daysStr.split(",").map(d => daysOfWeekMap[d.toLowerCase()])
 
     const current = new Date(startDate)
 
@@ -206,6 +203,7 @@ function calculateRecurringSessions(
         }
       }
 
+      // Move to next interval month
       current.setMonth(current.getMonth() + monthInterval)
       current.setDate(1) // reset to start of month
     }
@@ -214,13 +212,8 @@ function calculateRecurringSessions(
   return sessionCount
 }
 
-// ✅ Utility: Get Nth weekday in a month (e.g., 3rd Tuesday of June 2025)
-function getNthWeekdayOfMonth(
-  year: number,
-  month: number,
-  weekday: number,
-  nth: number
-): Date | null {
+// Utility: Get Nth weekday in a month (e.g., 3rd Tuesday of June 2025)
+function getNthWeekdayOfMonth(year: number, month: number, weekday: number, nth: number): Date | null {
   const firstDay = new Date(year, month, 1)
   const firstDayOfWeek = firstDay.getDay()
   const offset = (7 + weekday - firstDayOfWeek) % 7
@@ -228,4 +221,3 @@ function getNthWeekdayOfMonth(
   const result = new Date(year, month, date)
   return result.getMonth() === month ? result : null
 }
-

@@ -1,288 +1,307 @@
-"use client"
+'use client'
 
-import type React from "react"
-
-import { useEffect, useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { fetchUserProfile, updateUserProfile, fetchUserPets } from "@/lib/api"
-import PetList from "@/components/pet-list"
-import { AddressForm } from "@/components/address-form"
-import { User, PawPrint, MapPin, CheckCircle, Save, XCircle } from "lucide-react"
-import type { UserProfile, Pet } from "@/types/api"
+import { useState, useEffect } from 'react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
+import { Separator } from '@/components/ui/separator'
+import { toast } from '@/hooks/use-toast'
+import { fetchUserProfile, updateUserProfile } from '@/lib/api'
+import { UserProfile } from '@/types/api'
+import { User, Settings, Bell, Shield, CreditCard, MapPin, Phone, Mail, Calendar, Camera } from 'lucide-react'
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState<UserProfile | null>(null)
-  const [pets, setPets] = useState<Pet[]>([])
   const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [successMessage, setSuccessMessage] = useState<string | null>(null)
-
-  const loadPets = async () => {
-    try {
-      console.log("🐾 Loading pets...")
-      const petsData = await fetchUserPets()
-      console.log("✅ Pets loaded:", petsData)
-      setPets(petsData)
-    } catch (error) {
-      console.error("❌ Error loading pets:", error)
-    }
-  }
+  const [updating, setUpdating] = useState(false)
 
   useEffect(() => {
-    const loadProfileAndPets = async () => {
-      try {
-        setError(null)
-        console.log("🔍 Loading profile...")
-        const data = await fetchUserProfile()
-        console.log("✅ Profile loaded:", data)
-        setProfile(data)
-
-        await loadPets()
-      } catch (error) {
-        console.error("❌ Error loading profile:", error)
-        setError("Failed to load profile")
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    loadProfileAndPets()
+    loadProfile()
   }, [])
 
-  const handleProfileUpdate = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!profile) return
-
-    setSaving(true)
-    setError(null)
-    setSuccessMessage(null)
-
+  const loadProfile = async () => {
     try {
-      console.log("📝 Updating profile with:", {
-        name: profile.name, // Use 'name'
-        email: profile.email,
-        phone: profile.phone,
-      })
-
-      const updatedProfile = await updateUserProfile({
-        name: profile.name, // Use 'name'
-        email: profile.email,
-        phone: profile.phone,
-      })
-
-      setProfile({ ...profile, ...updatedProfile })
-      setSuccessMessage("Profile updated successfully!")
-      setTimeout(() => setSuccessMessage(null), 3000)
+      const data = await fetchUserProfile()
+      setProfile(data)
     } catch (error) {
-      console.error("❌ Error updating profile:", error)
-      setError("Failed to update profile")
+      toast({
+        title: "Error",
+        description: "Failed to load profile",
+        variant: "destructive",
+      })
     } finally {
-      setSaving(false)
+      setLoading(false)
     }
   }
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!profile) return
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
-    console.log(`🔄 Input changed: ${name} = ${value}`)
-    setProfile({ ...profile, [name]: value })
+    setProfile(prev => prev ? { ...prev, [name]: value } : null)
   }
 
-  const handlePetAdded = async (newPet: Pet) => {
-    console.log("🐾 Pet added, refreshing pets list:", newPet)
-    await loadPets()
-    setSuccessMessage("Pet added successfully!")
-    setTimeout(() => setSuccessMessage(null), 3000)
-  }
+  const handleProfileUpdate = async () => {
+    if (!profile) return
 
-  const handlePetUpdated = async (updatedPet: Pet) => {
-    console.log("🐾 Pet updated, refreshing pets list:", updatedPet)
-    await loadPets()
-    setSuccessMessage("Pet updated successfully!")
-    setTimeout(() => setSuccessMessage(null), 3000)
-  }
-
-  const handlePetDeleted = async (petId: string) => {
-    console.log("🐾 Pet deleted, refreshing pets list:", petId)
-    await loadPets()
-    setSuccessMessage("Pet deleted successfully!")
-    setTimeout(() => setSuccessMessage(null), 3000)
+    setUpdating(true)
+    try {
+      const updatedProfile = await updateUserProfile({
+        name: profile.name,
+        email: profile.email,
+        address: profile.address,
+      })
+      setProfile(updatedProfile)
+      toast({
+        title: "Success",
+        description: "Profile updated successfully",
+      })
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update profile",
+        variant: "destructive",
+      })
+    } finally {
+      setUpdating(false)
+    }
   }
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[calc(100vh-100px)] bg-zubo-background-100 p-4">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-zubo-primary-600"></div>
-        <p className="mt-4 text-zubo-text-600">Loading profile...</p>
+      <div className="container mx-auto p-6 max-w-4xl">
+        <div className="animate-pulse space-y-6">
+          <div className="h-8 bg-zubo-primary-100 rounded w-1/4"></div>
+          <div className="h-64 bg-zubo-primary-100 rounded"></div>
+        </div>
       </div>
     )
   }
-
-  if (error && !profile) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[calc(100vh-100px)] bg-zubo-background-100 p-4">
-        <Card className="w-full max-w-md border-zubo-highlight-1-200 bg-zubo-highlight-1-50 shadow-sm">
-          <CardHeader className="pb-4">
-            <CardTitle className="flex items-center text-zubo-highlight-1-800 text-lg">
-              <XCircle className="mr-2 h-5 w-5 text-zubo-highlight-1-600" />
-              Error Loading Profile
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="text-center text-zubo-highlight-1-600">
-            <p>{error}</p>
-            <Button
-              onClick={() => window.location.reload()}
-              className="mt-4 border-zubo-primary-500 text-zubo-primary-700 hover:bg-zubo-primary-50 bg-transparent"
-            >
-              Retry
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    )
-  }
-
-  const petCount = pets.length
-
-  console.log("🔍 Profile state:", {
-    hasProfile: !!profile,
-    name: profile?.name, // Use 'name'
-    email: profile?.email,
-    phone: profile?.phone,
-    petsCount: petCount,
-    hasAddress: !!profile?.address,
-  })
 
   return (
-    <div className="min-h-[calc(100vh-100px)] bg-zubo-background-100 p-4 md:p-6 lg:p-8">
-      <div className="max-w-4xl mx-auto space-y-6">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold text-zubo-text-800">My Profile</h1>
-            <p className="text-zubo-text-600">Manage your personal information, pets, and address.</p>
-            {profile?.name && <p className="text-zubo-primary-600 mt-1">Welcome, {profile.name}!</p>}
-          </div>
-        </div>
-
-        {successMessage && (
-          <div className="bg-zubo-accent-50 border border-zubo-accent-200 rounded-lg p-3 flex items-center">
-            <CheckCircle className="h-4 w-4 text-zubo-accent-600 mr-2" />
-            <span className="text-zubo-accent-800 text-sm">{successMessage}</span>
-          </div>
-        )}
-
-        <Tabs defaultValue="personal" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 bg-zubo-background-100">
-            <TabsTrigger
-              value="personal"
-              className="data-[state=active]:bg-zubo-background-50 data-[state=active]:text-zubo-primary-700 text-zubo-text-600 hover:text-zubo-primary-700"
-            >
-              <User className="mr-2 h-4 w-4" /> Personal Info
-            </TabsTrigger>
-            <TabsTrigger
-              value="pets"
-              className="data-[state=active]:bg-zubo-background-50 data-[state=active]:text-zubo-primary-700 text-zubo-text-600 hover:text-zubo-primary-700"
-            >
-              <PawPrint className="mr-2 h-4 w-4" /> My Pets ({petCount})
-            </TabsTrigger>
-            <TabsTrigger
-              value="address"
-              className="data-[state=active]:bg-zubo-background-50 data-[state=active]:text-zubo-primary-700 text-zubo-text-600 hover:text-zubo-primary-700"
-            >
-              <MapPin className="mr-2 h-4 w-4" /> Address
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="personal" className="mt-6">
-            <Card className="border-zubo-background-200 shadow-sm bg-zubo-background-50">
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center text-zubo-text-800 text-lg">
-                  <User className="mr-2 h-5 w-5 text-zubo-primary-600" />
-                  Personal Information
-                </CardTitle>
-                <CardDescription className="text-zubo-text-600 text-sm">Update your personal details</CardDescription>
-              </CardHeader>
-              <form onSubmit={handleProfileUpdate}>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    {" "}
-                    {/* Changed to single column layout */}
-                    <Label htmlFor="name" className="text-sm font-medium text-zubo-text-700">
-                      Full Name *
-                    </Label>
-                    <Input
-                      id="name"
-                      name="name"
-                      value={profile?.name || ""} // Use 'name'
-                      onChange={handleInputChange}
-                      required
-                      className="border-zubo-background-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-500 bg-zubo-background-100 text-zubo-text-800 placeholder:text-zubo-text-400"
-                      placeholder="John Doe"
-                    />
-                  </div>
-                  {/* Removed lastName input field */}
-                  <div className="space-y-2">
-                    <Label htmlFor="email" className="text-sm font-medium text-zubo-text-700">
-                      Email
-                    </Label>
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      value={profile?.email || ""}
-                      disabled
-                      className="border-zubo-background-300 bg-zubo-background-200 text-zubo-text-500 cursor-not-allowed"
-                    />
-                    <p className="text-xs text-zubo-text-500">Email cannot be changed.</p>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="phone" className="text-sm font-medium text-zubo-text-700">
-                      Phone Number
-                    </Label>
-                    <Input
-                      id="phone"
-                      name="phone"
-                      type="tel"
-                      value={profile?.phone || ""}
-                      disabled
-                      className="border-zubo-background-300 bg-zubo-background-200 text-zubo-text-500 cursor-not-allowed"
-                    />
-                    <p className="text-xs text-zubo-text-500">Phone number cannot be changed.</p>
-                  </div>
-                </CardContent>
-                <CardContent className="pt-4">
-                  <Button
-                    type="submit"
-                    disabled={saving}
-                    className="bg-zubo-primary-600 hover:bg-zubo-primary-700 text-zubo-background-50"
-                  >
-                    <Save className="mr-2 h-4 w-4" />
-                    {saving ? "Saving..." : "Save Changes"}
-                  </Button>
-                </CardContent>
-              </form>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="pets" className="mt-6">
-            <PetList
-              pets={pets}
-              onPetAdded={handlePetAdded}
-              onPetUpdated={handlePetUpdated}
-              onPetDeleted={handlePetDeleted}
-            />
-          </TabsContent>
-
-          <TabsContent value="address" className="mt-6">
-            <AddressForm initialAddress={profile?.address} />
-          </TabsContent>
-        </Tabs>
+    <div className="container mx-auto p-6 max-w-4xl">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-zubo-text-900 mb-2">Profile Settings</h1>
+        <p className="text-zubo-text-600">Manage your account settings and preferences</p>
+        {profile?.name && <p className="text-zubo-primary-600 mt-1">Welcome, {profile.name}!</p>}
       </div>
+
+      <Tabs defaultValue="personal" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-4 bg-zubo-primary-50 border border-zubo-primary-200">
+          <TabsTrigger 
+            value="personal" 
+            className="data-[state=active]:bg-zubo-primary-600 data-[state=active]:text-white"
+          >
+            <User className="w-4 h-4 mr-2" />
+            Personal
+          </TabsTrigger>
+          <TabsTrigger 
+            value="preferences" 
+            className="data-[state=active]:bg-zubo-primary-600 data-[state=active]:text-white"
+          >
+            <Settings className="w-4 h-4 mr-2" />
+            Preferences
+          </TabsTrigger>
+          <TabsTrigger 
+            value="notifications" 
+            className="data-[state=active]:bg-zubo-primary-600 data-[state=active]:text-white"
+          >
+            <Bell className="w-4 h-4 mr-2" />
+            Notifications
+          </TabsTrigger>
+          <TabsTrigger 
+            value="security" 
+            className="data-[state=active]:bg-zubo-primary-600 data-[state=active]:text-white"
+          >
+            <Shield className="w-4 h-4 mr-2" />
+            Security
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="personal" className="space-y-6">
+          <Card className="border-zubo-primary-200">
+            <CardHeader className="bg-zubo-primary-50">
+              <CardTitle className="text-zubo-text-900 flex items-center gap-2">
+                <User className="w-5 h-5 text-zubo-primary-600" />
+                Personal Information
+              </CardTitle>
+              <CardDescription className="text-zubo-text-600">
+                Update your personal details and contact information
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-6 space-y-6">
+              {/* Profile Picture Section */}
+              <div className="flex items-center space-x-4">
+                <Avatar className="w-20 h-20 border-2 border-zubo-primary-200">
+                  <AvatarImage src={profile?.profileImage || "/placeholder.svg"} />
+                  <AvatarFallback className="bg-zubo-accent-100 text-zubo-text-700 text-lg">
+                    {profile?.name?.charAt(0)?.toUpperCase() || 'U'}
+                  </AvatarFallback>
+                </Avatar>
+                <div>
+                  <Button variant="outline" className="border-zubo-primary-300 text-zubo-primary-700 hover:bg-zubo-primary-50">
+                    <Camera className="w-4 h-4 mr-2" />
+                    Change Photo
+                  </Button>
+                  <p className="text-sm text-zubo-text-500 mt-1">JPG, PNG or GIF. Max size 2MB.</p>
+                </div>
+              </div>
+
+              <Separator className="bg-zubo-primary-200" />
+
+              {/* Personal Details */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="name" className="text-zubo-text-700 font-medium">
+                    <User className="w-4 h-4 inline mr-1" />
+                    Full Name
+                  </Label>
+                  <Input
+                    id="name"
+                    name="name"
+                    value={profile?.name || ""}
+                    onChange={handleInputChange}
+                    className="border-zubo-primary-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-200"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-zubo-text-700 font-medium">
+                    <Mail className="w-4 h-4 inline mr-1" />
+                    Email Address
+                  </Label>
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    value={profile?.email || ""}
+                    onChange={handleInputChange}
+                    className="border-zubo-primary-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-200"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="phone" className="text-zubo-text-700 font-medium">
+                    <Phone className="w-4 h-4 inline mr-1" />
+                    Phone Number
+                  </Label>
+                  <Input
+                    id="phone"
+                    name="phone"
+                    value={profile?.phone || ""}
+                    disabled
+                    className="border-zubo-primary-300 bg-zubo-primary-50 text-zubo-text-600"
+                  />
+                  <p className="text-xs text-zubo-text-500">Phone number cannot be changed</p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="createdAt" className="text-zubo-text-700 font-medium">
+                    <Calendar className="w-4 h-4 inline mr-1" />
+                    Member Since
+                  </Label>
+                  <Input
+                    id="createdAt"
+                    value={profile?.createdAt ? new Date(profile.createdAt).toLocaleDateString() : ""}
+                    disabled
+                    className="border-zubo-primary-300 bg-zubo-primary-50 text-zubo-text-600"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="address" className="text-zubo-text-700 font-medium">
+                  <MapPin className="w-4 h-4 inline mr-1" />
+                  Address
+                </Label>
+                <Textarea
+                  id="address"
+                  name="address"
+                  value={profile?.address || ""}
+                  onChange={handleInputChange}
+                  className="border-zubo-primary-300 focus:border-zubo-primary-500 focus:ring-zubo-primary-200"
+                  rows={3}
+                  placeholder="Enter your full address"
+                />
+              </div>
+
+              <div className="flex justify-end pt-4">
+                <Button 
+                  onClick={handleProfileUpdate}
+                  disabled={updating}
+                  className="bg-zubo-primary-600 hover:bg-zubo-primary-700 text-white px-6"
+                >
+                  {updating ? "Saving..." : "Save Changes"}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Account Status */}
+          <Card className="border-zubo-highlight-1-200">
+            <CardHeader className="bg-zubo-highlight-1-50">
+              <CardTitle className="text-zubo-text-900">Account Status</CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium text-zubo-text-800">Account Verification</p>
+                  <p className="text-sm text-zubo-text-600">Your account is verified and active</p>
+                </div>
+                <Badge className="bg-zubo-highlight-1-100 text-zubo-highlight-1-800 border-zubo-highlight-1-300">
+                  Verified
+                </Badge>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="preferences" className="space-y-6">
+          <Card className="border-zubo-primary-200">
+            <CardHeader className="bg-zubo-primary-50">
+              <CardTitle className="text-zubo-text-900">App Preferences</CardTitle>
+              <CardDescription className="text-zubo-text-600">
+                Customize your app experience
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-6">
+              <p className="text-zubo-text-600">Preferences settings coming soon...</p>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="notifications" className="space-y-6">
+          <Card className="border-zubo-primary-200">
+            <CardHeader className="bg-zubo-primary-50">
+              <CardTitle className="text-zubo-text-900">Notification Settings</CardTitle>
+              <CardDescription className="text-zubo-text-600">
+                Manage how you receive notifications
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-6">
+              <p className="text-zubo-text-600">Notification settings coming soon...</p>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="security" className="space-y-6">
+          <Card className="border-zubo-primary-200">
+            <CardHeader className="bg-zubo-primary-50">
+              <CardTitle className="text-zubo-text-900">Security Settings</CardTitle>
+              <CardDescription className="text-zubo-text-600">
+                Manage your account security
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-6">
+              <p className="text-zubo-text-600">Security settings coming soon...</p>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }

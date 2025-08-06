@@ -53,22 +53,14 @@ export async function POST(request: NextRequest) {
       const refundAmount = session.session_price - deductionAmount
 
       // Get payment details for this session
-      let paymentResult = await sql`
+      const paymentResult = await sql`
         SELECT * FROM payments 
         WHERE recurring_booking_id = ${sessionId}::uuid 
         AND status = 'CAPTURED'
         ORDER BY created_at DESC
         LIMIT 1
       `
-      if (paymentResult.rows.length === 0) {
-        paymentResult = await sql`
-        SELECT * FROM payments 
-        WHERE booking_id = ${session.booking_id}::text
-        AND status = 'CAPTURED'
-        ORDER BY created_at DESC
-        LIMIT 1
-      `
-      }
+
       if (paymentResult.rows.length > 0) {
         const payment = paymentResult.rows[0]
 
@@ -87,15 +79,20 @@ export async function POST(request: NextRequest) {
           // Record refund in database
           await sql`
             INSERT INTO payment_refunds (
-              payment_id, refund_id, amount, status,               
-              initiated_at, razorpay_response
+              payment_id, refund_id, amount, status, 
+              session_id, sequence_number, session_date,
+              initiated_at, razorpay_response, estimated_processing_time
             ) VALUES (
               ${payment.id},
               ${refund.id},
               ${refundAmount},
               'INITIATED',
+              ${sessionId}::uuid,
+              ${session.sequence_number},
+              ${session.session_date},
               NOW(),
-              ${JSON.stringify(refund)}
+              ${JSON.stringify(refund)},
+              '5-7 business days'
             )
           `
 
@@ -112,7 +109,8 @@ export async function POST(request: NextRequest) {
           await sql`
             INSERT INTO payment_refunds (
               payment_id, refund_id, amount, status, 
-              initiated_at, failure_reason
+              session_id, sequence_number, session_date,
+              initiated_at, failure_reason, estimated_processing_time
             ) VALUES (
               ${payment.id},
               'manual_' || ${sessionId},
@@ -122,7 +120,8 @@ export async function POST(request: NextRequest) {
               ${session.sequence_number},
               ${session.session_date},
               NOW(),
-              ${refundError.message || "Razorpay API error"}
+              ${refundError.message || "Razorpay API error"},
+              '7-10 business days'
             )
           `
 

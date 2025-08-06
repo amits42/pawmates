@@ -372,7 +372,6 @@ export async function POST(request: NextRequest) {
         bookingData.recurringPattern,
         bookingData.time,
       );
-      const sessionPrice = payment.amount / sessions.length;
       for (const session of sessions) {
         // Insert recurring_booking entry
         const recurringBookingResult = await sql`
@@ -390,7 +389,7 @@ export async function POST(request: NextRequest) {
             ${session.date},
             ${session.time},
             ${bookingData.duration || 60},
-            ${sessionPrice},
+            ${payment.amount},
             'PENDING',
             'PAID',
             ${`Session ${session.sequenceNumber} of recurring booking`},

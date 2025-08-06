@@ -1,153 +1,99 @@
-export const dynamic = "force-dynamic"
-import { NextResponse } from "next/server"
-import { neon } from "@neondatabase/serverless"
+import { NextRequest, NextResponse } from 'next/server'
+import { sql } from '@vercel/postgres'
+import { verifyToken } from '@/lib/jwt-server'
 
-// Initialize the SQL client
-const sql = neon(process.env.DATABASE_URL!)
-
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   try {
-    console.log("👤 Fetching user profile from database...")
-
-    // Get user ID from query params
-    const url = new URL(request.url)
-    const userId = url.searchParams.get("userId")
-    const phone = url.searchParams.get("phone")
-
-    if (!userId && !phone) {
-      return NextResponse.json({ error: "User ID or phone is required" }, { status: 400 })
+    const token = request.headers.get('authorization')?.replace('Bearer ', '')
+    
+    if (!token) {
+      return NextResponse.json({ error: 'No token provided' }, { status: 401 })
     }
 
-    let users
-    if (userId) {
-      users = await sql`
-        SELECT 
-          id,
-          phone,
-          name, -- Select 'name' instead of 'firstName' and 'lastName'
-          email,
-          user_type as "userType",
-          profile_picture as "profilePicture",
-          is_active as "isActive",
-          created_at as "createdAt",
-          updated_at as "updatedAt"
-        FROM users
-        WHERE id = ${userId}
-        LIMIT 1
-      `
-    } else {
-      users = await sql`
-        SELECT 
-          id,
-          phone,
-          name, -- Select 'name' instead of 'firstName' and 'lastName'
-          email,
-          user_type as "userType",
-          profile_picture as "profilePicture",
-          is_active as "isActive",
-          created_at as "createdAt",
-          updated_at as "updatedAt"
-        FROM users
-        WHERE phone = ${phone}
-        LIMIT 1
-      `
+    const decoded = verifyToken(token)
+    if (!decoded) {
+      return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
     }
 
-    if (users.length === 0) {
-      console.log("❌ User not found:", userId || phone)
-      return NextResponse.json({ error: "User not found" }, { status: 404 })
+    const result = await sql`
+      SELECT id, name, email, phone, address, profile_image, created_at, is_onboarded
+      FROM users 
+      WHERE id = ${decoded.userId}
+    `
+
+    if (result.rowCount === 0) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
-    console.log("✅ User profile fetched:", users[0])
-    return NextResponse.json(users[0])
+    const user = result.rows[0]
+    
+    return NextResponse.json({
+      success: true,
+      data: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        address: user.address,
+        profileImage: user.profile_image,
+        createdAt: user.created_at,
+        isOnboarded: user.is_onboarded
+      }
+    })
   } catch (error) {
-    console.error("❌ Database error:", error)
-    return NextResponse.json({ error: "Failed to fetch user profile" }, { status: 500 })
+    console.error('Profile fetch error:', error)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
 
-export async function PUT(request: Request) {
+export async function PUT(request: NextRequest) {
   try {
-    console.log("📝 Updating user profile...")
+    const token = request.headers.get('authorization')?.replace('Bearer ', '')
+    
+    if (!token) {
+      return NextResponse.json({ error: 'No token provided' }, { status: 401 })
+    }
+
+    const decoded = verifyToken(token)
+    if (!decoded) {
+      return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
+    }
+
     const body = await request.json()
-    console.log("📥 Profile data received:", body)
+    const { name, email, address } = body
 
-    // Get user ID from request body or use phone to find user
-    let userId = body.userId
-    const phone = body.phone
-
-    if (!userId && !phone) {
-      console.log("❌ User ID or phone is required")
-      return NextResponse.json({ error: "User ID or phone is required" }, { status: 400 })
-    }
-
-    // If no userId provided, find user by phone
-    if (!userId && phone) {
-      console.log("🔍 Finding user by phone:", phone)
-      const users = await sql`
-        SELECT id FROM users WHERE phone = ${phone} LIMIT 1
-      `
-
-      if (users.length === 0) {
-        console.log("❌ User not found with phone:", phone)
-        return NextResponse.json({ error: "User not found" }, { status: 404 })
-      }
-
-      userId = users[0].id
-      console.log("✅ Found user ID:", userId)
-    }
-
-    // Validate required fields
-    if (!body.name || !body.name.trim()) {
-      // Validate 'name'
-      console.log("❌ Name is required")
-      return NextResponse.json({ error: "Name is required" }, { status: 400 })
-    }
-
-    console.log("🔄 Updating user profile for ID:", userId)
-
-    // Update user profile
-    const updatedUsers = await sql`
-      UPDATE users
+    const result = await sql`
+      UPDATE users 
       SET 
-        name = ${body.name.trim()}, -- Update 'name'
-        email = ${body.email || null},
+        name = ${name || null},
+        email = ${email || null},
+        address = ${address || null},
         updated_at = NOW()
-      WHERE id = ${userId}
-      RETURNING 
-        id,
-        phone,
-        name, -- Return 'name'
-        email,
-        user_type as "userType",
-        profile_picture as "profilePicture",
-        is_active as "isActive",
-        created_at as "createdAt",
-        updated_at as "updatedAt"
+      WHERE id = ${decoded.userId}
+      RETURNING id, name, email, phone, address, profile_image, created_at, is_onboarded
     `
 
-    if (updatedUsers.length === 0) {
-      console.log("❌ User not found for update:", userId)
-      return NextResponse.json({ error: "User not found" }, { status: 404 })
+    if (result.rowCount === 0) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
-    const updatedUser = updatedUsers[0]
-    console.log("✅ User profile updated successfully:", updatedUser)
-
+    const user = result.rows[0]
+    
     return NextResponse.json({
       success: true,
-      message: "Profile updated successfully",
-      user: updatedUser,
+      data: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        address: user.address,
+        profileImage: user.profile_image,
+        createdAt: user.created_at,
+        isOnboarded: user.is_onboarded
+      }
     })
   } catch (error) {
-    console.error("❌ Database error:", error)
-    return NextResponse.json(
-      {
-        success: false,
-        error: "Failed to update profile",
-        message: "Failed to update profile",
-      },
-      { status: 500 },
-    )
+    console.error('Profile update error:', error)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
